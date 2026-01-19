@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TheCoffeCream.Application\TheCoffeCream.Application.csproj" />
+  </ItemGroup>
+
+  <!-- Exclude moved domain/application/interface files from the API project build; sources now live in new projects -->
+  <ItemGroup>
+    <Compile Remove="Domain\**\*.cs" />
+    <Compile Remove="Application\**\*.cs" />
+    <Compile Remove="Infrastructure\Interfaces\**\*.cs" />
+    <Compile Remove="Api\DTOs\**\*.cs" />
+  </ItemGroup>
+
+</Project>
