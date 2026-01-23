@@ -27,26 +27,50 @@ namespace TheCoffeCream.Application.Services
             if (!Enum.TryParse<OrderType>(request.OrderType, true, out var orderType))
                 throw new ArgumentException("Invalid orderType", nameof(request.OrderType));
 
-            // Build items, snapshot topping prices if provided
-            var toppings = (await _productRepository.GetToppingsAsync()).ToDictionary(t => t.Id);
+            // Load all products to lookup toppings
+            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
 
             var items = request.Items.Select(i =>
             {
                 System.Collections.Generic.List<OrderItemTopping>? selected = null;
-                if (i.SelectedToppingIds != null && i.SelectedToppingIds.Any())
-                {
-                    selected = i.SelectedToppingIds.Where(id => toppings.ContainsKey(id))
-                        .Select(id => new OrderItemTopping(id, toppings[id].Name, toppings[id].Price))
-                        .ToList();
+                DiscountType? itemDiscountType = null;
+                if (!string.IsNullOrEmpty(i.DiscountType) && Enum.TryParse<DiscountType>(i.DiscountType, true, out var dt))
+                    itemDiscountType = dt;
+
+                if (allProducts.TryGetValue(i.ProductId, out var product))
+                { 
+                     if (i.SelectedToppingNames != null && i.SelectedToppingNames.Any())
+                     {
+                        // Match selected topping names with product's available toppings
+                        var productToppings = product.Toppings.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
+                        
+                        selected = i.SelectedToppingNames
+                            .Where(name => productToppings.ContainsKey(name))
+                            .Select(name => new OrderItemTopping(productToppings[name].Id, productToppings[name].Name, productToppings[name].Price))
+                            .ToList();
+                     }
                 }
 
-                if (selected == null)
-                    return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity);
-
-                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected);
+                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue);
             });
 
-            var order = new Order(request.ClientOrderId, orderType, items, request.TableNumber);
+            DiscountType? orderDiscountType = null;
+            if (!string.IsNullOrEmpty(request.DiscountType) && Enum.TryParse<DiscountType>(request.DiscountType, true, out var odt))
+                orderDiscountType = odt;
+
+            if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
+                paymentMethod = PaymentMethod.CASH;
+
+            var order = new Order(
+                request.ClientOrderId, 
+                orderType, 
+                items, 
+                request.TableNumber,
+                paymentMethod,
+                request.CashAmount,
+                request.TransferAmount,
+                orderDiscountType,
+                request.DiscountValue);
 
             await _orderRepository.AddAsync(order);
 

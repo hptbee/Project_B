@@ -8,6 +8,11 @@ namespace TheCoffeCream.Application.DTOs
         public Guid ClientOrderId { get; set; }
         public string OrderType { get; set; } = "TAKE_AWAY";
         public int? TableNumber { get; set; }
+        public string PaymentMethod { get; set; } = "CASH";
+        public decimal CashAmount { get; set; }
+        public decimal TransferAmount { get; set; }
+        public string? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
         public List<CreateOrderItemRequest> Items { get; set; } = new();
     }
 
@@ -17,7 +22,9 @@ namespace TheCoffeCream.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
-        // Optional: selected topping ids to snapshot prices at order time. Backwards compatible when omitted.
-        public List<Guid>? SelectedToppingIds { get; set; }
+        public string? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
+        // Optional: selected topping names to snapshot prices at order time.
+        public List<string>? SelectedToppingNames { get; set; }
     }
 }

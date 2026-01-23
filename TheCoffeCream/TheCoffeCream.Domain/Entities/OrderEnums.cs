@@ -1,0 +1,15 @@
+namespace TheCoffeCream.Domain.Entities
+{
+    public enum PaymentMethod
+    {
+        CASH,
+        TRANSFER,
+        COMBINED
+    }
+
+    public enum DiscountType
+    {
+        FIXED,
+        PERCENTAGE
+    }
+}

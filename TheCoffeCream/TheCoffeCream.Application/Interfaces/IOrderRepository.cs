@@ -8,5 +8,6 @@ namespace TheCoffeCream.Application.Interfaces
     {
         Task<bool> ExistsByClientOrderIdAsync(Guid clientOrderId);
         Task AddAsync(Order order);
+        Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate);
     }
 }

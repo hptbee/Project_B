@@ -10,6 +10,13 @@ namespace TheCoffeCream.Application.DTOs
         public DateTimeOffset CreatedAt { get; set; }
         public string OrderType { get; set; } = string.Empty;
         public int? TableNumber { get; set; }
+        public decimal SubTotal { get; set; }
+        public string? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public decimal CashAmount { get; set; }
+        public decimal TransferAmount { get; set; }
         public List<OrderItemResponse> Items { get; set; } = new();
         public decimal Total { get; set; }
     }
@@ -20,7 +27,10 @@ namespace TheCoffeCream.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
+        public string? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
+        public decimal DiscountAmount { get; set; }
         public decimal Total { get; set; }
-        public List<ToppingDto>? SelectedToppings { get; set; }
+        public List<ProductDto>? SelectedToppings { get; set; }
     }
 }

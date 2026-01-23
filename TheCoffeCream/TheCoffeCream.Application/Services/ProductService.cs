@@ -21,11 +21,10 @@ namespace TheCoffeCream.Application.Services
             return (await _productRepository.GetAllAsync()).ToList();
         }
 
-    public async Task<MenuDto> GetMenuAsync()
+        public async Task<MenuDto> GetMenuAsync()
         {
             var products = (await _productRepository.GetAllAsync()).ToList();
             var categories = (await _productRepository.GetCategoriesAsync()).ToList();
-            var toppings = (await _productRepository.GetToppingsAsync()).ToList();
 
             var dto = new MenuDto
             {
@@ -34,13 +33,24 @@ namespace TheCoffeCream.Application.Services
                 {
                     Id = p.Id,
                     Name = p.Name,
-                    Description = p.Description,
+                    Category = p.Category,
+                    Code = p.Code,
                     Price = p.Price,
-                    CategoryId = p.CategoryId,
                     ImageUrl = p.ImageUrl,
-                    AllowedToppingIds = p.AllowedToppingIds.ToList()
-                }).ToList(),
-                Toppings = toppings.Select(t => new ToppingDto { Id = t.Id, Name = t.Name, Price = t.Price }).ToList()
+                    IsActive = p.IsActive,
+                    IsTopping = p.IsTopping,
+                    Toppings = p.Toppings.Select(t => new ProductDto
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Category = t.Category,
+                        Code = t.Code,
+                        Price = t.Price,
+                        ImageUrl = t.ImageUrl,
+                        IsActive = t.IsActive,
+                        IsTopping = t.IsTopping
+                    }).ToList()
+                }).ToList()
             };
 
             return dto;

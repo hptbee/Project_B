@@ -1,0 +1,68 @@
+## [Standard .NET .gitignore](https://github.com/github/gitignore/blob/main/VisualStudio.gitignore)
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+Log/
+Logs/
+
+## Visual Studio cache and settings
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+## Visual Studio Code
+.vscode/
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## NuGet Packages
+*.nupkg
+# The packages folder can be ignored because of Package Reference support in SDK projects
+**/[Pp]ackages/*
+# but allow the packages.config file
+!**/[Pp]ackages/packages.config
+# Exceptions for NuGet.Config and NuGet.exe
+!**/[Pp]ackages/NuGet.Config
+!**/[Pp]ackages/NuGet.exe
+
+## Node/Web
+node_modules/
+dist/
+.env*
+!.env.example
+**/package-lock.json
+*.bak
+
+## OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+## Agent & Tool specific
+.gemini/
+brain/
+artifacts/
+.temp/
+temp/
+*.log

@@ -6,27 +6,44 @@ namespace TheCoffeCream.Domain.Entities
 {
     public class OrderItem
     {
+        public Guid Id { get; private set; }
         public Guid ProductId { get; private set; }
         public string Name { get; private set; } = string.Empty;
         public decimal UnitPrice { get; private set; }
         public int Quantity { get; private set; }
 
+        public DiscountType? DiscountType { get; private set; }
+        public decimal DiscountValue { get; private set; }
+
         public IReadOnlyList<OrderItemTopping> SelectedToppings => _selectedToppings.AsReadOnly();
 
         private readonly List<OrderItemTopping> _selectedToppings = new();
 
-        public decimal Total => UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price);
+        public decimal DiscountAmount
+        {
+            get
+            {
+                var baseTotal = UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price);
+                if (DiscountType == Entities.DiscountType.PERCENTAGE)
+                    return baseTotal * (DiscountValue / 100);
+                if (DiscountType == Entities.DiscountType.FIXED)
+                    return DiscountValue;
+                return 0;
+            }
+        }
+
+        public decimal Total => (UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price)) - DiscountAmount;
 
         private OrderItem() { }
 
-        // Backwards-compatible constructor (no toppings)
+        // Backwards-compatible constructor (no toppings, no discount)
         public OrderItem(Guid productId, string name, decimal unitPrice, int quantity)
-            : this(productId, name, unitPrice, quantity, null)
+            : this(productId, name, unitPrice, quantity, null, null, 0)
         {
         }
 
-        // New constructor supporting selected topping snapshots
-        public OrderItem(Guid productId, string name, decimal unitPrice, int quantity, IEnumerable<OrderItemTopping>? selectedToppings)
+        // New constructor supporting selected topping snapshots and discounts
+        public OrderItem(Guid productId, string name, decimal unitPrice, int quantity, IEnumerable<OrderItemTopping>? selectedToppings, DiscountType? discountType = null, decimal discountValue = 0)
         {
             if (productId == Guid.Empty) throw new ArgumentException("productId required", nameof(productId));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name required", nameof(name));
@@ -37,6 +54,8 @@ namespace TheCoffeCream.Domain.Entities
             Name = name;
             UnitPrice = unitPrice;
             Quantity = quantity;
+            DiscountType = discountType;
+            DiscountValue = discountValue;
 
             if (selectedToppings != null)
                 _selectedToppings.AddRange(selectedToppings);

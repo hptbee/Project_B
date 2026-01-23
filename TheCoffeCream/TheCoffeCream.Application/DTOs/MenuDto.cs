@@ -7,7 +7,6 @@ namespace TheCoffeCream.Application.DTOs
     {
         public List<CategoryDto> Categories { get; set; } = new();
         public List<ProductMenuDto> Products { get; set; } = new();
-        public List<ToppingDto> Toppings { get; set; } = new();
     }
 
     public class CategoryDto
@@ -19,11 +18,14 @@ namespace TheCoffeCream.Application.DTOs
     public class ProductMenuDto
     {
         public Guid Id { get; set; }
+        public string Category { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
-        public Guid? CategoryId { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
-        public List<Guid> AllowedToppingIds { get; set; } = new();
+        public bool IsActive { get; set; }
+        public bool IsTopping { get; set; }
+ 
+        public List<ProductDto> Toppings { get; set; } = new();
     }
 }

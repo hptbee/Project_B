@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.72.0.3966" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
@@ -14,12 +15,6 @@
     <ProjectReference Include="..\TheCoffeCream.Application\TheCoffeCream.Application.csproj" />
   </ItemGroup>
 
-  <!-- Exclude moved domain/application/interface files from the API project build; sources now live in new projects -->
-  <ItemGroup>
-    <Compile Remove="Domain\**\*.cs" />
-    <Compile Remove="Application\**\*.cs" />
-    <Compile Remove="Infrastructure\Interfaces\**\*.cs" />
-    <Compile Remove="Api\DTOs\**\*.cs" />
-  </ItemGroup>
+
 
 </Project>

@@ -5,19 +5,19 @@ namespace TheCoffeCream.Domain.Entities
     // Snapshot of a topping at order time
     public class OrderItemTopping
     {
-        public Guid Id { get; private set; }
+        public Guid ProductId { get; private set; }
         public string Name { get; private set; } = string.Empty;
         public decimal Price { get; private set; }
 
         private OrderItemTopping() { }
 
-        public OrderItemTopping(Guid id, string name, decimal price)
+        public OrderItemTopping(Guid productId, string name, decimal price)
         {
-            if (id == Guid.Empty) throw new ArgumentException("id required", nameof(id));
+            if (productId == Guid.Empty) throw new ArgumentException("productId required", nameof(productId));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name required", nameof(name));
             if (price < 0) throw new ArgumentException("price must be >= 0", nameof(price));
 
-            Id = id;
+            ProductId = productId;
             Name = name;
             Price = price;
         }

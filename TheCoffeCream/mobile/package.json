@@ -1,0 +1,7 @@
+{
+    "name": "thecoffecream-mobile",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ]
+}

@@ -8,6 +8,5 @@ namespace TheCoffeCream.Application.Interfaces
     {
         Task<IEnumerable<Product>> GetAllAsync();
         Task<IEnumerable<Category>> GetCategoriesAsync();
-        Task<IEnumerable<Topping>> GetToppingsAsync();
     }
 }

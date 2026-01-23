@@ -15,19 +15,17 @@ builder.Services.AddSwaggerGen();
 // Configure options
 builder.Services.Configure<TheCoffeCream.Shared.Middleware.ApiKeyOptions>(builder.Configuration.GetSection("ApiKeyOptions"));
 
-// DI - repositories and services
-// For now use skeleton GoogleSheetOrderRepository; replace sheet id via configuration
-builder.Services.AddSingleton<TheCoffeCream.Application.Interfaces.IOrderRepository>(sp =>
-    new TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetOrderRepository(builder.Configuration["GoogleSheets:OrdersSheetId"] ?? string.Empty)
-);
-// TODO: Implement IProductRepository with Google Sheets or other storage. Use in-memory placeholder for now
-builder.Services.AddSingleton<TheCoffeCream.Application.Interfaces.IProductRepository>(sp =>
-    new TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetProductRepositoryPlaceholder()
-);
+// Bind GoogleSheets options from configuration
+builder.Services.Configure<TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetsOptions>(builder.Configuration.GetSection("GoogleSheets"));
+
+// Register Google Sheets client and repositories
+builder.Services.AddSingleton<TheCoffeCream.Infrastructure.GoogleSheets.IGoogleSheetsClient, TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetsClient>();
+builder.Services.AddSingleton<TheCoffeCream.Application.Interfaces.IOrderRepository, TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetOrderRepository>();
+builder.Services.AddSingleton<TheCoffeCream.Application.Interfaces.IProductRepository, TheCoffeCream.Infrastructure.GoogleSheets.GoogleSheetProductRepository>();
 
 builder.Services.AddScoped<TheCoffeCream.Application.Services.OrderService>();
 builder.Services.AddScoped<TheCoffeCream.Application.Services.ProductService>();
-builder.Services.AddScoped<TheCoffeCream.Application.Services.ReportService>();
+builder.Services.AddScoped<TheCoffeCream.Application.Interfaces.IReportService, TheCoffeCream.Application.Services.ReportService>();
 
 var app = builder.Build();
 
