@@ -3,6 +3,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy csproj files and restore as distinct layers
+# DEBUG: List files to verify context
+RUN ls -R
+
 COPY ["TheCoffeeCream/TheCoffeeCream.csproj", "TheCoffeeCream/"]
 COPY ["TheCoffeeCream.Application/TheCoffeeCream.Application.csproj", "TheCoffeeCream.Application/"]
 COPY ["TheCoffeeCream.Domain/TheCoffeeCream.Domain.csproj", "TheCoffeeCream.Domain/"]
