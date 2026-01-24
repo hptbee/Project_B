@@ -70,6 +70,32 @@ function cartReducer(state, action) {
                 }
             }
         }
+        case 'UPDATE_ITEM_TABLE': {
+            const { tableId, oldKey, qty, toppings, note } = action.payload
+            const table = state.tables[tableId]
+            if (!table) return state
+
+            const originalItem = table.items.find(i => i.key === oldKey)
+            if (!originalItem) return state
+
+            const newKey = `${originalItem.product.id}:${toppings.map(t => `${t.id}x${t.qty || 1}`).join(',')}:${note}`
+
+            // Re-map items: remove old, add/merge new
+            const baseItems = table.items.filter(i => i.key !== oldKey)
+            const existingWithNewKey = baseItems.find(i => i.key === newKey)
+
+            const updatedItems = existingWithNewKey
+                ? baseItems.map(i => i.key === newKey ? { ...i, qty: i.qty + qty, note, toppings } : i)
+                : [...baseItems, { ...originalItem, key: newKey, qty, toppings, note }]
+
+            return {
+                ...state,
+                tables: {
+                    ...state.tables,
+                    [tableId]: { ...table, items: updatedItems }
+                }
+            }
+        }
         case 'UPDATE_QTY_TABLE': {
             const { tableId, key, qty } = action.payload
             const table = state.tables[tableId]

@@ -81,6 +81,7 @@
     border: none;
     z-index: 1000;
     transition: $trans-bounce;
+    text-decoration: none;
 
     &:active {
         transform: scale(0.9);

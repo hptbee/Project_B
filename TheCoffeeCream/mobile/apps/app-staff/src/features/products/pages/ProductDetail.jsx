@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { useCartDispatch } from '@/shared/contexts/CartContext'
+import { useCartDispatch, useTableCart } from '@/shared/contexts/CartContext'
 import { useToast } from '@/shared/contexts/UIContext'
-
 import { useProducts } from '@/shared/contexts/ProductContext'
-import './ProductDetail.scss'
+import { formatPrice } from '@/shared/utils/formatters'
+import Icon from '@/shared/components/ui/Icon'
 import IconChevron from '@/shared/components/ui/IconChevron'
+import './ProductDetail.scss'
 
 export default function ProductDetail() {
     const { id } = useParams()
@@ -13,19 +14,88 @@ export default function ProductDetail() {
     const { products } = useProducts()
     const product = products.find(p => p.id === id)
 
-    // Toppings logic - API returns toppings in product object based on my mapper
-    const initialToppings = (product?.toppings || []).map(t => ({ ...t, qty: 0 }))
-
     const [searchParams] = useSearchParams()
     const location = useLocation()
-    const tableId = searchParams.get('table') || new URLSearchParams(location.search).get('table')
+    const { showToast } = useToast()
     const dispatch = useCartDispatch()
-    const showToast = useToast()
-    const [qty, setQty] = useState(1)
-    const [toppingsState, setToppingsState] = useState(initialToppings)
-    const [note, setNote] = useState('')
 
-    if (!product) return <div className="page product-not-found">Loading or Product Not Found...</div>
+    const tableId = searchParams.get('table') || new URLSearchParams(location.search).get('table')
+    const itemKey = searchParams.get('itemKey')
+    const tableCart = useTableCart(tableId)
+
+    // Find existing item if editing
+    const existingItem = useMemo(() => {
+        if (!itemKey || !tableCart) return null
+        return tableCart.items.find(i => i.key === itemKey)
+    }, [itemKey, tableCart])
+
+    // Initial State Hydration
+    const [qty, setQty] = useState(() => existingItem ? existingItem.qty : 1)
+    const [note, setNote] = useState(() => existingItem ? existingItem.note : '')
+    const [toppingsState, setToppingsState] = useState(() => {
+        const baseToppings = (product?.toppings || []).map(t => ({ ...t, qty: 0 }))
+        if (existingItem && existingItem.toppings) {
+            return baseToppings.map(bt => {
+                const et = existingItem.toppings.find(t => t.id === bt.id)
+                return et ? { ...bt, qty: et.qty } : bt
+            })
+        }
+        return baseToppings
+    })
+
+    // Calculate dynamic total
+    const total = useMemo(() => {
+        if (!product) return 0
+        const toppingsTotal = toppingsState.reduce((s, t) => s + (t.price * t.qty), 0)
+        return (product.price + toppingsTotal) * qty
+    }, [product, toppingsState, qty])
+
+    if (!product) return (
+        <div className="page product-not-found">
+            <header className="page-header">
+                <button className="back" onClick={() => nav(-1)}><IconChevron size={20} /></button>
+                <h2>Lỗi</h2>
+            </header>
+            <div className="page-content">Không tìm thấy sản phẩm...</div>
+        </div>
+    )
+
+    const handleAction = () => {
+        const selectedToppings = toppingsState.filter(t => t.qty > 0).map(t => ({
+            id: t.id,
+            title: t.title,
+            price: t.price,
+            qty: t.qty
+        }))
+
+        const payload = {
+            product: { id: product.id, title: product.title, price: product.price },
+            qty,
+            toppings: selectedToppings,
+            note
+        }
+
+        if (existingItem) {
+            // EDIT MODE
+            dispatch({
+                type: 'UPDATE_ITEM_TABLE',
+                payload: { ...payload, tableId, oldKey: itemKey }
+            })
+            showToast(`Đã cập nhật ${product.title}`)
+            nav(`/table/${tableId}`)
+        } else {
+            // ADD MODE
+            if (tableId) {
+                dispatch({ type: 'ADD_TO_TABLE', payload: { ...payload, tableId } })
+                showToast(`${product.title} đã thêm vào Bàn ${tableId}`)
+                nav(`/table/${tableId}`)
+            } else {
+                dispatch({ type: 'ADD', payload })
+                showToast(`${product.title} đã thêm vào giỏ`)
+                nav(-1)
+            }
+        }
+    }
 
     return (
         <div className="page detail">
@@ -33,35 +103,41 @@ export default function ProductDetail() {
                 <button className="back" onClick={() => nav(-1)} aria-label="Quay lại">
                     <IconChevron size={20} />
                 </button>
-                <h2>{product.title}</h2>
+                <h2>{existingItem ? 'Cập nhật món' : product.title}</h2>
             </header>
 
             <div className="product-card">
                 <div className="thumb product-detail-thumb" style={{ backgroundImage: `url(${product.imageUrl})` }} />
                 <div className="info">
                     <h3>{product.title}</h3>
-                    <div className="price">{product.price.toLocaleString()}</div>
+                    <div className="price">{formatPrice(product.price, true)}</div>
                 </div>
             </div>
 
             {toppingsState.length > 0 && (
                 <>
-                    <h4>TOPPING</h4>
+                    <h4 className="detail-section-title">TOPPING</h4>
                     <div className="toppings">
                         {toppingsState.map(t => (
                             <div className="topping" key={t.id}>
-                                <div>
+                                <div className="topping-info">
                                     <div className="topping-title">{t.title}</div>
-                                    <div className="topping-price">{t.price.toLocaleString()}</div>
+                                    <div className="topping-price">+{formatPrice(t.price)}</div>
                                 </div>
                                 {t.qty > 0 ? (
-                                    <div className="topping-qty">
-                                        <button className="minus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: Math.max(0, tt.qty - 1) } : tt))}>－</button>
-                                        <div className="qty">{t.qty}</div>
-                                        <button className="plus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>＋</button>
+                                    <div className="topping-qty-bar">
+                                        <button className="btn-icon" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: Math.max(0, tt.qty - 1) } : tt))}>
+                                            <Icon name="minus" size={14} color="var(--text-primary)" />
+                                        </button>
+                                        <div className="qty-val">{t.qty}</div>
+                                        <button className="btn-icon plus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>
+                                            <Icon name="plus" size={14} color="#fff" />
+                                        </button>
                                     </div>
                                 ) : (
-                                    <button className="plus-only plus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: 1 } : tt))}>＋</button>
+                                    <button className="add-topping-btn" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: 1 } : tt))}>
+                                        <Icon name="plus" size={18} color="var(--accent-amber)" />
+                                    </button>
                                 )}
                             </div>
                         ))}
@@ -69,35 +145,28 @@ export default function ProductDetail() {
                 </>
             )}
 
+            <h4 className="detail-section-title">GHI CHÚ</h4>
             <div className="notes">
-                <textarea placeholder="Nhập ghi chú" value={note} onChange={e => setNote(e.target.value)} />
+                <textarea
+                    placeholder="Ví dụ: ít đường, không đá..."
+                    value={note}
+                    onChange={e => setNote(e.target.value)}
+                />
             </div>
 
-            <div className="qty-row">
-                <button className="minus" onClick={() => setQty(Math.max(1, qty - 1))}>－</button>
-                <div className="qty">{qty}</div>
-                <button className="plus" onClick={() => setQty(qty + 1)}>＋</button>
+            <div className="qty-adjustment">
+                <button className="adj-btn" onClick={() => setQty(Math.max(1, qty - 1))}>
+                    <Icon name="minus" size={24} color="var(--text-primary)" />
+                </button>
+                <div className="adj-val">{qty}</div>
+                <button className="adj-btn active" onClick={() => setQty(qty + 1)}>
+                    <Icon name="plus" size={24} color="#000" />
+                </button>
             </div>
 
-            <div className="bottom-action" onClick={() => {
-                const finalQty = qty
-                const selectedToppings = (toppingsState || []).filter(t => t.qty > 0).map(t => ({ id: t.id, title: t.title, price: t.price, qty: t.qty }))
-                const tableIdLocal = tableId || new URLSearchParams(window.location.search).get('table')
-                if (tableIdLocal) {
-                    dispatch({ type: 'ADD_TO_TABLE', payload: { tableId: tableIdLocal, product: { id: product.id, title: product.title, price: product.price }, qty: finalQty, toppings: selectedToppings, note } })
-                    showToast(`${product.title} đã được thêm`)
-                    nav(`/table/${tableIdLocal}`)
-                } else {
-                    dispatch({ type: 'ADD', payload: { product: { id: product.id, title: product.title, price: product.price }, qty: finalQty, toppings: selectedToppings, note } })
-                    showToast(`${product.title} đã được thêm`)
-                }
-            }}>
-                {(() => {
-                    const toppingsPerProduct = (toppingsState || []).reduce((s, t) => s + (Number(t.price) || 0) * (Number(t.qty) || 0), 0)
-                    const total = ((Number(product.price) || 0) + toppingsPerProduct) * (Number(qty) || 1)
-                    return `Thêm vào đơn • ${total.toLocaleString()} đ`
-                })()}
-            </div>
+            <button className="bottom-action" onClick={handleAction}>
+                {existingItem ? 'Cập nhật món' : 'Thêm vào đơn'} • {formatPrice(total, true)}
+            </button>
         </div>
     )
 }

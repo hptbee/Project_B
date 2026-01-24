@@ -79,7 +79,7 @@ export default function ProductList() {
 
     if (loading && products.length === 0) return <LoadingSpinner fullScreen message="Đang tải thực đơn..." />
 
-    const showToast = useToast()
+    const { showToast } = useToast()
 
     const handleAdd = (p) => {
         if (tableId) {

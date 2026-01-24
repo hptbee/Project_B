@@ -14,22 +14,22 @@
 }
 
 .home-tab {
-    background: $bg-secondary;
-    color: $text-secondary;
-    border: $glass-border;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-glass);
     padding: 10px 22px;
-    border-radius: $radius-full;
+    border-radius: var(--radius-full);
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: $trans-fast;
+    transition: var(--trans-fast);
     white-space: nowrap;
 
     &.active {
-        background: $accent-amber;
-        color: #000;
-        border-color: $accent-amber;
-        box-shadow: 0 0 15px $accent-amber-glow;
+        background: var(--accent-amber);
+        color: var(--text-on-accent);
+        border-color: var(--accent-amber);
+        box-shadow: 0 0 15px var(--accent-amber-glow);
     }
 }
 
@@ -45,14 +45,14 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 24px 20px;
-    background: $bg-card;
-    backdrop-filter: $glass-blur;
-    border: $glass-border;
-    border-radius: $radius-xl;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
     text-decoration: none;
-    color: $text-primary;
+    color: var(--text-primary);
     min-height: 120px;
-    transition: $trans-smooth;
+    transition: var(--trans-smooth);
     animation: fadeInUp 0.4s ease backwards;
 
     @for $i from 1 through 20 {
@@ -63,16 +63,16 @@
 
     &:active {
         transform: scale(0.96);
-        background: rgba(255, 255, 255, 0.08);
+        background: var(--bg-glass-active);
     }
 
     &.active {
-        border-color: $border-active;
-        background: rgba($accent-amber, 0.08);
-        box-shadow: 0 0 20px rgba($accent-amber, 0.05);
+        border-color: var(--border-active);
+        background: var(--primary-light);
+        box-shadow: 0 0 20px var(--accent-amber-glow);
 
         .card-title {
-            color: $accent-amber;
+            color: var(--accent-amber);
         }
     }
 }
@@ -96,28 +96,28 @@
 .card-time {
     font-size: 13px;
     font-weight: 600;
-    color: $text-secondary;
-    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    background: var(--bg-glass-active);
     padding: 4px 10px;
-    border-radius: $radius-sm;
+    border-radius: var(--radius-sm);
 }
 
 .card-amount {
-    color: $accent-amber;
+    color: var(--accent-amber);
     font-weight: 900;
     font-size: 16px;
 }
 
 .badge-draft {
     font-size: 10px;
-    background: rgba($accent-red, 0.15);
-    color: $accent-red;
+    background: var(--danger-bg);
+    color: var(--danger-color);
     padding: 2px 8px;
-    border-radius: $radius-sm;
+    border-radius: var(--radius-sm);
     margin-left: auto;
     text-transform: uppercase;
     font-weight: 900;
-    border: 1px solid rgba($accent-red, 0.2);
+    border: 1px solid var(--border-glass);
 }
 
 .takeaway-icon {

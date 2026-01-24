@@ -1,17 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
+import { calculateCartTotal, calculateDiscount, calculateTotal } from '@/shared/utils/calculations'
+import { formatPrice } from '@/shared/utils/formatters'
+import { api } from '@/shared/services/api'
 import ConfirmModal from '@/shared/components/ui/ConfirmModal'
 import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import './Checkout.scss'
 import IconChevron from '@/shared/components/ui/IconChevron'
-import { api } from '@/shared/services/api'
+import './Checkout.scss'
 
 export default function Checkout() {
     const { tableId } = useParams()
     const nav = useNavigate()
     const tableCart = useTableCart(tableId)
     const dispatch = useTableCartDispatch(tableId)
+
+    // UI State
     const [paymentMethod, setPaymentMethod] = useState('CASH') // CASH, TRANSFER, COMBINED
     const [cashAmount, setCashAmount] = useState(0)
     const [transferAmount, setTransferAmount] = useState(0)
@@ -23,19 +27,13 @@ export default function Checkout() {
     const [discountValue, setDiscountValue] = useState(0)
     const [showDiscountInput, setShowDiscountInput] = useState(false)
 
-    const subtotal = tableCart.items.reduce(
-        (s, i) => s + i.product.price * i.qty + (i.toppings || []).reduce((t, tt) => t + tt.price, 0) * i.qty,
-        0
-    )
-
-    const discountAmount = discountType === 'PERCENTAGE'
-        ? Math.floor((subtotal * discountValue) / 100)
-        : discountValue
-
-    const total = Math.max(0, subtotal - discountAmount)
+    // Derived Totals using shared utilities
+    const subtotal = calculateCartTotal(tableCart.items)
+    const discountAmount = calculateDiscount(subtotal, discountType, discountValue)
+    const total = calculateTotal(subtotal, discountAmount)
 
     // Sync amounts based on method
-    React.useEffect(() => {
+    useEffect(() => {
         if (paymentMethod === 'CASH') {
             setCashAmount(total)
             setTransferAmount(0)
@@ -43,14 +41,14 @@ export default function Checkout() {
             setTransferAmount(total)
             setCashAmount(0)
         } else if (paymentMethod === 'COMBINED') {
-            // Default to all cash if just switched
+            // Maintain balance if possible, or reset to cash
             setCashAmount(total)
             setTransferAmount(0)
         }
     }, [paymentMethod, total])
 
     const handleFinalize = async () => {
-        // 1. Construct payload
+        setLoading(true)
         const orderItems = tableCart.items.map(item => ({
             ProductId: item.product.id,
             Name: item.product.title,
@@ -73,30 +71,33 @@ export default function Checkout() {
             DiscountAmount: discountAmount || 0
         }
 
-        // 2. Instant feedback (Zero latency)
-        setModal({
-            show: true,
-            title: 'Thành công',
-            message: 'Đã nhận đơn hàng! Đang đồng bộ...',
-            onConfirm: () => {
-                dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
-                nav('/')
-            }
-        })
-
-        // 3. Background call
-        api.createOrder(payload).catch(e => console.error('Bg checkout failed', e))
+        try {
+            setModal({
+                show: true,
+                title: 'Thành công',
+                message: 'Đã nhận đơn hàng! Đang đồng bộ...',
+                onConfirm: () => {
+                    dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
+                    nav('/')
+                }
+            })
+            await api.createOrder(payload)
+        } catch (e) {
+            console.error('Checkout API call failed', e)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
         <div className="page checkout-page">
-            <header className="page-header checkout-header">
+            <header className="page-header">
                 <button className="back" onClick={() => nav(-1)} aria-label="Quay lại">
                     <IconChevron size={20} />
                 </button>
                 <div className="checkout-header-title">
                     <div className="title">Thanh toán</div>
-                    <div className="subtitle">Bàn {tableId}: {tableCart.orderId}</div>
+                    <div className="subtitle">Bàn {tableId}: {tableCart.orderId || 'Mới'}</div>
                 </div>
             </header>
 
@@ -109,15 +110,16 @@ export default function Checkout() {
                 <div className="order-summary-box">
                     <div className="summary-row">
                         <div className="label">Tổng tiền hàng <span className="items-badge">{tableCart.items.length}</span></div>
-                        <div className="value">{subtotal.toLocaleString()}</div>
+                        <div className="value">{formatPrice(subtotal)}</div>
                     </div>
-                    <div
+
+                    <button
                         className={`summary-row dashed-bottom clickable-row ${showDiscountInput ? 'active' : ''}`}
                         onClick={() => setShowDiscountInput(!showDiscountInput)}
                     >
                         <div className="label">Giảm giá {discountValue > 0 ? `(${discountType === 'PERCENTAGE' ? discountValue + '%' : '✎'})` : '✎'}</div>
-                        <div className="value danger">-{discountAmount.toLocaleString()}</div>
-                    </div>
+                        <div className="value danger">-{formatPrice(discountAmount)}</div>
+                    </button>
 
                     {showDiscountInput && (
                         <div className="discount-input-area">
@@ -141,6 +143,7 @@ export default function Checkout() {
                                     value={discountValue}
                                     onChange={e => setDiscountValue(Number(e.target.value))}
                                     autoFocus
+                                    placeholder="0"
                                 />
                                 <span>{discountType === 'PERCENTAGE' ? '%' : 'đ'}</span>
                             </div>
@@ -149,21 +152,20 @@ export default function Checkout() {
 
                     <div className="summary-row total-row">
                         <div className="total-label">Khách cần trả</div>
-                        <div className="total-value">{total.toLocaleString()}</div>
+                        <div className="total-value">{formatPrice(total)}</div>
                     </div>
                 </div>
 
                 <h4 className="payment-section-title">Phương thức thanh toán</h4>
 
                 <div className="payment-methods">
-                    {/* Payment Options */}
                     {[
                         { id: 'CASH', label: 'Tiền mặt', icon: '💵' },
                         { id: 'TRANSFER', label: 'Chuyển khoản', icon: '🏦' },
                         { id: 'COMBINED', label: 'Kết hợp', icon: '➕' }
                     ].map(method => (
                         <div key={method.id}>
-                            <div
+                            <button
                                 onClick={() => setPaymentMethod(method.id)}
                                 className={`payment-method-item ${paymentMethod === method.id ? 'active' : ''}`}
                             >
@@ -172,10 +174,10 @@ export default function Checkout() {
 
                                 {paymentMethod === method.id && method.id !== 'COMBINED' && (
                                     <div className="payment-numeric-info">
-                                        {total.toLocaleString()} đ
+                                        {formatPrice(total, true)}
                                     </div>
                                 )}
-                            </div>
+                            </button>
 
                             {paymentMethod === method.id && method.id === 'COMBINED' && (
                                 <div className="combined-inputs">
@@ -211,7 +213,7 @@ export default function Checkout() {
                                     </div>
                                     {cashAmount + transferAmount !== total && (
                                         <div className="payment-warning">
-                                            Tổng tiền ({(cashAmount + transferAmount).toLocaleString()}) chưa khớp với đơn hàng ({total.toLocaleString()})
+                                            Lệch: {formatPrice(Math.abs(total - (cashAmount + transferAmount)), true)}
                                         </div>
                                     )}
                                 </div>
@@ -225,8 +227,9 @@ export default function Checkout() {
                 <button
                     onClick={handleFinalize}
                     className="btn-checkout"
+                    disabled={loading || (paymentMethod === 'COMBINED' && cashAmount + transferAmount !== total)}
                 >
-                    Thanh toán: {total.toLocaleString()}
+                    {loading ? 'Đang xử lý...' : `Thanh toán: ${formatPrice(total)}`}
                 </button>
             </div>
 
@@ -237,7 +240,6 @@ export default function Checkout() {
                 onConfirm={modal.onConfirm}
                 confirmText="Đồng ý"
             />
-
             {loading && <LoadingSpinner fullScreen />}
         </div>
     )

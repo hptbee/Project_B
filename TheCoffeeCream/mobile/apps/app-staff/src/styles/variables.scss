@@ -6,7 +6,7 @@
     --radius-lg: 16px;
     --radius-xl: 28px;
     --radius-full: 999px;
-    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-main: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
     --trans-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -17,12 +17,19 @@
     --accent-amber-glow: rgba(255, 171, 0, 0.3);
     --accent-red: #ff5252;
     --accent-blue: #448aff;
+    --accent-green: #4caf50;
+
+    // Constant text colors
+    --text-on-accent: #000000;
+    --text-on-dark: #ffffff;
 
     /* Light Theme (Normal Mode) */
     --bg-primary: #ffffff;
     --bg-secondary: #f6f6f7;
     --bg-card: #ffffff;
     --bg-glass: rgba(255, 255, 255, 0.8);
+    --bg-overlay: rgba(0, 0, 0, 0.4);
+    --bg-logo: #ffffff;
 
     --text-primary: #111111;
     --text-secondary: #666666;
@@ -31,8 +38,15 @@
     --border-glass: #eeeeee;
     --border-active: var(--accent-amber);
 
+    --logo-filter: contrast(1.2) brightness(0.8);
+    --logo-blend: normal;
+
     --glass-blur: blur(0px);
     --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    --toggle-track: #e0e0e0;
+    --bg-glass-active: rgba(0, 0, 0, 0.05);
+    --bg-darker: rgba(0, 0, 0, 0.06);
 
     // Dynamic Mapped (Legacy Support)
     --bg-white: #ffffff;
@@ -53,6 +67,8 @@
     --bg-secondary: rgba(255, 255, 255, 0.05);
     --bg-card: rgba(255, 255, 255, 0.04);
     --bg-glass: rgba(30, 30, 30, 0.7);
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --bg-logo: #ffffff;
 
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.6);
@@ -61,8 +77,15 @@
     --border-glass: rgba(255, 255, 255, 0.1);
     --border-active: rgba(255, 171, 0, 0.5);
 
+    --logo-filter: invert(1) brightness(1.2) contrast(1.2);
+    --logo-blend: normal;
+
     --glass-blur: blur(20px);
     --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    --toggle-track: #000000;
+    --bg-glass-active: rgba(255, 255, 255, 0.12);
+    --bg-darker: rgba(0, 0, 0, 0.2);
 
     --bg-white: var(--bg-card);
     --bg-page: var(--bg-primary);
@@ -83,6 +106,7 @@ $bg-card: var(--bg-card);
 $bg-glass: var(--bg-glass);
 $bg-white: var(--bg-white);
 $bg-page: var(--bg-page);
+$bg-logo: var(--bg-logo);
 
 $primary-color: var(--primary-color);
 $primary-light: var(--primary-light);
@@ -91,6 +115,7 @@ $accent-amber: var(--accent-amber);
 $accent-amber-glow: var(--accent-amber-glow);
 $accent-red: var(--accent-red);
 $accent-blue: var(--accent-blue);
+$accent-green: var(--accent-green);
 
 $warning-bg: var(--warning-bg);
 $warning-color: var(--warning-color);
@@ -102,22 +127,15 @@ $danger-color: var(--danger-color);
 $text-primary: var(--text-primary);
 $text-secondary: var(--text-secondary);
 $text-muted: var(--text-muted);
-$text-main: var(--text-primary); // Compatibility alias
-$text-light: var(--text-muted); // Compatibility alias
+$text-on-accent: var(--text-on-accent);
+$text-on-dark: var(--text-on-dark);
 
 $border-glass: var(--border-glass);
 $border-active: var(--border-active);
-$border-color: var(--border-glass); // Compatibility alias
-$border-light: var(--border-glass); // Compatibility alias
 
-// Helper for complex border definition
 $glass-border: 1px solid var(--border-glass);
-
 $glass-blur: var(--glass-blur);
 $glass-shadow: var(--glass-shadow);
-$shadow-sm: var(--glass-shadow); // Compatibility alias
-
-$font-main: var(--font-main);
 
 $radius-sm: var(--radius-sm);
 $radius-md: var(--radius-md);
@@ -129,7 +147,7 @@ $trans-fast: var(--trans-fast);
 $trans-smooth: var(--trans-smooth);
 $trans-bounce: var(--trans-bounce);
 
-// Static spacing (no logic needed)
+// Static spacing
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 12px;

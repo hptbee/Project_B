@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/shared/contexts/AuthContext'
+import logo from '@/assets/icons/logo.png'
 import './Login.scss'
 
 /**
@@ -34,12 +35,14 @@ export default function Login() {
     }
 
     return (
-        <div className="login-page">
+        <div className="login-page" data-theme="dark">
             <div className="login-container">
                 <div className="login-card">
                     <div className="login-header">
-                        <div className="logo-placeholder">☕</div>
-                        <h1>THE COFFEE CREAM</h1>
+                        <div className="brand-logo-wrapper">
+                            <img src={logo} alt="The Coffee Cream" className="brand-logo" />
+                        </div>
+                        <div className="brand-name">THE COFFEE CREAM</div>
                         <p>Hệ thống quản lý nội bộ</p>
                     </div>
 

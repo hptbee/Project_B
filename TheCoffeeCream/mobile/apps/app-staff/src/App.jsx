@@ -4,17 +4,16 @@ import { App as CapacitorApp } from '@capacitor/app'
 import { Dialog } from '@capacitor/dialog'
 
 import './styles.scss'
-import { CartProvider } from '@/shared/contexts/CartContext'
-import { UIProvider } from '@/shared/contexts/UIContext'
-import { ProductProvider } from '@/shared/contexts/ProductContext'
-import { AuthProvider } from '@/shared/contexts/AuthContext'
-import { ThemeProvider } from '@/shared/contexts/ThemeContext'
+import { CoreProvider } from '@/shared/contexts/CoreProvider'
 import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
 import { OfflineQueue } from '@/shared/services/offline/offlineQueue'
 import { Logger } from '@/shared/services/api/logger'
 
+/**
+ * Main application content with route and global effect logic
+ */
 function AppContent() {
     const navigate = useNavigate()
     const location = useLocation()
@@ -55,10 +54,11 @@ function AppContent() {
         }
     }, [])
 
-    // Capacitor Hardware Back Button
+    // Capacitor Hardware Back Button Support
     useEffect(() => {
         const backListener = CapacitorApp.addListener('backButton', async () => {
             const isRootPath = location.pathname === '/' || location.pathname === '/home' || location.pathname === '/login'
+
             if (isRootPath) {
                 const { value } = await Dialog.confirm({
                     title: 'Thoát ứng dụng',
@@ -81,18 +81,10 @@ function AppContent() {
     }, [navigate, location])
 
     return (
-        <ThemeProvider>
-            <AuthProvider>
-                <CartProvider>
-                    <UIProvider>
-                        <ProductProvider>
-                            <SideMenu />
-                            <AppRoutes />
-                        </ProductProvider>
-                    </UIProvider>
-                </CartProvider>
-            </AuthProvider>
-        </ThemeProvider>
+        <CoreProvider>
+            <SideMenu />
+            <AppRoutes />
+        </CoreProvider>
     )
 }
 

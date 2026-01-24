@@ -6,6 +6,7 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { useAuth } from '../../contexts/AuthContext'
 import LoadingSpinner from '../ui/LoadingSpinner'
 import Icon from '../ui/Icon'
+import logo from '@/assets/icons/logo.png'
 import '@/styles/components.scss'
 
 const items = [
@@ -42,10 +43,10 @@ export default function SideMenu() {
             <div className={`side-menu ${isOpen ? 'open' : ''}`} onClick={close}>
                 <div className="side-drawer" onClick={e => e.stopPropagation()}>
                     <div className="side-header">
-                        <div className="user-avatar">
-                            {user?.username?.charAt(0).toUpperCase() || 'S'}
+                        <div className="side-logo-wrapper">
+                            <img src={logo} alt="Logo" className="side-logo" />
                         </div>
-                        <div className="user-info">
+                        <div className="side-user-info">
                             <div className="user">{user?.username || 'Staff'}</div>
                             <div className="branch">The Coffee Cream</div>
                         </div>

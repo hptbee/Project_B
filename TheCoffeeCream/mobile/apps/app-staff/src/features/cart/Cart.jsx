@@ -1,15 +1,18 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart, useCartDispatch } from '@/shared/contexts/CartContext'
-import './Cart.scss'
+import { calculateCartTotal } from '@/shared/utils/calculations'
+import { formatPrice } from '@/shared/utils/formatters'
+import Icon from '@/shared/components/ui/Icon'
 import IconChevron from '@/shared/components/ui/IconChevron'
+import './Cart.scss'
 
 export default function Cart() {
     const { items } = useCart()
     const navigate = useNavigate()
     const dispatch = useCartDispatch()
 
-    const total = items.reduce((s, i) => s + i.product.price * i.qty + (i.toppings || []).reduce((t, tt) => t + tt.price, 0) * i.qty, 0)
+    const total = calculateCartTotal(items)
 
     return (
         <div className="page">
@@ -21,32 +24,42 @@ export default function Cart() {
             </header>
 
             <div className="checkout">
-                <div className="summary">
-                    <div>Tổng tiền hàng <span>{items.length}</span></div>
-                    <div className="amount">{total.toLocaleString()}</div>
+                <div className="summary-card">
+                    <div className="label">Tổng tiền hàng ({items.length})</div>
+                    <div className="amount">{formatPrice(total, true)}</div>
                 </div>
 
-                <h4>PHƯƠNG THỨC THANH TOÁN</h4>
-                <div className="payment">Tiền mặt</div>
+                <h4 className="cart-section-title">PHƯƠNG THỨC THANH TOÁN</h4>
+                <div className="payment-preview">💵 Tiền mặt</div>
 
                 <div className="cart-items-container">
                     {items.map(it => (
                         <div key={it.key} className="cart-item">
-                            <div className="item-main">
-                                <div>{it.product.title}</div>
-                                <div>{(it.product.price * it.qty).toLocaleString()}</div>
+                            <div className="item-info">
+                                <div className="item-name">{it.product.title}</div>
+                                <div className="item-price">{formatPrice(it.product.price * it.qty, true)}</div>
                             </div>
                             <div className="item-actions">
-                                <button onClick={() => dispatch({ type: 'SET_QTY', payload: { key: it.key, qty: Math.max(1, it.qty - 1) } })}>-</button>
-                                <div className="qty-display">{it.qty}</div>
-                                <button onClick={() => dispatch({ type: 'SET_QTY', payload: { key: it.key, qty: it.qty + 1 } })}>+</button>
-                                <button onClick={() => dispatch({ type: 'REMOVE', payload: { key: it.key } })}>Remove</button>
+                                <div className="cart-qty-bar">
+                                    <button className="qty-btn" onClick={() => dispatch({ type: 'SET_QTY', payload: { key: it.key, qty: Math.max(1, it.qty - 1) } })}>
+                                        <Icon name="minus" size={14} color="var(--text-secondary)" />
+                                    </button>
+                                    <div className="qty-val">{it.qty}</div>
+                                    <button className="qty-btn plus" onClick={() => dispatch({ type: 'SET_QTY', payload: { key: it.key, qty: it.qty + 1 } })}>
+                                        <Icon name="plus" size={14} color="#fff" />
+                                    </button>
+                                </div>
+                                <button className="remove-btn" onClick={() => dispatch({ type: 'REMOVE', payload: { key: it.key } })}>
+                                    <Icon name="trash" size={16} />
+                                </button>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="pay-btn">Thanh toán: {total.toLocaleString()}</div>
+                <button className="pay-btn" onClick={() => navigate('/checkout/takeaway')}>
+                    Thanh toán • {formatPrice(total, true)}
+                </button>
             </div>
         </div>
     )

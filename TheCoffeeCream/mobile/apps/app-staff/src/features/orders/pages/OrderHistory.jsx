@@ -1,4 +1,12 @@
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { api } from '@/shared/services/api'
 import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
+import { formatPrice } from '@/shared/utils/formatters'
+import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
+import IconChevron from '@/shared/components/ui/IconChevron'
+import Badge from '@/shared/components/ui/Badge'
+import './OrderHistory.scss'
 
 export default function OrderHistory() {
     const navigate = useNavigate()
@@ -82,16 +90,19 @@ export default function OrderHistory() {
                                     </div>
                                     <div className="order-items-count">{order.items.length} món</div>
                                 </div>
-                                <div className="order-total">{order.total.toLocaleString()} đ</div>
+                                <div className="order-total">{formatPrice(order.total, true)}</div>
                             </div>
                             <div className="order-status-line">
                                 <div className="payment-method">
                                     {order.paymentMethod === 'CASH' ? '💵 Tiền mặt' :
                                         order.paymentMethod === 'TRANSFER' ? '🏦 Chuyển khoản' : '➕ Kết hợp'}
                                 </div>
-                                <div className={`status-badge ${order.status.toLowerCase()}`}>
+                                <Badge
+                                    variant={order.status === 'SUCCESS' ? 'success' : order.status === 'DRAFT' ? 'warning' : 'danger'}
+                                    size="sm"
+                                >
                                     {order.status}
-                                </div>
+                                </Badge>
                             </div>
                         </div>
                     ))

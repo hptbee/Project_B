@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
 import useAutoSave from '@/shared/hooks/useAutoSave'
+import { calculateCartTotal } from '@/shared/utils/calculations'
+import { formatPrice } from '@/shared/utils/formatters'
+import { api } from '@/shared/services/api'
 import Fab from '@/shared/components/ui/Fab'
 import Icon from '@/shared/components/ui/Icon'
 import ConfirmModal from '@/shared/components/ui/ConfirmModal'
 import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import './TableOrder.scss'
 import IconChevron from '@/shared/components/ui/IconChevron'
-import { api } from '@/shared/services/api'
+import Badge from '@/shared/components/ui/Badge'
+import './TableOrder.scss'
 
 export default function TableOrder() {
     const { tableId } = useParams()
@@ -28,10 +31,7 @@ export default function TableOrder() {
         }
     }, [tableCart.items.length, tableId, navigate])
 
-    const total = tableCart.items.reduce(
-        (s, i) => s + i.product.price * i.qty + (i.toppings || []).reduce((t, tt) => t + tt.price, 0) * i.qty,
-        0
-    )
+    const total = calculateCartTotal(tableCart.items)
 
     const handleQtyChange = (key, delta) => {
         const item = tableCart.items.find(i => i.key === key)
@@ -53,16 +53,11 @@ export default function TableOrder() {
     }
 
     const handleAutoSave = async () => {
-        // Auto-save logic can be expanded here to save to local draft state
-        // Currently it just logs as the main saving happens on 'Lưu nháp' or 'Thanh toán'
         console.log('Draft updated locally for table', tableId)
     }
 
     // Auto-save on changes
     useAutoSave((_data) => {
-        // We can just call handleAutoSave, but we need to ensure it uses latest state.
-        // handleAutoSave reads from tableCart.items and tableCart.note which are from context/props.
-        // Since they are dependencies of useAutoSave (via data arg), it should work if we pass them.
         if (tableCart.items.length > 0) {
             handleAutoSave()
         }
@@ -73,7 +68,7 @@ export default function TableOrder() {
     }
 
     const handleSaveDraft = async () => {
-        // 1. Construct payload
+        setProcessing(true)
         const orderItems = tableCart.items.map(item => ({
             ProductId: item.product.id,
             Name: item.product.title,
@@ -95,12 +90,15 @@ export default function TableOrder() {
             Note: tableCart.note || ''
         }
 
-        // 2. Respond to user IMMEDIATELY (Zero latency)
-        navigate('/')
-        dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
-
-        // 3. Background call
-        api.createOrder(payload).catch(e => console.error('Bg Save Draft failed', e))
+        try {
+            navigate('/')
+            dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
+            await api.createOrder(payload)
+        } catch (e) {
+            console.error('Bg Save Draft failed', e)
+        } finally {
+            setProcessing(false)
+        }
     }
 
     const saveNote = () => {
@@ -132,64 +130,58 @@ export default function TableOrder() {
                 <button className="back" onClick={() => navigate('/')} aria-label="Quay lại">
                     <IconChevron variant="bold" />
                 </button>
-                <h2>{tableCart.orderId || 'N/A'}: Bàn {tableId}</h2>
+                <h2>BÀN: {tableId}</h2>
             </header>
 
             <div className="order-metadata">
-                <span className="badge-customer">
+                <Badge variant="primary">
                     👤 {tableCart.customer || 'Khách lẻ'}
-                </span>
-                <span onClick={openOrderNote} className="badge-note">
+                </Badge>
+                <button onClick={openOrderNote} className="badge-note">
                     ✎ {tableCart.note || 'Ghi chú'}
-                </span>
-                <span className={`badge-status ${tableCart.status === 'SUCCESS' ? 'success' : 'draft'}`}>
+                </button>
+                <Badge variant={tableCart.status === 'SUCCESS' ? 'success' : 'warning'}>
                     {tableCart.status || 'DRAFT'}
-                </span>
+                </Badge>
             </div>
 
             <div className="list order-item-list">
                 {tableCart.items.map(item => (
                     <div key={item.key} className="order-item">
-                        <div className="thumb-small thumb-container">
-                            {/* Product image placeholder */}
-                        </div>
-                        <div className="item-content">
+                        <div
+                            className="item-content clickable"
+                            onClick={() => navigate(`/products/${item.product.id}?table=${tableId}&itemKey=${encodeURIComponent(item.key)}`)}
+                        >
                             <div className="item-title">{item.product.title}</div>
                             {item.toppings && item.toppings.length > 0 && (
                                 <div className="item-toppings">
                                     {item.toppings.map(t => `+1 ${t.title}`).join(', ')}
                                 </div>
                             )}
-                            <div
-                                onClick={() => openItemNote(item)}
-                                className={`item-note-trigger ${item.note ? 'has-note' : 'no-note'}`}
-                            >
-                                {item.note ? `✎ ${item.note}` : '+ Thêm ghi chú món'}
-                            </div>
+                            {item.note && (
+                                <span className="item-note-trigger has-note">
+                                    ✎ {item.note}
+                                </span>
+                            )}
                             <div className="item-price">
-                                {item.product.price.toLocaleString()}
+                                {formatPrice(item.product.price, true)}
                             </div>
                         </div>
                         <div className="item-actions">
                             <button
                                 onClick={() => handleRemove(item.key)}
                                 className="remove-btn"
+                                aria-label="Xóa món"
                             >
-                                <Icon name="trash" size={16} color="#c62828" />
+                                <Icon name="trash" size={16} />
                             </button>
-                            <div className="qty-control">
-                                <button
-                                    onClick={() => handleQtyChange(item.key, -1)}
-                                >
-                                    −
+                            <div className="table-qty-bar">
+                                <button className="qty-btn" onClick={() => handleQtyChange(item.key, -1)} aria-label="Giảm">
+                                    <Icon name="minus" size={14} color="var(--text-secondary)" />
                                 </button>
-                                <span>
-                                    {item.qty}
-                                </span>
-                                <button
-                                    onClick={() => handleQtyChange(item.key, 1)}
-                                >
-                                    +
+                                <span className="qty-val">{item.qty}</span>
+                                <button className="qty-btn plus" onClick={() => handleQtyChange(item.key, 1)} aria-label="Tăng">
+                                    <Icon name="plus" size={14} color="#fff" />
                                 </button>
                             </div>
                         </div>
@@ -205,39 +197,28 @@ export default function TableOrder() {
                         Tổng tiền <span className="count-badge">{tableCart.items.length}</span>
                     </div>
                     <div className="amount">
-                        {total.toLocaleString()}
+                        {formatPrice(total, true)}
                     </div>
                 </div>
                 <div className="footer-btns">
-                    <button
-                        onClick={handleSaveDraft}
-                        className="btn-save-draft"
-                    >
-                        Lưu nháp
-                    </button>
-                    <button
-                        onClick={handleCheckout}
-                        className="btn-checkout"
-                    >
-                        Thanh toán
-                    </button>
+                    <button onClick={handleSaveDraft} className="btn-save-draft">Lưu nháp</button>
+                    <button onClick={handleCheckout} className="btn-checkout">Thanh toán</button>
                 </div>
             </div>
 
-            {/* Note Modal */}
             {showNoteModal && (
                 <div className="modal-overlay" onClick={() => setShowNoteModal(false)}>
                     <div className="modal-container" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <span className="modal-title">{editingItemKey ? 'Ghi chú món' : 'Ghi chú đơn hàng'}</span>
-                            <span className="close-btn" onClick={() => { setShowNoteModal(false); setEditingItemKey(null); }}>✕</span>
+                            <button className="close-btn" onClick={() => { setShowNoteModal(false); setEditingItemKey(null); }}>✕</button>
                         </div>
                         <div className="modal-body">
                             <textarea
                                 value={noteText}
                                 onChange={e => setNoteText(e.target.value)}
                                 autoFocus
-                                placeholder="Nhập ghi chú đơn hàng..."
+                                placeholder="Nhập ghi chú..."
                             />
                         </div>
                         <div className="modal-footer">
@@ -247,18 +228,18 @@ export default function TableOrder() {
                     </div>
                 </div>
             )}
-            {/* Remove Confirmation */}
+
             <ConfirmModal
                 show={confirmDelete.show}
                 title="Xác nhận xóa"
-                message="Bạn có chắc chắn muốn xóa món này khỏi đơn hàng?"
+                message="Bạn có chắc chắn muốn xóa món này?"
                 onConfirm={executeRemove}
                 onCancel={() => setConfirmDelete({ show: false, key: null })}
                 confirmText="Xóa món"
                 type="danger"
             />
 
-            {processing && <LoadingSpinner fullScreen message="Đang lưu nháp..." />}
+            {processing && <LoadingSpinner fullScreen message="Đang xử lý..." />}
         </div>
     )
 }

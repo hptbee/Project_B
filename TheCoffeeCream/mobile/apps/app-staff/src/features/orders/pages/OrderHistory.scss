@@ -28,7 +28,7 @@
     &:active {
         transform: scale(0.97);
         border-color: var(--border-active);
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--bg-glass-active);
     }
 
     .order-head {
@@ -104,15 +104,15 @@
             letter-spacing: 0.5px;
 
             &.success {
-                background: rgba(76, 175, 80, 0.2);
-                color: #4caf50;
-                border: 1px solid rgba(76, 175, 80, 0.3);
+                background: var(--success-bg);
+                color: var(--success-color);
+                border: 1px solid var(--border-glass);
             }
 
             &.draft {
-                background: rgba(255, 171, 0, 0.2);
+                background: var(--primary-light);
                 color: var(--accent-amber);
-                border: 1px solid rgba(255, 171, 0, 0.3);
+                border: 1px solid var(--border-active);
             }
         }
     }

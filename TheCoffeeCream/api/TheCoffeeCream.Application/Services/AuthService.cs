@@ -28,6 +28,7 @@ namespace TheCoffeeCream.Application.Services
             // Verify password
             try 
             {
+                var abc = BC.HashPassword(password);
                 if (!BC.Verify(password, user.PasswordHash))
                 {
                     return null;

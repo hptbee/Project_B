@@ -71,5 +71,5 @@ export function useMenu() {
  */
 export function useToast() {
     const { showToast } = useUI()
-    return showToast
+    return { showToast }
 }

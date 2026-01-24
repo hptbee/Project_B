@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import Icon from '@/shared/components/ui/Icon'
+import { formatPrice } from '@/shared/utils/formatters'
 import '@/styles/components.scss'
 
 function highlightText(text, term) {
@@ -16,10 +18,16 @@ export default function ProductCard({ product, onAdd, highlight = '' }) {
             <div className="thumb-small" />
             <div className="meta">
                 <div className="title">{highlightText(product.title, highlight)}</div>
-                <div className="price">{product.price.toLocaleString()}</div>
+                <div className="price">{formatPrice(product.price, true)}</div>
             </div>
             <div className="product-card-actions">
-                <button onClick={(e) => { e.stopPropagation(); navigate(`/products/${product.id}${window.location.search}`) }} className="add-btn">＋</button>
+                <button
+                    onClick={(e) => { e.stopPropagation(); navigate(`/products/${product.id}${window.location.search}`) }}
+                    className="add-btn"
+                    aria-label="Thêm sản phẩm"
+                >
+                    <Icon name="plus" size={18} color="var(--accent-amber)" />
+                </button>
             </div>
         </div>
     )

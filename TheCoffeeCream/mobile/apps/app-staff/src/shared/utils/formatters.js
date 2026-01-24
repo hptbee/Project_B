@@ -21,8 +21,10 @@ export const formatTime = (start) => {
  * @param {number} amount - Amount to format
  * @returns {string} Formatted price (e.g., "100,000")
  */
-export const formatPrice = (amount) => {
-    return amount.toLocaleString('vi-VN')
+export const formatPrice = (amount, showCurrency = false) => {
+    if (amount === undefined || amount === null) return '0'
+    const formatted = amount.toLocaleString('vi-VN')
+    return showCurrency ? `${formatted}đ` : formatted
 }
 
 /**

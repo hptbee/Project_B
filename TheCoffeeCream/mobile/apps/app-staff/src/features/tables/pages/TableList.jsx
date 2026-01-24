@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/shared/contexts/CartContext'
 import { useMenu } from '@/shared/contexts/UIContext'
+import { calculateCartTotal } from '@/shared/utils/calculations'
+import { formatPrice, formatTime } from '@/shared/utils/formatters'
+import Badge from '@/shared/components/ui/Badge'
+import Icon from '@/shared/components/ui/Icon'
 import './TableList.scss'
 
 export default function TableList() {
@@ -15,16 +19,8 @@ export default function TableList() {
         return () => clearInterval(interval)
     }, [])
 
-    const formatTime = (start) => {
-        if (!start) return '0p'
-        const diff = now - start
-        if (diff < 0) return '0p'
-        const minutes = Math.floor(diff / 60000)
-        const hours = Math.floor(minutes / 60)
-        const mins = minutes % 60
-        if (hours === 0) return `${mins}p`
-        return `${hours}g ${mins}p`
-    }
+    // Takeaway "table"
+    const takeaway = { id: 'takeaway', name: 'Mang về', type: 'takeaway' }
 
     // Generate table data
     const rawTables = Array.from({ length: 12 }).map((_, i) => {
@@ -36,16 +32,10 @@ export default function TableList() {
         }
     })
 
-    // Takeaway "table"
-    const takeaway = { id: 'takeaway', name: 'Mang về', type: 'takeaway' }
-
     // Combine and enrich with cart data
     const allItems = [takeaway, ...rawTables].map(t => {
         const tableCart = cart.tables[t.id] || { items: [] }
-        const amount = tableCart.items.reduce(
-            (sum, item) => sum + item.product.price * item.qty + (item.toppings || []).reduce((t, tt) => t + tt.price, 0) * item.qty,
-            0
-        )
+        const amount = calculateCartTotal(tableCart.items)
         const active = tableCart.items.length > 0
         return {
             ...t,
@@ -67,8 +57,10 @@ export default function TableList() {
     return (
         <div className="page">
             <header className="page-header">
-                <button className="menu" onClick={() => menu.toggle()}>☰</button>
-                <h2>Bảng bàn</h2>
+                <button className="menu" onClick={() => menu.toggle()} aria-label="Menu">
+                    <Icon name="menu" size={24} color="var(--text-primary)" />
+                </button>
+                <h2>Thế giới cà phê</h2>
             </header>
 
             <div className="home-tabs">
@@ -84,7 +76,7 @@ export default function TableList() {
                             {t.type === 'takeaway' && <span className="takeaway-icon">🛍️</span>}
                             {t.name}
                             {t.active && t.status === 'DRAFT' && (
-                                <span className="badge-draft">Draft</span>
+                                <Badge variant="danger" size="sm" pill={false}>DRAFT</Badge>
                             )}
                         </div>
                         {t.active && (
@@ -93,7 +85,7 @@ export default function TableList() {
                                     {formatTime(t.createdAt)}
                                 </div>
                                 <div className="card-amount">
-                                    {t.amount.toLocaleString()}
+                                    {formatPrice(t.amount, true)}
                                 </div>
                             </div>
                         )}
