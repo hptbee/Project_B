@@ -1,5 +1,16 @@
 var builder = WebApplication.CreateBuilder(args);
 
+// If Render (or any host) provides GOOGLE_CREDENTIALS_JSON, write it to disk
+var googleCredJson = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
+if (!string.IsNullOrEmpty(googleCredJson))
+{
+    // write to a file the GoogleSheets client expects by default
+    var credPath = Path.Combine(Directory.GetCurrentDirectory(), "google-credentials.json");
+    File.WriteAllText(credPath, googleCredJson);
+    // expose to configuration so GoogleSheetsOptions can pick it up via config or defaults
+    builder.Configuration.AddInMemoryCollection(new[] { new KeyValuePair<string, string?>("GoogleSheets:CredentialsPath", credPath) });
+}
+
 // Configure PORT for Render (Render sets PORT env var)
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrEmpty(port) && int.TryParse(port, out var p))

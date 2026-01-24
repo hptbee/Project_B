@@ -194,60 +194,61 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
 
                 var note = GetRowValue(row, 14);
 
-                // Get items for this order
-                var orderItems = itemRows.Skip(1)
-                    .Where(ir => ir != null && ir.Count > 0 && GetRowValue(ir, 0) == orderId.ToString())
-                    .Select(ir =>
+                // Get items for this order (imperative to make null-checks explicit)
+                var orderItems = new List<OrderItem>();
+                foreach (var ir in itemRows.Skip(1))
+                {
+                    if (ir == null || ir.Count == 0) continue;
+                    if (GetRowValue(ir, 0) != orderId.ToString()) continue;
+
+                    var productIdStr = GetRowValue(ir, 1);
+                    var productId = Guid.TryParse(productIdStr, out var pid) ? pid : Guid.Empty;
+                    var itemName = GetRowValue(ir, 2);
+                    var unitPriceStr = GetRowValue(ir, 3, "0");
+                    var unitPrice = decimal.Parse(unitPriceStr, CultureInfo.InvariantCulture);
+                    var quantityStr = GetRowValue(ir, 4, "1");
+                    var quantity = int.Parse(quantityStr);
+
+                    var itemDiscountTypeStr = GetRowValue(ir, 5);
+                    var itemDiscountType = string.IsNullOrEmpty(itemDiscountTypeStr) ? (DiscountType?)null : Enum.Parse<DiscountType>(itemDiscountTypeStr);
+
+                    var itemDiscountValueStr = GetRowValue(ir, 6, "0");
+                    var itemDiscountValue = decimal.Parse(itemDiscountValueStr, CultureInfo.InvariantCulture);
+
+                    var itemNote = GetRowValue(ir, 10);
+
+                    // Parse toppings if any
+                    List<OrderItemTopping>? toppings = null;
+                    var toppingsStr = GetRowValue(ir, 9);
+                    if (!string.IsNullOrEmpty(toppingsStr))
                     {
-                        var r = ir!;
-                        var productIdStr = GetRowValue(r, 1);
-                        var productId = Guid.TryParse(productIdStr, out var pid) ? pid : Guid.Empty;
-                        var itemName = GetRowValue(r, 2);
-                        var unitPriceStr = GetRowValue(r, 3, "0");
-                        var unitPrice = decimal.Parse(unitPriceStr, CultureInfo.InvariantCulture);
-                        var quantityStr = GetRowValue(r, 4, "1");
-                        var quantity = int.Parse(quantityStr);
+                        toppings = toppingsStr.Split(',')
+                            .Select(s => s.Trim())
+                            .Where(s => !string.IsNullOrEmpty(s))
+                            .Select(name => new OrderItemTopping(Guid.NewGuid(), name, 0))
+                            .ToList();
+                    }
 
-                        var itemDiscountTypeStr = GetRowValue(r, 5);
-                        var itemDiscountType = string.IsNullOrEmpty(itemDiscountTypeStr) ? (DiscountType?)null : Enum.Parse<DiscountType>(itemDiscountTypeStr);
-
-                        var itemDiscountValueStr = GetRowValue(r, 6, "0");
-                        var itemDiscountValue = decimal.Parse(itemDiscountValueStr, CultureInfo.InvariantCulture);
-
-                        var itemNote = GetRowValue(r, 10);
-
-                        // Parse toppings if any
-                        List<OrderItemTopping>? toppings = null;
-                        var toppingsStr = GetRowValue(r, 9);
-                        if (!string.IsNullOrEmpty(toppingsStr))
-                        {
-                            toppings = toppingsStr.Split(',')
-                                .Select(s => s.Trim())
-                                .Where(s => !string.IsNullOrEmpty(s))
-                                .Select(name => new OrderItemTopping(Guid.NewGuid(), name, 0)) // Using NewGuid as dummy for reconstruction
-                                .ToList();
-                        }
-
-                        return new OrderItem(productId, itemName, unitPrice, quantity, toppings, itemDiscountType, itemDiscountValue, itemNote);
-                    }).ToList();
+                    orderItems.Add(new OrderItem(productId, itemName, unitPrice, quantity, toppings, itemDiscountType, itemDiscountValue, itemNote));
+                }
 
                 // Use reflection to create Order with private setters
-                var order = (Order)Activator.CreateInstance(typeof(Order), true);
-                typeof(Order).GetProperty("Id").SetValue(order, orderId);
-                typeof(Order).GetProperty("ClientOrderId").SetValue(order, clientOrderId);
-                typeof(Order).GetProperty("CreatedAt").SetValue(order, createdAt);
-                typeof(Order).GetProperty("OrderType").SetValue(order, orderType);
-                typeof(Order).GetProperty("TableNumber").SetValue(order, tableNumber);
-                typeof(Order).GetProperty("PaymentMethod").SetValue(order, paymentMethod);
-                typeof(Order).GetProperty("CashAmount").SetValue(order, cashAmount);
-                typeof(Order).GetProperty("TransferAmount").SetValue(order, transferAmount);
-                typeof(Order).GetProperty("DiscountType").SetValue(order, discountType);
-                typeof(Order).GetProperty("DiscountValue").SetValue(order, discountValue);
-                typeof(Order).GetProperty("Status").SetValue(order, status);
-                typeof(Order).GetProperty("Note").SetValue(order, note);
+                var order = (Order)Activator.CreateInstance(typeof(Order), true)!;
+                typeof(Order).GetProperty("Id")!.SetValue(order, orderId);
+                typeof(Order).GetProperty("ClientOrderId")!.SetValue(order, clientOrderId);
+                typeof(Order).GetProperty("CreatedAt")!.SetValue(order, createdAt);
+                typeof(Order).GetProperty("OrderType")!.SetValue(order, orderType);
+                typeof(Order).GetProperty("TableNumber")!.SetValue(order, tableNumber);
+                typeof(Order).GetProperty("PaymentMethod")!.SetValue(order, paymentMethod);
+                typeof(Order).GetProperty("CashAmount")!.SetValue(order, cashAmount);
+                typeof(Order).GetProperty("TransferAmount")!.SetValue(order, transferAmount);
+                typeof(Order).GetProperty("DiscountType")!.SetValue(order, discountType);
+                typeof(Order).GetProperty("DiscountValue")!.SetValue(order, discountValue);
+                typeof(Order).GetProperty("Status")!.SetValue(order, status);
+                typeof(Order).GetProperty("Note")!.SetValue(order, note);
 
                 // Set items using reflection
-                var itemsField = typeof(Order).GetField("_items", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var itemsField = typeof(Order).GetField("_items", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
                 itemsField.SetValue(order, orderItems);
 
                 orders.Add(order);

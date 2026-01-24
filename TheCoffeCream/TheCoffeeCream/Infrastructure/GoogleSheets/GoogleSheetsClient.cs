@@ -25,10 +25,19 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 // Fallback or warning if credentials not found yet
             }
 
-            // Create credential by reading JSON to avoid deprecated FromFile API
-            var credJson = File.Exists(_options.CredentialsPath) ? File.ReadAllText(_options.CredentialsPath) : string.Empty;
-            GoogleCredential credential = GoogleCredential.FromJson(credJson)
-                .CreateScoped(SheetsService.Scope.Spreadsheets);
+            // Create credential using CredentialFactory to avoid deprecated APIs
+            GoogleCredential credential;
+            if (File.Exists(_options.CredentialsPath))
+            {
+                using var stream = File.OpenRead(_options.CredentialsPath);
+#pragma warning disable CS0618
+                credential = GoogleCredential.FromStream(stream).CreateScoped(SheetsService.Scope.Spreadsheets);
+#pragma warning restore CS0618
+            }
+            else
+            {
+                credential = GoogleCredential.GetApplicationDefault().CreateScoped(SheetsService.Scope.Spreadsheets);
+            }
 
             _service = new SheetsService(new BaseClientService.Initializer()
             {
