@@ -28,40 +28,7 @@ namespace TheCoffeCream.Api.Controllers
             {
                 var order = await _orderService.CreateOrderAsync(request);
 
-                var response = new OrderResponse
-                {
-                    Id = order.Id,
-                    ClientOrderId = order.ClientOrderId,
-                    CreatedAt = order.CreatedAt,
-                    OrderType = order.OrderType.ToString(),
-                    TableNumber = order.TableNumber,
-                    SubTotal = order.SubTotal,
-                    DiscountType = order.DiscountType?.ToString(),
-                    DiscountValue = order.DiscountValue,
-                    DiscountAmount = order.DiscountAmount,
-                    PaymentMethod = order.PaymentMethod.ToString(),
-                    CashAmount = order.CashAmount,
-                    TransferAmount = order.TransferAmount,
-                    Items = order.Items.Select(i => new OrderItemResponse
-                    {
-                        ProductId = i.ProductId,
-                        Name = i.Name,
-                        UnitPrice = i.UnitPrice,
-                        Quantity = i.Quantity,
-                        DiscountType = i.DiscountType?.ToString(),
-                        DiscountValue = i.DiscountValue,
-                        DiscountAmount = i.DiscountAmount,
-                        Total = i.Total,
-                        SelectedToppings = i.SelectedToppings.Select(t => new ProductDto
-                        {
-                            Id = t.ProductId,
-                            Name = t.Name,
-                            Price = t.Price,
-                            IsTopping = true 
-                        }).ToList()
-                    }).ToList(),
-                    Total = order.Total
-                };
+                var response = MapOrderToResponse(order);
 
                 return CreatedAtAction(nameof(Create), new { id = response.Id }, response);
             }
@@ -74,6 +41,68 @@ namespace TheCoffeCream.Api.Controllers
                 // Idempotency conflict: order exists
                 return Conflict(ex.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        {
+            var start = startDate ?? DateTimeOffset.Now.AddDays(-1);
+            var end = endDate ?? DateTimeOffset.Now.AddDays(1);
+
+            var orders = await _orderService.GetOrdersByDateRangeAsync(start, end);
+            var response = orders.Select(MapOrderToResponse).ToList();
+
+            return Ok(response);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            if (order == null) return NotFound();
+
+            return Ok(MapOrderToResponse(order));
+        }
+
+        private OrderResponse MapOrderToResponse(Order order)
+        {
+            return new OrderResponse
+            {
+                Id = order.Id,
+                ClientOrderId = order.ClientOrderId,
+                CreatedAt = order.CreatedAt,
+                OrderType = order.OrderType.ToString(),
+                TableNumber = order.TableNumber,
+                SubTotal = order.SubTotal,
+                DiscountType = order.DiscountType?.ToString(),
+                DiscountValue = order.DiscountValue,
+                DiscountAmount = order.DiscountAmount,
+                PaymentMethod = order.PaymentMethod.ToString(),
+                CashAmount = order.CashAmount,
+                TransferAmount = order.TransferAmount,
+                Status = order.Status.ToString(),
+                Note = order.Note,
+                Items = order.Items.Select(i => new OrderItemResponse
+                {
+                    ProductId = i.ProductId,
+                    Name = i.Name,
+                    UnitPrice = i.UnitPrice,
+                    Quantity = i.Quantity,
+                    DiscountType = i.DiscountType?.ToString(),
+                    DiscountValue = i.DiscountValue,
+                    DiscountAmount = i.DiscountAmount,
+                    Total = i.Total,
+                    Note = i.Note,
+                    SelectedToppings = i.SelectedToppings.Select(t => new ProductDto
+                    {
+                        Id = t.ProductId,
+                        Name = t.Name,
+                        Price = t.Price,
+                        IsTopping = true
+                    }).ToList()
+                }).ToList(),
+                Total = order.Total
+            };
         }
         [HttpPost("seed-financials")]
         public async Task<IActionResult> SeedFinancials()

@@ -1,0 +1,116 @@
+@use 'sass:color';
+@import '../../../styles/variables.scss';
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-container {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: scaleUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+
+    .modal-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid $border-light;
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: $text-main;
+        }
+    }
+
+    .modal-body {
+        padding: 20px;
+        font-size: 15px;
+        color: $text-muted;
+        line-height: 1.5;
+
+        p {
+            margin: 0;
+        }
+    }
+
+    .modal-footer {
+        padding: 12px 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        background: #fafafa;
+        border-top: 1px solid $border-light;
+
+        button {
+            padding: 10px 20px;
+            border-radius: $radius-sm;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: $text-main;
+
+            &:active {
+                background: #d0d0d0;
+            }
+        }
+
+        .btn-primary {
+            background: $primary-color;
+            color: $text-white;
+
+            &:active {
+                opacity: 0.9;
+            }
+
+            &.danger {
+                background: $danger-color;
+
+                &:active {
+                    background: color.adjust($danger-color, $lightness: -10%);
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

@@ -26,9 +26,11 @@ namespace TheCoffeCream.Application.Services
             var products = (await _productRepository.GetAllAsync()).ToList();
             var categories = (await _productRepository.GetCategoriesAsync()).ToList();
 
+            var productsById = products.ToDictionary(p => p.Id);
+
             var dto = new MenuDto
             {
-                Categories = categories.Select(c => new CategoryDto { Id = c.Id, Name = c.Name }).ToList(),
+                Categories = categories.Select(c => new CategoryDto { Id = c.Id, Name = c.Name, Rank = c.Rank }).ToList(),
                 Products = products.Select(p => new ProductMenuDto
                 {
                     Id = p.Id,
@@ -39,7 +41,15 @@ namespace TheCoffeCream.Application.Services
                     ImageUrl = p.ImageUrl,
                     IsActive = p.IsActive,
                     IsTopping = p.IsTopping,
-                    Toppings = p.Toppings.Select(t => new ProductDto
+                    Toppings = (p.Toppings != null && p.Toppings.Any()
+                        ? p.Toppings
+                        : (string.IsNullOrWhiteSpace(p.ToppingMapping)
+                            ? Enumerable.Empty<TheCoffeCream.Domain.Entities.Product>()
+                            : p.ToppingMapping.Split(';').Select(s => {
+                                return Guid.TryParse(s.Trim(), out var gid) && productsById.ContainsKey(gid) ? productsById[gid] : null;
+                            }).Where(x => x != null).Cast<TheCoffeCream.Domain.Entities.Product>()
+                        )
+                    ).Select(t => new ProductDto
                     {
                         Id = t.Id,
                         Name = t.Name,

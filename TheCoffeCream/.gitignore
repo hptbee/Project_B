@@ -66,3 +66,7 @@ artifacts/
 .temp/
 temp/
 *.log
+
+## Added by Agent
+build/
+.idea/

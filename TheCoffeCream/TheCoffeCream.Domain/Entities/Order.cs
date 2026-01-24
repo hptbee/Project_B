@@ -17,6 +17,9 @@ namespace TheCoffeCream.Domain.Entities
         public DiscountType? DiscountType { get; private set; }
         public decimal DiscountValue { get; private set; }
 
+        public OrderStatus Status { get; private set; }
+        public string Note { get; private set; } = string.Empty;
+
         public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 
         private readonly List<OrderItem> _items = new();
@@ -48,7 +51,10 @@ namespace TheCoffeCream.Domain.Entities
             decimal cashAmount = 0,
             decimal transferAmount = 0,
             DiscountType? discountType = null,
-            decimal discountValue = 0)
+            decimal discountValue = 0,
+            OrderStatus status = OrderStatus.SUCCESS,
+            string? note = null,
+            Guid? id = null)
         {
             if (clientOrderId == Guid.Empty) throw new ArgumentException("clientOrderId required", nameof(clientOrderId));
             if (items == null) throw new ArgumentNullException(nameof(items));
@@ -59,7 +65,7 @@ namespace TheCoffeCream.Domain.Entities
             if (orderType == OrderType.DINE_IN && tableNumber == null)
                 throw new ArgumentException("DINE_IN orders must have a table number", nameof(tableNumber));
 
-            Id = Guid.NewGuid();
+            Id = id ?? Guid.NewGuid();
             ClientOrderId = clientOrderId;
             CreatedAt = DateTimeOffset.UtcNow;
             OrderType = orderType;
@@ -69,6 +75,8 @@ namespace TheCoffeCream.Domain.Entities
             TransferAmount = transferAmount;
             DiscountType = discountType;
             DiscountValue = discountValue;
+            Status = status;
+            Note = note ?? string.Empty;
 
             _items.AddRange(itemList);
 

@@ -1,0 +1,69 @@
+@import './variables.scss';
+
+.product-row-clickable {
+    cursor: pointer;
+}
+
+.product-card-actions {
+    display: flex;
+    gap: $spacing-sm;
+    align-items: center;
+}
+
+.icon-placeholder {
+    display: inline-block;
+}
+
+.side-link-icon {
+    display: inline-flex;
+    width: 28px;
+    justify-content: center;
+    margin-right: $spacing-sm;
+}
+
+.toast-check-icon {
+    margin-right: $spacing-sm;
+}
+
+.fab {
+    position: fixed;
+    right: 20px;
+    bottom: 110px;
+    width: 60px;
+    height: 60px;
+    background-color: #2f6bd8 !important;
+    color: #ffffff !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    box-shadow: 0 6px 16px rgba(47, 107, 216, 0.5);
+    text-decoration: none;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+
+    &:active {
+        transform: scale(0.92);
+        box-shadow: 0 4px 8px rgba(47, 107, 216, 0.4);
+    }
+}
+
+// Sync button in side menu
+.sync-button {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}

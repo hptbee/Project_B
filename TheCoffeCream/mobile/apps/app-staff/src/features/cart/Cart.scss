@@ -1,0 +1,54 @@
+.page {
+    padding: 12px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 8px
+}
+
+.back {
+    background: none;
+    border: none
+}
+
+.checkout {
+    margin-top: 12px
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.amount {
+    font-weight: 700
+}
+
+.cart-items-container {
+    margin-top: 12px
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid #eee
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center
+}
+
+.pay-btn {
+    margin-top: 20px;
+    background: #2b8a3e;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px
+}

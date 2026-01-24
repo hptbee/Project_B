@@ -82,5 +82,23 @@ namespace TheCoffeCream.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Get specialized daily report
+        /// </summary>
+        /// <param name="date">Date for the report</param>
+        [HttpGet("daily")]
+        public async Task<IActionResult> GetDailyReport([FromQuery] DateTimeOffset date)
+        {
+            try
+            {
+                var report = await _reportService.GetDailyReportAsync(date);
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

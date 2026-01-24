@@ -11,6 +11,13 @@ if (!string.IsNullOrEmpty(port) && int.TryParse(port, out var p))
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        builder => builder.WithOrigins("http://localhost:5173")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 
 // Configure options
 builder.Services.Configure<TheCoffeCream.Shared.Middleware.ApiKeyOptions>(builder.Configuration.GetSection("ApiKeyOptions"));
@@ -37,6 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 
 // API key middleware
 app.UseMiddleware<TheCoffeCream.Shared.Middleware.ApiKeyMiddleware>();

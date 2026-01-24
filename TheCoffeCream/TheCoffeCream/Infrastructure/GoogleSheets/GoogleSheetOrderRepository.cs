@@ -26,8 +26,20 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
 
         public async Task AddAsync(Order order)
         {
-            // 1. Append to Order sheet
-            // Columns: Id, ClientOrderId, CreatedAt, OrderType, TableNumber, PaymentMethod, CashAmount, TransferAmount, DiscountType, DiscountValue, DiscountAmount, SubTotal, Total
+            // 1. Check if order exists (by ClientOrderId)
+            var existingRows = await _client.ReadSheetAsync(_options.OrdersSheetId, "Order");
+            int rowIndex = -1;
+            // Skip header
+            for (int i = 1; i < existingRows.Count; i++)
+            {
+                if (existingRows[i].Count > 1 && string.Equals(existingRows[i][1].ToString()?.Trim(), order.ClientOrderId.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    rowIndex = i + 1; // Google Sheets is 1-indexed
+                    break;
+                }
+            }
+
+            // Columns: Id, ClientOrderId, CreatedAt, OrderType, TableNumber, PaymentMethod, CashAmount, TransferAmount, DiscountType, DiscountValue, DiscountAmount, SubTotal, Total, Status, Note
             var orderRow = new object[]
             {
                 order.Id.ToString(),
@@ -42,18 +54,30 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
                 order.DiscountValue.ToString(CultureInfo.InvariantCulture),
                 order.DiscountAmount.ToString(CultureInfo.InvariantCulture),
                 order.SubTotal.ToString(CultureInfo.InvariantCulture),
-                order.Total.ToString(CultureInfo.InvariantCulture)
+                order.Total.ToString(CultureInfo.InvariantCulture),
+                order.Status.ToString(),
+                order.Note ?? string.Empty
             };
 
-            await _client.AppendRowAsync(_options.OrdersSheetId, "Order", orderRow);
+            if (rowIndex != -1)
+            {
+                // Update existing order row
+                await _client.UpdateRowAsync(_options.OrdersSheetId, $"Order!A{rowIndex}:O{rowIndex}", orderRow);
+                // Clear existing items for this order to avoid duplicates (simpler than updating individually)
+                await ClearOrderItemsAsync(order.Id);
+            }
+            else
+            {
+                // Append new order row
+                await _client.AppendRowAsync(_options.OrdersSheetId, "Order", orderRow);
+            }
 
             // 2. Append to OrderItem sheet
-            // Columns: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Toppings
-            foreach (var item in order.Items)
+            // Columns: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Toppings, Note
+            var itemRows = order.Items.Select(item =>
             {
                 var toppingsStr = string.Join(", ", item.SelectedToppings.Select(t => t.Name));
-                
-                var itemRow = new object[]
+                return new object[]
                 {
                     order.Id.ToString(),
                     item.ProductId.ToString(),
@@ -64,14 +88,58 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
                     item.DiscountValue.ToString(CultureInfo.InvariantCulture),
                     item.DiscountAmount.ToString(CultureInfo.InvariantCulture),
                     item.Total.ToString(CultureInfo.InvariantCulture),
-                    toppingsStr
+                    toppingsStr,
+                    item.Note ?? string.Empty
                 };
+            }).ToList();
 
-                await _client.AppendRowAsync(_options.OrdersSheetId, "OrderItem", itemRow); 
+            await _client.AppendRowsAsync(_options.OrdersSheetId, "OrderItem", itemRows);
+        }
+
+        private async Task ClearOrderItemsAsync(Guid orderId)
+        {
+            var itemRows = await _client.ReadSheetAsync(_options.OrdersSheetId, "OrderItem");
+            var rowsToDelete = new List<int>();
+
+            // Skip header
+            for (int i = 1; i < itemRows.Count; i++)
+            {
+                if (itemRows[i].Count > 0 && string.Equals(itemRows[i][0].ToString()?.Trim(), orderId.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    rowsToDelete.Add(i + 1); // 1-indexed for Google Sheets row numbers
+                }
+            }
+
+            if (rowsToDelete.Any())
+            {
+                await _client.DeleteRowsAsync(_options.OrdersSheetId, "OrderItem", rowsToDelete);
             }
         }
 
+        public async Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId)
+        {
+            // For now, scan all orders. In Google Sheets this is slow but we don't have indexes.
+            var allOrders = await FetchOrdersAsync(null, null);
+            return allOrders.LastOrDefault(o => o.ClientOrderId == clientOrderId);
+        }
+
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return await FetchOrdersAsync(startDate, endDate);
+        }
+
+        public async Task<Order?> GetByIdAsync(Guid id)
+        {
+            var allOrders = await FetchOrdersAsync(null, null);
+            return allOrders.FirstOrDefault(o => o.Id == id);
+        }
+
+        private string GetRowValue(IList<object> row, int index, string defaultValue = "")
+        {
+            return row.Count > index ? row[index]?.ToString() ?? defaultValue : defaultValue;
+        }
+
+        private async Task<IEnumerable<Order>> FetchOrdersAsync(DateTimeOffset? startDate, DateTimeOffset? endDate)
         {
             // Read all orders from sheet
             var orderRows = await _client.ReadSheetAsync(_options.OrdersSheetId, "Order");
@@ -82,45 +150,81 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
             // Skip header row
             foreach (var row in orderRows.Skip(1))
             {
-                if (row.Count < 13) continue; // Need all columns
+                if (row.Count < 2) continue; // Must have at least Id and ClientOrderId
 
-                var orderId = Guid.Parse(row[0].ToString());
-                var createdAt = DateTimeOffset.Parse(row[2].ToString());
+                var orderIdStr = GetRowValue(row, 0);
+                if (!Guid.TryParse(orderIdStr, out var orderId)) continue;
 
-                // Filter by date range
-                if (createdAt < startDate || createdAt > endDate) continue;
+                var createdAtStr = GetRowValue(row, 2);
+                if (!DateTimeOffset.TryParse(createdAtStr, out var createdAt)) continue;
 
-                var clientOrderId = Guid.Parse(row[1].ToString());
-                var orderType = Enum.Parse<OrderType>(row[3].ToString());
-                var tableNumber = string.IsNullOrEmpty(row[4].ToString()) ? (int?)null : int.Parse(row[4].ToString());
-                var paymentMethod = Enum.Parse<PaymentMethod>(row[5].ToString());
-                var cashAmount = decimal.Parse(row[6].ToString(), CultureInfo.InvariantCulture);
-                var transferAmount = decimal.Parse(row[7].ToString(), CultureInfo.InvariantCulture);
-                var discountType = string.IsNullOrEmpty(row[8].ToString()) ? (DiscountType?)null : Enum.Parse<DiscountType>(row[8].ToString());
-                var discountValue = decimal.Parse(row[9].ToString(), CultureInfo.InvariantCulture);
+                // Filter by date range if provided
+                if (startDate.HasValue && createdAt < startDate.Value) continue;
+                if (endDate.HasValue && createdAt > endDate.Value) continue;
+
+                var clientOrderIdStr = GetRowValue(row, 1);
+                if (!Guid.TryParse(clientOrderIdStr, out var clientOrderId)) continue;
+
+                var orderTypeStr = GetRowValue(row, 3, "DINE_IN");
+                var orderType = Enum.TryParse<OrderType>(orderTypeStr, true, out var ot) ? ot : OrderType.DINE_IN;
+
+                var tableNumberStr = GetRowValue(row, 4);
+                var tableNumber = string.IsNullOrEmpty(tableNumberStr) ? (int?)null : int.Parse(tableNumberStr);
+
+                var paymentMethodStr = GetRowValue(row, 5, "CASH");
+                var paymentMethod = Enum.TryParse<PaymentMethod>(paymentMethodStr, true, out var pm) ? pm : PaymentMethod.CASH;
+
+                var cashAmountStr = GetRowValue(row, 6, "0");
+                var cashAmount = decimal.Parse(cashAmountStr, CultureInfo.InvariantCulture);
+
+                var transferAmountStr = GetRowValue(row, 7, "0");
+                var transferAmount = decimal.Parse(transferAmountStr, CultureInfo.InvariantCulture);
+
+                var discountTypeStr = GetRowValue(row, 8);
+                var discountType = string.IsNullOrEmpty(discountTypeStr) ? (DiscountType?)null : Enum.Parse<DiscountType>(discountTypeStr);
+
+                var discountValueStr = GetRowValue(row, 9, "0");
+                var discountValue = decimal.Parse(discountValueStr, CultureInfo.InvariantCulture);
+                
+                var statusStr = GetRowValue(row, 13, "SUCCESS");
+                var status = Enum.TryParse<OrderStatus>(statusStr, true, out var os) ? os : OrderStatus.SUCCESS;
+
+                var note = GetRowValue(row, 14);
 
                 // Get items for this order
                 var orderItems = itemRows.Skip(1)
-                    .Where(ir => ir.Count >= 10 && ir[0].ToString() == orderId.ToString())
+                    .Where(ir => ir.Count > 0 && GetRowValue(ir, 0) == orderId.ToString())
                     .Select(ir =>
                     {
-                        var productId = Guid.Parse(ir[1].ToString());
-                        var name = ir[2].ToString();
-                        var unitPrice = decimal.Parse(ir[3].ToString(), CultureInfo.InvariantCulture);
-                        var quantity = int.Parse(ir[4].ToString());
-                        var itemDiscountType = string.IsNullOrEmpty(ir[5].ToString()) ? (DiscountType?)null : Enum.Parse<DiscountType>(ir[5].ToString());
-                        var itemDiscountValue = decimal.Parse(ir[6].ToString(), CultureInfo.InvariantCulture);
+                        var productIdStr = GetRowValue(ir, 1);
+                        var productId = Guid.TryParse(productIdStr, out var pid) ? pid : Guid.Empty;
+                        var itemName = GetRowValue(ir, 2);
+                        var unitPriceStr = GetRowValue(ir, 3, "0");
+                        var unitPrice = decimal.Parse(unitPriceStr, CultureInfo.InvariantCulture);
+                        var quantityStr = GetRowValue(ir, 4, "1");
+                        var quantity = int.Parse(quantityStr);
+                        
+                        var itemDiscountTypeStr = GetRowValue(ir, 5);
+                        var itemDiscountType = string.IsNullOrEmpty(itemDiscountTypeStr) ? (DiscountType?)null : Enum.Parse<DiscountType>(itemDiscountTypeStr);
+                        
+                        var itemDiscountValueStr = GetRowValue(ir, 6, "0");
+                        var itemDiscountValue = decimal.Parse(itemDiscountValueStr, CultureInfo.InvariantCulture);
+                        
+                        var itemNote = GetRowValue(ir, 10);
 
                         // Parse toppings if any
                         List<OrderItemTopping>? toppings = null;
-                        if (ir.Count > 9 && !string.IsNullOrEmpty(ir[9].ToString()))
+                        var toppingsStr = GetRowValue(ir, 9);
+                        if (!string.IsNullOrEmpty(toppingsStr))
                         {
-                            // Toppings are comma-separated names - we can't reconstruct full topping objects
-                            // For reporting purposes, we'll skip topping details
-                            toppings = new List<OrderItemTopping>();
+                            toppings = toppingsStr.Split(',')
+                                .Select(s => s.Trim())
+                                .Where(s => !string.IsNullOrEmpty(s))
+                                .Select(name => new OrderItemTopping(Guid.NewGuid(), name, 0)) // Using NewGuid as dummy for reconstruction
+                                .ToList();
                         }
 
-                        return new OrderItem(productId, name, unitPrice, quantity, toppings, itemDiscountType, itemDiscountValue);
+                        return new OrderItem(productId, itemName, unitPrice, quantity, toppings, itemDiscountType, itemDiscountValue, itemNote);
                     }).ToList();
 
                 // Use reflection to create Order with private setters
@@ -135,6 +239,8 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
                 typeof(Order).GetProperty("TransferAmount").SetValue(order, transferAmount);
                 typeof(Order).GetProperty("DiscountType").SetValue(order, discountType);
                 typeof(Order).GetProperty("DiscountValue").SetValue(order, discountValue);
+                typeof(Order).GetProperty("Status").SetValue(order, status);
+                typeof(Order).GetProperty("Note").SetValue(order, note);
 
                 // Set items using reflection
                 var itemsField = typeof(Order).GetField("_items", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

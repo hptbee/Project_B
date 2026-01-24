@@ -1,0 +1,22 @@
+@import '../../../styles/variables.scss';
+
+.product-list-back {
+    font-size: 22px;
+}
+
+.product-list-title {
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;
+    margin: 0;
+}
+
+.empty-list-container {
+    padding: 24px;
+    text-align: center;
+    color: $text-light;
+
+    small {
+        display: block; // Added for better spacing if needed
+    }
+}

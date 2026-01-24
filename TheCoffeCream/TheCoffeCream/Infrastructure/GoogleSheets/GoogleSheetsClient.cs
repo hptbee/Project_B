@@ -23,8 +23,6 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
             if (string.IsNullOrEmpty(_options.CredentialsPath) || !File.Exists(_options.CredentialsPath))
             {
                 // Fallback or warning if credentials not found yet
-                // For now, initializing service with null will fail on first call if not handled.
-                // In production, we'd throw or use a placeholder.
             }
 
             GoogleCredential credential = GoogleCredential.FromFile(_options.CredentialsPath)
@@ -39,9 +37,16 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
 
         public async Task AppendRowAsync(string sheetId, string range, object[] row)
         {
+            await AppendRowsAsync(sheetId, range, new List<object[]> { row });
+        }
+
+        public async Task AppendRowsAsync(string sheetId, string range, IEnumerable<object[]> rows)
+        {
+            if (rows == null || !rows.Any()) return;
+
             var valueRange = new ValueRange
             {
-                Values = new List<IList<object>> { row.ToList() }
+                Values = rows.Select(r => (IList<object>)r.ToList()).ToList()
             };
 
             var appendRequest = _service.Spreadsheets.Values.Append(valueRange, sheetId, range);
@@ -51,7 +56,6 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
 
         public async Task<bool> ExistsByClientOrderIdAsync(string sheetId, Guid clientOrderId)
         {
-            // Search in "Order" sheet, assuming column B (index 1) has the ClientOrderId
             var range = "Order!B:B";
             var request = _service.Spreadsheets.Values.Get(sheetId, range);
             var response = await request.ExecuteAsync();
@@ -84,10 +88,50 @@ namespace TheCoffeCream.Infrastructure.GoogleSheets
 
         public async Task<IList<IList<object>>> ReadSheetAsync(string sheetId, string sheetName)
         {
-            var range = $"{sheetName}!A:Z"; // Read all columns
+            var range = $"{sheetName}!A:Z";
             var request = _service.Spreadsheets.Values.Get(sheetId, range);
             var response = await request.ExecuteAsync();
             return response.Values ?? new List<IList<object>>();
+        }
+
+        public async Task UpdateRowAsync(string sheetId, string range, object[] row)
+        {
+            var valueRange = new ValueRange
+            {
+                Values = new List<IList<object>> { row.ToList() }
+            };
+
+            var updateRequest = _service.Spreadsheets.Values.Update(valueRange, sheetId, range);
+            updateRequest.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+            await updateRequest.ExecuteAsync();
+        }
+
+        public async Task DeleteRowsAsync(string sheetId, string sheetName, List<int> rowIndices)
+        {
+            if (rowIndices == null || !rowIndices.Any()) return;
+
+            var spreadSheet = await _service.Spreadsheets.Get(sheetId).ExecuteAsync();
+            var sheet = spreadSheet.Sheets.FirstOrDefault(s => s.Properties.Title == sheetName);
+            if (sheet == null) return;
+            int numericSheetId = sheet.Properties.SheetId ?? 0;
+
+            var sortedIndices = rowIndices.OrderByDescending(i => i).ToList();
+
+            var requests = sortedIndices.Select(index => new Request
+            {
+                DeleteDimension = new DeleteDimensionRequest
+                {
+                    Range = new DimensionRange
+                    {
+                        SheetId = numericSheetId,
+                        Dimension = "ROWS",
+                        StartIndex = index - 1,
+                        EndIndex = index
+                    }
+                }
+            }).ToList();
+
+            await _service.Spreadsheets.BatchUpdate(new BatchUpdateSpreadsheetRequest { Requests = requests }, sheetId).ExecuteAsync();
         }
     }
 }

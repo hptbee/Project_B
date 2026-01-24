@@ -1,0 +1,133 @@
+@import '../../../styles/variables.scss';
+
+.order-detail-container {
+    padding: 16px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
+}
+
+.receipt-card {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    padding: 20px;
+    border: 1px solid $border-color;
+    box-shadow: $shadow-sm;
+    position: relative;
+
+    .receipt-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px dashed $border-light;
+
+        .receipt-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: $text-main;
+            margin-bottom: 4px;
+        }
+
+        .receipt-subtitle {
+            font-size: 13px;
+            color: $text-muted;
+        }
+    }
+
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 20px;
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+
+            .label {
+                color: $text-muted;
+            }
+
+            .value {
+                font-weight: 600;
+                color: $text-main;
+            }
+        }
+    }
+
+    .items-section {
+        margin-bottom: 20px;
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: $text-muted;
+            text-transform: uppercase;
+        }
+
+        .order-item-row {
+            padding: 10px 0;
+            border-bottom: 1px solid $border-light;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .item-main {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 4px;
+
+                .item-name {
+                    font-weight: 600;
+                    color: $text-main;
+                }
+
+                .item-total {
+                    font-weight: 600;
+                }
+            }
+
+            .item-meta {
+                font-size: 12px;
+                color: $text-light;
+
+                .toppings {
+                    font-style: italic;
+                }
+            }
+        }
+    }
+
+    .payment-summary {
+        padding-top: 16px;
+        border-top: 2px solid $text-main;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+
+            &.grand-total {
+                margin-top: 8px;
+                padding-top: 8px;
+                border-top: 1px solid $border-light;
+                font-size: 18px;
+                font-weight: 800;
+                color: $primary-color;
+            }
+
+            .label {
+                color: $text-muted;
+            }
+
+            .val {
+                font-weight: 600;
+            }
+        }
+    }
+}

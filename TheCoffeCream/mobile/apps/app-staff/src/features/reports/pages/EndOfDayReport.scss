@@ -1,0 +1,484 @@
+@import '../../../styles/variables.scss';
+
+.report-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: $bg-white;
+    border-bottom: 1px solid $border-light;
+    gap: $spacing-md;
+}
+
+.report-tabs {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 8px 16px;
+    background: #f5f5f5;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.active {
+        background: $primary-color;
+        color: $text-white;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.date-picker-container {
+    position: relative;
+
+    input[type="date"] {
+        padding: 8px 12px 8px 36px;
+        border: 1.5px solid $border-color;
+        border-radius: $radius-md;
+        font-size: 13px;
+        font-weight: 600;
+        color: $text-main;
+        outline: none;
+        cursor: pointer;
+        background: $bg-white;
+        transition: all 0.2s;
+        min-width: 140px;
+
+        &:hover {
+            border-color: $primary-color;
+            box-shadow: 0 2px 8px rgba(47, 107, 216, 0.1);
+        }
+
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba(47, 107, 216, 0.1);
+        }
+
+        // Custom calendar icon
+        &::-webkit-calendar-picker-indicator {
+            position: absolute;
+            left: 10px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    // Add calendar icon using pseudo-element
+    &::before {
+        content: '📅';
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        pointer-events: none;
+        z-index: 1;
+    }
+}
+
+.product-sales-list {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    margin: 16px;
+}
+
+.product-sales-header {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-bottom: 2px solid $border-color;
+
+    .header-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: $text-muted;
+        margin-bottom: 8px;
+    }
+
+    .header-summary {
+        display: grid;
+        grid-template-columns: 1fr 80px 120px;
+        gap: 12px;
+        font-weight: 700;
+        color: $text-main;
+        font-size: 14px;
+
+        span:nth-child(2),
+        span:nth-child(3) {
+            text-align: right;
+        }
+    }
+}
+
+// DatePicker Styles
+.date-picker-button {
+    padding: 8px 16px;
+    background: $bg-white;
+    border: 1.5px solid $border-color;
+    border-radius: $radius-md;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-main;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: $primary-color;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+.datepicker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.datepicker-modal {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 16px;
+    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+
+    .datepicker-header {
+        background: $primary-color;
+        color: $text-white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: $text-white;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.9;
+
+            &:active {
+                opacity: 0.6;
+            }
+        }
+    }
+
+    .react-datepicker {
+        border: none;
+        width: 100%;
+        font-family: inherit;
+        background: $bg-white;
+
+        &__header {
+            background: $bg-white;
+            border-bottom: none;
+            padding: 16px 16px 8px;
+        }
+
+        &__current-month {
+            font-size: 16px;
+            font-weight: 700;
+            color: $text-main;
+            margin-bottom: 16px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        &__month-dropdown-container,
+        &__year-dropdown-container {
+            margin: 0 4px;
+        }
+
+        &__month-dropdown,
+        &__year-dropdown {
+            background: $bg-white;
+            border: 1.5px solid $border-color;
+            border-radius: $radius-md;
+            padding: 4px 8px;
+            font-size: 15px;
+            font-weight: 700;
+            color: $text-main;
+            cursor: pointer;
+
+            &:hover {
+                border-color: $primary-color;
+            }
+        }
+
+        &__month-select,
+        &__year-select {
+            background: $bg-white;
+            border: 1.5px solid $border-color;
+            border-radius: $radius-md;
+            padding: 6px 8px;
+            font-size: 15px;
+            font-weight: 700;
+            color: $text-main;
+            cursor: pointer;
+            outline: none;
+
+            &:hover,
+            &:focus {
+                border-color: $primary-color;
+            }
+        }
+
+        &__day-names {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 8px;
+        }
+
+        &__day-name {
+            color: $text-muted;
+            font-size: 13px;
+            font-weight: 600;
+            width: 40px;
+            line-height: 40px;
+        }
+
+        &__month {
+            margin: 0;
+            padding: 12px;
+        }
+
+        &__week {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        &__day {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            margin: 4px 0;
+            border-radius: 50%;
+            color: $text-main;
+            font-size: 14px;
+            font-weight: 500;
+
+            &:hover {
+                background: #f0f0f0;
+            }
+
+            &--selected {
+                background: $primary-color !important;
+                color: $text-white !important;
+                font-weight: 700;
+            }
+
+            &--keyboard-selected {
+                background: rgba(47, 107, 216, 0.1);
+            }
+
+            &--today {
+                font-weight: 700;
+                color: $primary-color;
+            }
+
+            &--disabled {
+                color: $text-light;
+                cursor: not-allowed;
+
+                &:hover {
+                    background: transparent;
+                }
+            }
+
+            &--outside-month {
+                color: $text-light;
+            }
+        }
+
+        &__navigation {
+            top: 16px;
+
+            &--previous {
+                left: 20px;
+            }
+
+            &--next {
+                right: 20px;
+            }
+
+            &-icon::before {
+                border-color: $text-main;
+                border-width: 2px 2px 0 0;
+                height: 8px;
+                width: 8px;
+            }
+        }
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.product-item {
+    display: grid;
+    grid-template-columns: 1fr 80px 120px;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-light;
+    align-items: center;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .product-name {
+        font-size: 14px;
+        color: $text-main;
+    }
+
+    .product-quantity {
+        text-align: right;
+        font-weight: 600;
+        color: $text-main;
+    }
+
+    .product-revenue {
+        text-align: right;
+        font-weight: 700;
+        color: $primary-color;
+    }
+}
+
+.report-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #f8f9fa;
+    min-height: calc(100vh - 64px);
+}
+
+.report-card {
+    background: $bg-white;
+    border-radius: $radius-lg;
+    padding: 16px;
+    border: 1px solid $border-color;
+    box-shadow: $shadow-sm;
+
+    .card-title {
+        font-size: 14px;
+        color: $text-muted;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .card-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: $text-main;
+
+        &.primary {
+            color: $primary-color;
+        }
+    }
+
+    .card-subtext {
+        font-size: 13px;
+        color: $text-light;
+        margin-top: 4px;
+    }
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.clickable-card {
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &:active {
+        transform: scale(0.98);
+        background: #fafafa;
+    }
+
+    .arrow {
+        color: $text-light;
+        font-size: 18px;
+    }
+}
+
+.payment-details {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 15px;
+
+        .label {
+            color: $text-muted;
+        }
+
+        .val {
+            font-weight: 600;
+        }
+    }
+}

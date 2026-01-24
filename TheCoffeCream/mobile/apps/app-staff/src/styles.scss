@@ -1,0 +1,442 @@
+@import './styles/variables.scss';
+@import './styles/components.scss';
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --blue: #{$primary-color};
+    --muted: #f6f6f7;
+}
+
+body {
+    font-family: Inter, system-ui, Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: #fff
+}
+
+.page {
+    min-height: 100vh;
+    padding-bottom: 92px
+}
+
+.page-content {
+    padding: $spacing-lg;
+}
+
+/* Page enter animation for smoother transitions */
+.page {
+    animation: pageFadeIn .24s cubic-bezier(.2, .9, .2, 1);
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee
+}
+
+.back {
+    background: none;
+    border: 0;
+    font-size: 18px
+}
+
+
+
+
+.bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 72px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px
+}
+
+.bottom-bar .pay {
+    background: var(--blue);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none
+}
+
+/* Tabs as Pills */
+.tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 12px 16px;
+    gap: 8px;
+    background: #fff;
+    scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    background: #f5f5f5;
+    color: #444;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.tab.active {
+    background: var(--blue);
+    color: #fff;
+}
+
+/* Product list adjustments */
+.list {
+    padding: 0;
+}
+
+.product-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f2f2f2;
+    background: #fff;
+}
+
+.thumb-small {
+    width: 72px;
+    height: 72px;
+    background: #f0f4f8;
+    border-radius: 8px;
+    margin-right: 14px;
+    /* Placeholder icon style if needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e0;
+    font-size: 24px;
+}
+
+.meta {
+    flex: 1;
+}
+
+.title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.price {
+    font-size: 14px;
+    color: #666;
+}
+
+.product-row .add-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #888;
+    padding: 0;
+    cursor: pointer;
+    transition: all .15s ease;
+}
+
+.product-row .add-btn:active {
+    background: #f5f5f5;
+    border-color: #ccc;
+    transform: scale(0.95);
+}
+
+mark {
+    background: var(--blue);
+    color: #fff;
+    padding: 0 4px;
+    border-radius: 4px;
+}
+
+.icon {
+    display: inline-flex;
+    vertical-align: middle
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #fafafa;
+    margin: 12px
+}
+
+.search-input {
+    flex: 1;
+    border: 0;
+    padding: 8px 10px;
+    background: transparent;
+    font-size: 15px
+}
+
+.search-input:focus {
+    outline: none
+}
+
+.search-icon {
+    margin-right: 8px;
+    opacity: 0.8
+}
+
+.search-clear {
+    background: none;
+    border: 0;
+    font-size: 16px
+}
+
+/* Side menu styles */
+.side-menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.side-menu.open {
+    pointer-events: auto;
+}
+
+.side-menu .side-drawer {
+    width: 300px;
+    max-width: 80vw;
+    background: #fff;
+    height: 100%;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+    transform: translateX(-110%);
+    transition: transform .2s ease;
+    padding: 12px;
+}
+
+.side-menu.open .side-drawer {
+    transform: translateX(0);
+}
+
+.side-header {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.side-header .user {
+    font-weight: 700;
+}
+
+.side-header .branch {
+    color: #888;
+    font-size: 13px;
+}
+
+.side-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 8px;
+    color: #111;
+    text-decoration: none;
+    border-bottom: 1px solid #f7f7f7;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+}
+
+.side-link.danger {
+    color: #d23;
+}
+
+.page-header .menu {
+    background: none;
+    border: 0;
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.page-header .actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.page-header .actions .icon {
+    background: #fff;
+    border: 1px solid #f0f0f0;
+    padding: 8px;
+    border-radius: 10px;
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* global search button removed - no styles needed */
+
+/* empty state animation */
+.empty-state {
+    padding: 36px 12px;
+    color: #666;
+    text-align: center;
+    animation: fadeInUp .35s ease
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px)
+    }
+
+    to {
+        opacity: 1;
+        transform: none
+    }
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* optional subtle page exit (for browsers that keep element during navigation) */
+.page.page-exit {
+    animation: pageFadeOut .18s ease forwards;
+}
+
+@keyframes pageFadeOut {
+    from {
+        opacity: 1;
+        transform: none
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-6px)
+    }
+}
+
+/* menu open animation tweak */
+.side-menu .side-drawer {
+    transition: transform .28s cubic-bezier(.2, .9, .2, 1)
+}
+
+/* toast */
+.app-toast {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    bottom: 88px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .28s cubic-bezier(.2, .9, .2, 1);
+    z-index: 80
+}
+
+.app-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0)
+}
+
+.app-toast .toast-inner {
+    display: flex;
+    align-items: center
+}
+
+.app-toast .toast-msg {
+    font-weight: 600
+}
+
+.card-info {
+    margin-top: 12px;
+}
+
+.card-time {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.card.active .card-amount {
+    font-size: 16px;
+    color: var(--blue);
+}
+
+/* Home Tabs */
+.home-tabs {
+    display: flex;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.home-tab {
+    flex: 1;
+    text-align: center;
+    padding: 14px;
+    font-size: 15px;
+    color: #444;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+}
+
+.home-tab.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+    font-weight: 600;
+}
+
+/* Takeaway Card icon */
+.takeaway-icon {
+    font-size: 18px;
+    color: var(--blue);
+    margin-right: 6px;
+}
+
+/* Refine active card background to match screenshot (lighter blue) */
+.card.active {
+    background: #cce4ff;
+    /* Lighter/distinct blue from screenshot */
+    border-color: #9cc5ff;
+}

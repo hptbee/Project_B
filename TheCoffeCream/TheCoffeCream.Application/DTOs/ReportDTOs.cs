@@ -36,4 +36,14 @@ namespace TheCoffeCream.Application.DTOs
         public decimal CashAmount { get; set; }
         public decimal TransferAmount { get; set; }
     }
+
+    public class DailyReport
+    {
+        public int RegularCupCount { get; set; }
+        public int ToppingCount { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public decimal CashRevenue { get; set; }
+        public decimal TransferRevenue { get; set; }
+        public int OrderCount { get; set; }
+    }
 }

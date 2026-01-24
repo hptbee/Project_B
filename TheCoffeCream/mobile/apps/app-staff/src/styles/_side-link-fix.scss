@@ -1,0 +1,17 @@
+.side-link {
+    display: flex;
+    align-items: center;
+    padding: 14px 8px;
+    color: #111;
+    text-decoration: none;
+    border-bottom: 1px solid #f7f7f7;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+}
+
+.side-link.danger {
+    color: #d23;
+}

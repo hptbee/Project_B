@@ -12,4 +12,11 @@ namespace TheCoffeCream.Domain.Entities
         FIXED,
         PERCENTAGE
     }
+
+    public enum OrderStatus
+    {
+        DRAFT,
+        SUCCESS,
+        REMOVED
+    }
 }

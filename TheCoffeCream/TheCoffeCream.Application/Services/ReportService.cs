@@ -95,6 +95,28 @@ namespace TheCoffeCream.Application.Services
             return paymentReports;
         }
 
+        public async Task<DailyReport> GetDailyReportAsync(DateTimeOffset date)
+        {
+            var startDate = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset);
+            var endDate = startDate.AddDays(1).AddTicks(-1);
+            
+            var orders = (await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate))
+                .Where(o => o.Status == OrderStatus.SUCCESS)
+                .ToList();
+            
+            var report = new DailyReport
+            {
+                OrderCount = orders.Count,
+                TotalRevenue = orders.Sum(o => o.Total),
+                CashRevenue = orders.Sum(o => o.CashAmount),
+                TransferRevenue = orders.Sum(o => o.TransferAmount),
+                RegularCupCount = orders.SelectMany(o => o.Items).Sum(i => i.Quantity),
+                ToppingCount = orders.SelectMany(o => o.Items).Sum(i => i.Quantity * (i.SelectedToppings?.Count ?? 0))
+            };
+
+            return report;
+        }
+
         private DateTime GetWeekStart(DateTimeOffset date)
         {
             var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;

@@ -1,0 +1,17 @@
+{
+    "name": "@thecoffecream/ui-shared",
+    "version": "0.0.1",
+    "private": true,
+    "main": "dist/index.js",
+    "source": "src/index.jsx",
+    "scripts": {
+        "build": "esbuild src/index.jsx --bundle --outfile=dist/index.js --format=esm",
+        "build:watch": "esbuild src/index.jsx --bundle --outfile=dist/index.js --format=esm --watch"
+    },
+    "dependencies": {
+        "react": "^18.2.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.18.20"
+    }
+}

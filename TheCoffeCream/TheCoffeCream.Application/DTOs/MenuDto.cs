@@ -13,6 +13,7 @@ namespace TheCoffeCream.Application.DTOs
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public int Rank { get; set; }
     }
 
     public class ProductMenuDto

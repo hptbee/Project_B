@@ -1,0 +1,101 @@
+@import '../../../styles/variables.scss';
+
+.home-header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: $spacing-md;
+}
+
+.badge-draft {
+    font-size: 10px;
+    background: $warning-bg;
+    color: $warning-color;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-left: 6px;
+    text-transform: uppercase;
+}
+
+.home-tabs {
+    display: flex;
+    padding: 12px 16px;
+    gap: 8px;
+    background: #fff;
+}
+
+.home-tab {
+    background: #f5f5f5;
+    color: $text-muted;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &.active {
+        background-color: $primary-color !important;
+        color: #ffffff !important;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    min-height: 100px; // Enforce uniform height
+    transition: all 0.2s ease;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &.active {
+        background: $primary-light;
+        border-color: $primary-color;
+    }
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.card-time {
+    font-size: 13px;
+    color: $text-light;
+}
+
+.card-amount {
+    color: $primary-color;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.takeaway-icon {
+    margin-right: 6px;
+}

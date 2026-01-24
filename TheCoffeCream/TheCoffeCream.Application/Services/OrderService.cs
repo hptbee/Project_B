@@ -20,9 +20,10 @@ namespace TheCoffeCream.Application.Services
 
         public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
         {
-            // idempotency check
-            if (await _orderRepository.ExistsByClientOrderIdAsync(request.ClientOrderId))
-                throw new InvalidOperationException("Order with this clientOrderId already exists");
+            // idempotency check - allow if it's a draft update
+            var existing = await _orderRepository.GetByClientOrderIdAsync(request.ClientOrderId);
+            if (existing != null && existing.Status != OrderStatus.DRAFT)
+                throw new InvalidOperationException("This order has already been finalized and cannot be modified.");
 
             if (!Enum.TryParse<OrderType>(request.OrderType, true, out var orderType))
                 throw new ArgumentException("Invalid orderType", nameof(request.OrderType));
@@ -51,7 +52,7 @@ namespace TheCoffeCream.Application.Services
                      }
                 }
 
-                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue);
+                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue, i.Note);
             });
 
             DiscountType? orderDiscountType = null;
@@ -60,6 +61,11 @@ namespace TheCoffeCream.Application.Services
 
             if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
                 paymentMethod = PaymentMethod.CASH;
+
+            if (!Enum.TryParse<OrderStatus>(request.Status, true, out var status))
+                status = OrderStatus.SUCCESS;
+
+            Guid? existingId = existing?.Id;
 
             var order = new Order(
                 request.ClientOrderId, 
@@ -70,11 +76,23 @@ namespace TheCoffeCream.Application.Services
                 request.CashAmount,
                 request.TransferAmount,
                 orderDiscountType,
-                request.DiscountValue);
+                request.DiscountValue,
+                status,
+                request.Note,
+                existingId);
 
             await _orderRepository.AddAsync(order);
 
             return order;
+        }
+        public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            return await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+        }
+
+        public async Task<Order?> GetOrderByIdAsync(Guid id)
+        {
+            return await _orderRepository.GetByIdAsync(id);
         }
     }
 }

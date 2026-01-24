@@ -17,6 +17,8 @@ namespace TheCoffeCream.Application.DTOs
         public string PaymentMethod { get; set; } = string.Empty;
         public decimal CashAmount { get; set; }
         public decimal TransferAmount { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
         public List<OrderItemResponse> Items { get; set; } = new();
         public decimal Total { get; set; }
     }
@@ -31,6 +33,7 @@ namespace TheCoffeCream.Application.DTOs
         public decimal DiscountValue { get; set; }
         public decimal DiscountAmount { get; set; }
         public decimal Total { get; set; }
+        public string Note { get; set; } = string.Empty;
         public List<ProductDto>? SelectedToppings { get; set; }
     }
 }

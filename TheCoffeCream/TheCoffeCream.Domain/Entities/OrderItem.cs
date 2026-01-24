@@ -15,6 +15,8 @@ namespace TheCoffeCream.Domain.Entities
         public DiscountType? DiscountType { get; private set; }
         public decimal DiscountValue { get; private set; }
 
+        public string Note { get; private set; } = string.Empty;
+
         public IReadOnlyList<OrderItemTopping> SelectedToppings => _selectedToppings.AsReadOnly();
 
         private readonly List<OrderItemTopping> _selectedToppings = new();
@@ -23,7 +25,7 @@ namespace TheCoffeCream.Domain.Entities
         {
             get
             {
-                var baseTotal = UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price);
+                var baseTotal = UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price) * Quantity;
                 if (DiscountType == Entities.DiscountType.PERCENTAGE)
                     return baseTotal * (DiscountValue / 100);
                 if (DiscountType == Entities.DiscountType.FIXED)
@@ -32,18 +34,18 @@ namespace TheCoffeCream.Domain.Entities
             }
         }
 
-        public decimal Total => (UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price)) - DiscountAmount;
+        public decimal Total => (UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price) * Quantity) - DiscountAmount;
 
         private OrderItem() { }
 
-        // Backwards-compatible constructor (no toppings, no discount)
+        // Backwards-compatible constructor (no toppings, no discount, no note)
         public OrderItem(Guid productId, string name, decimal unitPrice, int quantity)
-            : this(productId, name, unitPrice, quantity, null, null, 0)
+            : this(productId, name, unitPrice, quantity, null, null, 0, null)
         {
         }
 
-        // New constructor supporting selected topping snapshots and discounts
-        public OrderItem(Guid productId, string name, decimal unitPrice, int quantity, IEnumerable<OrderItemTopping>? selectedToppings, DiscountType? discountType = null, decimal discountValue = 0)
+        // New constructor supporting selected topping snapshots, discounts and notes
+        public OrderItem(Guid productId, string name, decimal unitPrice, int quantity, IEnumerable<OrderItemTopping>? selectedToppings, DiscountType? discountType = null, decimal discountValue = 0, string? note = null)
         {
             if (productId == Guid.Empty) throw new ArgumentException("productId required", nameof(productId));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name required", nameof(name));
@@ -56,6 +58,7 @@ namespace TheCoffeCream.Domain.Entities
             Quantity = quantity;
             DiscountType = discountType;
             DiscountValue = discountValue;
+            Note = note ?? string.Empty;
 
             if (selectedToppings != null)
                 _selectedToppings.AddRange(selectedToppings);

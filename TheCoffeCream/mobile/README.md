@@ -2,9 +2,9 @@
 
 Monorepo containing two Vite React apps and a shared UI package.
 
-- packages/app-admin — Admin mobile web app (Vite + React)
-- packages/app-staff — Staff mobile web app (Vite + React)
-- packages/ui-shared — Shared React components/hooks/types
+- apps/app-admin — Admin mobile web app (Vite + React)
+- apps/app-staff — Staff mobile web app (Vite + React)
+- apps/ui-shared — Shared React components/hooks/types
 
 To get started:
 
