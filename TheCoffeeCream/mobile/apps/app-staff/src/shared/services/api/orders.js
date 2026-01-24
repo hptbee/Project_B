@@ -1,18 +1,32 @@
 import { apiFetch } from './client'
+import { OfflineQueue } from '../offline/offlineQueue'
+import { Logger } from './logger'
 
 /**
  * Orders API
  */
 export const ordersApi = {
-    /**
-     * Create new order
-     * @param {Object} orderData - Order data
-     */
     createOrder: async (orderData) => {
-        return apiFetch('/Orders', {
-            method: 'POST',
-            body: JSON.stringify(orderData)
-        })
+        // ALWAYS use offline queue first for instant feedback (Zero-latency)
+        await OfflineQueue.addOrder(orderData);
+
+        // Trigger background sync immediately in next tick
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('trigger-sync'));
+        }, 100);
+
+        return {
+            id: orderData.id || orderData.ClientOrderId || 'offline-pending',
+            status: 'PENDING_SYNC',
+            message: 'Đã lưu. Đang đồng bộ ngầm...'
+        };
+    },
+
+    /**
+     * Legacy method preserved for compatibility
+     */
+    createOrderOffline: async (orderData) => {
+        return ordersApi.createOrder(orderData);
     },
 
     /**

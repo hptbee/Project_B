@@ -1,9 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '@/shared/services/api'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
-import './OrderHistory.scss'
+import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
 
 export default function OrderHistory() {
     const navigate = useNavigate()
@@ -16,21 +11,31 @@ export default function OrderHistory() {
 
     useEffect(() => {
         const fetchOrders = async () => {
+            const localDate = new Date().toLocaleDateString('en-CA')
+            const targetDate = paramDate || localDate
+            const isToday = targetDate === localDate
+
             try {
-                const localDate = new Date().toLocaleDateString('en-CA')
-                const targetDate = paramDate || localDate
+                // 1. Check cache for today
+                if (isToday) {
+                    const cached = cacheService.get(CACHE_KEYS.ORDERS)
+                    if (cached) {
+                        setOrders(cached)
+                        setLoading(false)
+                    }
+                } else {
+                    setLoading(true)
+                }
 
-                // Fetch orders for the target date
+                // 2. Background Fetch
                 const data = await api.getOrders(targetDate, null)
-
                 let filteredData = data || []
-
-                // If status param is provided, filter the results
                 if (paramStatus) {
                     filteredData = filteredData.filter(o => o.status === paramStatus)
                 }
 
                 setOrders(filteredData)
+                if (isToday) cacheService.set(CACHE_KEYS.ORDERS, filteredData, 15 * 60 * 1000) // 15m cache
             } catch (err) {
                 console.error(err)
             } finally {
@@ -45,7 +50,7 @@ export default function OrderHistory() {
         return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
 
-    if (loading) return <LoadingSpinner fullScreen message="Đang tải lịch sử..." />
+    if (loading && orders.length === 0) return <LoadingSpinner fullScreen message="Đang tải lịch sử..." />
 
     return (
         <div className="page">

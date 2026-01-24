@@ -4,6 +4,8 @@
 const CACHE_KEYS = {
     MENU: 'app_cache_menu',
     PRODUCTS: 'app_cache_products',
+    ORDERS: 'app_cache_orders_today',
+    REPORT: 'app_cache_report_today',
 }
 
 const DEFAULT_TTL = 24 * 60 * 60 * 1000 // 24 hours in milliseconds

@@ -1,11 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { api } from '@/shared/services/api'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-import './EndOfDayReport.scss'
+import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
 
 export default function EndOfDayReport() {
     const navigate = useNavigate()
@@ -20,16 +13,26 @@ export default function EndOfDayReport() {
         const day = String(today.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
     })
-    const [productSales, setProductSales] = useState([])
-    const [loadingProducts, setLoadingProducts] = useState(false)
-    const [showDatePicker, setShowDatePicker] = useState(false)
 
     useEffect(() => {
         const fetchReport = async () => {
+            const todayStr = new Date().toLocaleDateString('en-CA')
+            const isToday = selectedDate === todayStr
+
             try {
-                setLoading(true)
+                if (isToday) {
+                    const cached = cacheService.get(CACHE_KEYS.REPORT)
+                    if (cached) {
+                        setReport(cached)
+                        setLoading(false)
+                    }
+                } else {
+                    setLoading(true)
+                }
+
                 const data = await api.getDailyReport(selectedDate)
                 setReport(data)
+                if (isToday) cacheService.set(CACHE_KEYS.REPORT, data, 10 * 60 * 1000) // 10m cache
             } catch (err) {
                 console.error(err)
                 setError(err.message)
@@ -66,7 +69,7 @@ export default function EndOfDayReport() {
         fetchProductSales()
     }, [selectedTab, selectedDate])
 
-    if (loading) return <LoadingSpinner fullScreen message="Đang tạo báo cáo..." />
+    if (loading && !report) return <LoadingSpinner fullScreen message="Đang tải báo cáo..." />
 
     if (error) return <div className="page"><header className="page-header"><button className="back" onClick={() => navigate(-1)} aria-label="Quay lại"><IconChevron variant="bold" /></button><h2>Báo cáo cuối ngày</h2></header><div className="page-content">Lỗi: {error}</div></div>
 

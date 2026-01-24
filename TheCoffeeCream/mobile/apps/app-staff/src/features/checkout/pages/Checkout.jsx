@@ -5,6 +5,7 @@ import ConfirmModal from '@/shared/components/ui/ConfirmModal'
 import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
 import './Checkout.scss'
 import IconChevron from '@/shared/components/ui/IconChevron'
+import { api } from '@/shared/services/api'
 
 export default function Checkout() {
     const { tableId } = useParams()
@@ -49,53 +50,42 @@ export default function Checkout() {
     }, [paymentMethod, total])
 
     const handleFinalize = async () => {
-        setLoading(true)
-        try {
-            const orderItems = tableCart.items.map(item => ({
-                ProductId: item.product.id,
-                Name: item.product.title,
-                UnitPrice: item.product.price,
-                Quantity: item.qty,
-                SelectedToppingNames: (item.toppings || []).map(t => t.title),
-                Note: item.note
-            }))
+        // 1. Construct payload
+        const orderItems = tableCart.items.map(item => ({
+            ProductId: item.product.id,
+            Name: item.product.title,
+            UnitPrice: item.product.price,
+            Quantity: item.qty,
+            SelectedToppingNames: (item.toppings || []).map(t => t.title),
+            Note: item.note
+        }))
 
-            const payload = {
-                ClientOrderId: tableCart.clientOrderId,
-                OrderType: 'DINE_IN',
-                TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
-                PaymentMethod: paymentMethod,
-                CashAmount: paymentMethod === 'COMBINED' ? cashAmount : (paymentMethod === 'CASH' ? total : 0),
-                TransferAmount: paymentMethod === 'COMBINED' ? transferAmount : (paymentMethod === 'TRANSFER' ? total : 0),
-                Items: orderItems,
-                Status: 'SUCCESS',
-                Note: tableCart.note,
-                DiscountAmount: discountAmount || 0
-            }
-
-            const { api } = await import('@/shared/services/api')
-            await api.createOrder(payload)
-
-            setModal({
-                show: true,
-                title: 'Thành công',
-                message: 'Thanh toán đơn hàng thành công!',
-                onConfirm: () => {
-                    dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
-                    nav('/')
-                }
-            })
-        } catch (e) {
-            console.error(e)
-            setModal({
-                show: true,
-                title: 'Lỗi thanh toán',
-                message: 'Không thể hoàn tất thanh toán: ' + e.message,
-                onConfirm: () => setModal({ show: false })
-            })
-        } finally {
-            setLoading(false)
+        const payload = {
+            ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
+            OrderType: 'DINE_IN',
+            TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
+            PaymentMethod: paymentMethod,
+            CashAmount: paymentMethod === 'COMBINED' ? cashAmount : (paymentMethod === 'CASH' ? total : 0),
+            TransferAmount: paymentMethod === 'COMBINED' ? transferAmount : (paymentMethod === 'TRANSFER' ? total : 0),
+            Items: orderItems,
+            Status: 'SUCCESS',
+            Note: tableCart.note,
+            DiscountAmount: discountAmount || 0
         }
+
+        // 2. Instant feedback (Zero latency)
+        setModal({
+            show: true,
+            title: 'Thành công',
+            message: 'Đã nhận đơn hàng! Đang đồng bộ...',
+            onConfirm: () => {
+                dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
+                nav('/')
+            }
+        })
+
+        // 3. Background call
+        api.createOrder(payload).catch(e => console.error('Bg checkout failed', e))
     }
 
     return (

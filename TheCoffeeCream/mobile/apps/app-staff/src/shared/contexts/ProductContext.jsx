@@ -12,34 +12,35 @@ export function ProductProvider({ children }) {
 
     const loadMenu = useCallback(async (forceRefresh = false) => {
         try {
-            setLoading(true)
-
-            // Check cache first (unless force refresh)
-            if (!forceRefresh) {
-                const cachedMenu = cacheService.get(CACHE_KEYS.MENU)
-                if (cachedMenu) {
-                    console.log('Loading menu from cache')
-                    processMenuData(cachedMenu)
-                    setLoading(false)
-                    return
-                }
+            // 1. Try to load from cache first for instant UI
+            const cachedMenu = cacheService.get(CACHE_KEYS.MENU)
+            if (cachedMenu && !forceRefresh) {
+                console.log('Instant load from cache')
+                processMenuData(cachedMenu)
+                setLoading(false)
+            } else {
+                setLoading(true)
             }
 
-            // Fetch from API
-            console.log('Fetching menu from API')
+            // 2. Fetch from API in background (SWR)
+            console.log('Updating menu from API in background')
             const data = await api.getMenu()
 
-            // Save to cache
+            // 3. Save to cache and update UI
             cacheService.set(CACHE_KEYS.MENU, data)
-
             processMenuData(data)
+
             setLoading(false)
+            setError(null)
         } catch (err) {
-            console.error(err)
-            setError(err)
+            console.error('Background sync failed:', err)
+            // Only show error if we have no products at all
+            if (products.length === 0) {
+                setError(err)
+            }
             setLoading(false)
         }
-    }, [])
+    }, [products.length])
 
     const processMenuData = (data) => {
         const catMap = {}

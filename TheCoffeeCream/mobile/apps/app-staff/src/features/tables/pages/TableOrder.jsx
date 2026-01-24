@@ -8,6 +8,7 @@ import ConfirmModal from '@/shared/components/ui/ConfirmModal'
 import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
 import './TableOrder.scss'
 import IconChevron from '@/shared/components/ui/IconChevron'
+import { api } from '@/shared/services/api'
 
 export default function TableOrder() {
     const { tableId } = useParams()
@@ -52,35 +53,9 @@ export default function TableOrder() {
     }
 
     const handleAutoSave = async () => {
-        try {
-            const orderItems = tableCart.items.map(item => ({
-                ProductId: item.product.id,
-                Name: item.product.title,
-                UnitPrice: item.product.price,
-                Quantity: item.qty,
-                SelectedToppingNames: (item.toppings || []).map(t => t.title),
-                Note: item.note
-            }))
-
-            if (orderItems.length === 0) return
-
-            const payload = {
-                ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
-                OrderType: 'DINE_IN',
-                TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
-                PaymentMethod: 'CASH',
-                CashAmount: 0,
-                TransferAmount: 0,
-                Items: orderItems,
-                Status: 'DRAFT',
-                Note: tableCart.note || ''
-            }
-
-            const { api } = await import('@/shared/services/api')
-            console.log('Auto-saved draft for table', tableId)
-        } catch (e) {
-            console.error('Auto-save failed:', e)
-        }
+        // Auto-save logic can be expanded here to save to local draft state
+        // Currently it just logs as the main saving happens on 'Lưu nháp' or 'Thanh toán'
+        console.log('Draft updated locally for table', tableId)
     }
 
     // Auto-save on changes
@@ -98,39 +73,34 @@ export default function TableOrder() {
     }
 
     const handleSaveDraft = async () => {
-        setProcessing(true)
-        try {
-            const orderItems = tableCart.items.map(item => ({
-                ProductId: item.product.id,
-                Name: item.product.title,
-                UnitPrice: item.product.price,
-                Quantity: item.qty,
-                SelectedToppingNames: (item.toppings || []).map(t => t.title),
-                Note: item.note
-            }))
+        // 1. Construct payload
+        const orderItems = tableCart.items.map(item => ({
+            ProductId: item.product.id,
+            Name: item.product.title,
+            UnitPrice: item.product.price,
+            Quantity: item.qty,
+            SelectedToppingNames: (item.toppings || []).map(t => t.title),
+            Note: item.note
+        }))
 
-            const payload = {
-                ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
-                OrderType: 'DINE_IN',
-                TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
-                PaymentMethod: 'CASH',
-                CashAmount: total,
-                TransferAmount: 0,
-                Items: orderItems,
-                Status: 'DRAFT',
-                Note: tableCart.note || ''
-            }
-
-            const { api } = await import('@/shared/services/api')
-            await api.createOrder(payload)
-            navigate('/')
-            dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
-        } catch (e) {
-            console.error(e)
-            alert('Lưu nháp thất bại: ' + e.message)
-        } finally {
-            setProcessing(false)
+        const payload = {
+            ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
+            OrderType: 'DINE_IN',
+            TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
+            PaymentMethod: 'CASH',
+            CashAmount: total,
+            TransferAmount: 0,
+            Items: orderItems,
+            Status: 'DRAFT',
+            Note: tableCart.note || ''
         }
+
+        // 2. Respond to user IMMEDIATELY (Zero latency)
+        navigate('/')
+        dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
+
+        // 3. Background call
+        api.createOrder(payload).catch(e => console.error('Bg Save Draft failed', e))
     }
 
     const saveNote = () => {

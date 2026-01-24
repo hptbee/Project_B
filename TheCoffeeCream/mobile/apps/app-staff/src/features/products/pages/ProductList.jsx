@@ -49,35 +49,9 @@ export default function ProductList() {
 
     const { products, categories: sortedCategories, loading } = useProducts()
 
-    // Extract unique categories (prefer sorted list from API)
-    const categories = useMemo(() => {
-        if (sortedCategories && sortedCategories.length > 0) {
-            return ['all', ...sortedCategories]
-        }
-        const cats = new Set(products.map(p => p.category).filter(Boolean))
-        return ['all', ...Array.from(cats)]
-    }, [products, sortedCategories])
-
-    const filtered = useMemo(() => {
-        const term = (debouncedQ || '').trim().toLowerCase()
-        let res = products
-
-        // Filter by category
-        if (selectedCat !== 'all') {
-            res = res.filter(p => p.category === selectedCat)
-        }
-
-        // Filter by search
-        if (term) {
-            res = res.filter(p => p.title.toLowerCase().includes(term))
-        }
-
-        return res
-    }, [debouncedQ, products, selectedCat])
-
     const term = (debouncedQ || '').trim()
 
-    if (loading) return <LoadingSpinner fullScreen message="Đang tải thực đơn..." />
+    if (loading && products.length === 0) return <LoadingSpinner fullScreen message="Đang tải thực đơn..." />
 
     const showToast = useToast()
 
