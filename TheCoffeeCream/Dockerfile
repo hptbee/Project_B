@@ -8,9 +8,6 @@ RUN ls -R
 
 COPY ["api/TheCoffeeCream/TheCoffeeCream.csproj", "api/TheCoffeeCream/"]
 COPY ["api/TheCoffeeCream.Application/TheCoffeeCream.Application.csproj", "api/TheCoffeeCream.Application/"]
-# Debug: Check if the file exists before copying
-RUN ls -la api/TheCoffeeCream.Domain/
-
 COPY ["api/TheCoffeeCream.Domain/TheCoffeeCream.Domain.csproj", "api/TheCoffeeCream.Domain/"]
 
 # Restore dependencies
