@@ -3,10 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
 import { calculateCartTotal, calculateDiscount, calculateTotal } from '@/shared/utils/calculations'
 import { formatPrice } from '@/shared/utils/formatters'
-import { api } from '@/shared/services/api'
-import ConfirmModal from '@/shared/components/ui/ConfirmModal'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
+import { ConfirmModal, LoadingSpinner, IconChevron } from '@thecoffeecream/ui-shared'
 import './Checkout.scss'
 
 export default function Checkout() {
@@ -105,11 +102,12 @@ export default function Checkout() {
                 <div className="customer-info-box">
                     <div className="customer-icon">👤</div>
                     <div className="customer-name">Khách lẻ</div>
+                    <button className="customer-edit-btn" aria-label="Thay đổi khách hàng">✎</button>
                 </div>
 
                 <div className="order-summary-box">
                     <div className="summary-row">
-                        <div className="label">Tổng tiền hàng <span className="items-badge">{tableCart.items.length}</span></div>
+                        <div className="label">Tổng tiền hàng <span className="items-badge">{(tableCart.items || []).reduce((s, it) => s + (it.qty ?? it.quantity ?? 1), 0)} món</span></div>
                         <div className="value">{formatPrice(subtotal)}</div>
                     </div>
 
@@ -118,7 +116,7 @@ export default function Checkout() {
                         onClick={() => setShowDiscountInput(!showDiscountInput)}
                     >
                         <div className="label">Giảm giá {discountValue > 0 ? `(${discountType === 'PERCENTAGE' ? discountValue + '%' : '✎'})` : '✎'}</div>
-                        <div className="value danger">-{formatPrice(discountAmount)}</div>
+                        <div className={`value ${discountValue > 0 ? 'success' : ''}`}>-{formatPrice(discountAmount)}</div>
                     </button>
 
                     {showDiscountInput && (
@@ -128,15 +126,32 @@ export default function Checkout() {
                                     className={discountType === 'AMOUNT' ? 'active' : ''}
                                     onClick={(e) => { e.stopPropagation(); setDiscountType('AMOUNT'); }}
                                 >
-                                    Số tiền
+                                    Số tiền (đ)
                                 </button>
                                 <button
                                     className={discountType === 'PERCENTAGE' ? 'active' : ''}
                                     onClick={(e) => { e.stopPropagation(); setDiscountType('PERCENTAGE'); }}
                                 >
-                                    Phần trăm
+                                    Phần trăm (%)
                                 </button>
                             </div>
+
+                            <div className="quick-discounts">
+                                {discountType === 'PERCENTAGE' ? (
+                                    <>
+                                        {[5, 10, 15, 20].map(p => (
+                                            <button key={p} onClick={(e) => { e.stopPropagation(); setDiscountValue(p); }}>{p}%</button>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <>
+                                        {[10000, 20000, 50000, 100000].map(a => (
+                                            <button key={a} onClick={(e) => { e.stopPropagation(); setDiscountValue(a); }}>{a / 1000}k</button>
+                                        ))}
+                                    </>
+                                )}
+                            </div>
+
                             <div className="input-with-suffix" onClick={e => e.stopPropagation()}>
                                 <input
                                     type="number"

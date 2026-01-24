@@ -27,10 +27,10 @@
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    padding: 16px 20px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     margin: 16px;
     animation: fadeInUp 0.4s ease;
 
@@ -52,6 +52,25 @@
         font-size: 16px;
         color: var(--text-primary);
     }
+
+    .customer-edit-btn {
+        margin-left: auto;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 18px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+
+        &:active {
+            background: var(--bg-active);
+        }
+    }
 }
 
 .order-summary-box {
@@ -59,7 +78,7 @@
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    padding: 20px;
+    padding: 16px;
     margin: 16px;
     animation: fadeInUp 0.5s ease backwards;
 
@@ -86,6 +105,11 @@
             &.danger {
                 color: var(--accent-red);
             }
+
+            &.success {
+                color: #4CAF50;
+                /* Green */
+            }
         }
 
         &.dashed-bottom {
@@ -96,20 +120,20 @@
         &.clickable-row {
             cursor: pointer;
             transition: var(--trans-fast);
-            margin: 0 -20px 16px;
-            padding: 12px 20px;
-            border-radius: 0;
+            margin: 0 0 16px;
+            padding: 10px 0;
+            border-radius: var(--radius-md);
 
             &:active {
                 background: var(--bg-glass-active);
             }
 
             &.active {
-                background: var(--danger-bg);
-                color: var(--accent-red);
+                background: var(--bg-secondary);
 
-                .label {
-                    color: var(--accent-red);
+                .label,
+                .value {
+                    /* Keep neutral color, don't make it red/danger */
                 }
             }
         }
@@ -136,22 +160,22 @@
 
     .discount-input-area {
         background: var(--bg-darker);
-        margin: -16px -20px 16px;
-        padding: 20px;
-        border-bottom: 1px dashed rgba(255, 82, 82, 0.3);
+        margin: 0 0 16px;
+        padding: 16px;
+        border-bottom: 1px dashed var(--border-glass); // Changed from red dashed
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
 
         .type-tabs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
 
             button {
                 flex: 1;
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-glass);
-                padding: 10px;
+                padding: 8px 10px;
                 border-radius: var(--radius-md);
                 font-size: 13px;
                 font-weight: 700;
@@ -160,10 +184,33 @@
                 transition: var(--trans-fast);
 
                 &.active {
-                    background: var(--accent-red);
-                    color: var(--text-on-dark);
-                    border-color: var(--accent-red);
-                    box-shadow: 0 4px 12px rgba(255, 82, 82, 0.3);
+                    background: var(--accent-amber); // Changed to amber/brand
+                    color: black;
+                    border-color: var(--accent-amber);
+                    box-shadow: 0 4px 12px var(--accent-amber-glow);
+                }
+            }
+        }
+
+        .quick-discounts {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+
+            button {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid var(--border-glass);
+                padding: 6px 4px;
+                border-radius: var(--radius-md);
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                cursor: pointer;
+                transition: var(--trans-fast);
+
+                &:active {
+                    background: var(--accent-amber);
+                    color: black;
                 }
             }
         }
@@ -171,21 +218,30 @@
         .input-with-suffix {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: var(--bg-glass-active);
-            padding: 12px 18px;
+            padding: 10px 14px;
             border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 82, 82, 0.2);
+            border: 1px solid var(--border-glass);
 
             input {
                 flex: 1;
                 border: none;
                 background: transparent;
-                font-size: 20px;
-                font-weight: 900;
-                color: var(--accent-red);
+                font-size: 24px; // Larger
+                font-weight: 800;
+                color: var(--text-primary); // Neutral color
                 text-align: right;
                 outline: none;
+
+                /* Remove spinners */
+                &::-webkit-outer-spin-button,
+                &::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                -moz-appearance: textfield;
             }
 
             span {
@@ -197,7 +253,7 @@
 }
 
 .payment-section-title {
-    margin: 24px 20px 12px;
+    margin: 20px 16px 12px;
     color: var(--text-muted);
     font-size: 12px;
     font-weight: 800;
@@ -209,24 +265,24 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 0 16px 140px;
+    padding: 0 16px 160px;
 }
 
 .payment-method-item {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
-    padding: 18px 20px;
+    padding: 14px 16px;
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-glass);
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     cursor: pointer;
     transition: var(--trans-smooth);
     width: 100%;
     font-family: inherit;
     text-align: left;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 
     &.active {
         border-color: var(--border-active);
@@ -305,6 +361,14 @@
             color: var(--accent-amber);
             outline: none;
             font-family: inherit;
+
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            -moz-appearance: textfield;
         }
 
         span {

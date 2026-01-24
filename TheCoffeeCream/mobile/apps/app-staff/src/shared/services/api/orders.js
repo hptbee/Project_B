@@ -1,6 +1,6 @@
-import { apiFetch } from './client'
+import { apiFetch } from '@thecoffeecream/ui-shared'
 import { OfflineQueue } from '../offline/offlineQueue'
-import { Logger } from './logger'
+import { Logger } from '@thecoffeecream/ui-shared'
 
 /**
  * Orders API

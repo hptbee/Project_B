@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '@/shared/services/api'
+import { LoadingSpinner, IconChevron, Badge } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@/shared/utils/formatters'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
-import Badge from '@/shared/components/ui/Badge'
 import './OrderDetail.scss'
 
 export default function OrderDetail() {

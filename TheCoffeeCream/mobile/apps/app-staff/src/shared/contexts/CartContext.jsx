@@ -1,18 +1,14 @@
 import React, { createContext, useContext, useReducer } from 'react'
+import { generateCartItemKey, generateOrderId } from '@/shared/utils/cartUtils'
 
 const CartStateContext = createContext()
 const CartDispatchContext = createContext()
-
-function generateOrderId() {
-    const timestamp = Date.now().toString().slice(-4)
-    return `11-${timestamp}`
-}
 
 function cartReducer(state, action) {
     switch (action.type) {
         case 'ADD': {
             const { product, qty = 1, toppings = [], note = '' } = action.payload
-            const key = `${product.id}:${toppings.map(t => `${t.id}x${t.qty || 1}`).join(',')}:${note}`
+            const key = generateCartItemKey(product, toppings, note)
             const existing = state.items.find(i => i.key === key)
             if (existing) {
                 return { ...state, items: state.items.map(i => i.key === key ? { ...i, qty: i.qty + qty } : i) }
@@ -31,7 +27,7 @@ function cartReducer(state, action) {
         // Table-specific actions
         case 'ADD_TO_TABLE': {
             const { tableId, product, qty = 1, toppings = [], note = '' } = action.payload
-            const key = `${product.id}:${toppings.map(t => `${t.id}x${t.qty || 1}`).join(',')}:${note}`
+            const key = generateCartItemKey(product, toppings, note)
             const table = state.tables[tableId] || {
                 items: [],
                 orderId: generateOrderId(),
@@ -78,7 +74,7 @@ function cartReducer(state, action) {
             const originalItem = table.items.find(i => i.key === oldKey)
             if (!originalItem) return state
 
-            const newKey = `${originalItem.product.id}:${toppings.map(t => `${t.id}x${t.qty || 1}`).join(',')}:${note}`
+            const newKey = generateCartItemKey(originalItem.product, toppings, note)
 
             // Re-map items: remove old, add/merge new
             const baseItems = table.items.filter(i => i.key !== oldKey)

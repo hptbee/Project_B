@@ -1,25 +1,23 @@
 import React from 'react'
-import { ThemeProvider } from './ThemeContext'
-import { AuthProvider } from './AuthContext'
+import { AuthProvider, ThemeProvider, UIProvider, Toast } from '@thecoffeecream/ui-shared'
 import { CartProvider } from './CartContext'
-import { UIProvider } from './UIContext'
 import { ProductProvider } from './ProductContext'
 
 /**
  * Composite provider to wrap the application in all necessary contexts
  */
-export const CoreProvider = ({ children }) => {
+export function CoreProvider({ children }) {
     return (
         <ThemeProvider>
-            <AuthProvider>
-                <CartProvider>
-                    <UIProvider>
+            <UIProvider ToastComponent={Toast}>
+                <AuthProvider>
+                    <CartProvider>
                         <ProductProvider>
                             {children}
                         </ProductProvider>
-                    </UIProvider>
-                </CartProvider>
-            </AuthProvider>
+                    </CartProvider>
+                </AuthProvider>
+            </UIProvider>
         </ThemeProvider>
     )
 }

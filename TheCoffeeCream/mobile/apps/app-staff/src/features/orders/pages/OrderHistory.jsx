@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '@/shared/services/api'
 import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
+import { LoadingSpinner, IconChevron, Badge } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@/shared/utils/formatters'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
-import Badge from '@/shared/components/ui/Badge'
 import './OrderHistory.scss'
 
 export default function OrderHistory() {
@@ -88,7 +86,7 @@ export default function OrderHistory() {
                                     <div className="order-type">
                                         {order.orderType === 'DINE_IN' ? `Bàn ${order.tableNumber}` : 'Mang về'}
                                     </div>
-                                    <div className="order-items-count">{order.items.length} món</div>
+                                    <div className="order-items-count">{order.items.reduce((sum, it) => sum + (it.quantity ?? it.qty ?? 1), 0)} món</div>
                                 </div>
                                 <div className="order-total">{formatPrice(order.total, true)}</div>
                             </div>

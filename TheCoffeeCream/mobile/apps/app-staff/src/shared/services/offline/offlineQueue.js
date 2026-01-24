@@ -1,5 +1,5 @@
 import { cacheService } from '../cache/cacheService';
-import { Logger } from '../api/logger';
+import { Logger } from '@thecoffeecream/ui-shared';
 
 const QUEUE_KEY = 'app_offline_orders_queue';
 

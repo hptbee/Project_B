@@ -1,0 +1,52 @@
+@use '../../../styles/variables' as *;
+
+.app-toast {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 110px;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: var(--trans-smooth, 0.3s ease);
+
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .toast-inner {
+        max-width: fit-content;
+        margin: 0 auto;
+        background: var(--accent-amber, #ffab00);
+        color: var(--text-on-accent, #000);
+        padding: 12px 24px;
+        border-radius: var(--radius-full, 99px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        font-weight: 800;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .toast-check-icon {
+        flex-shrink: 0;
+    }
+
+    .toast-msg {
+        flex: 1;
+    }
+}
+
+@media (min-width: 768px) {
+    .app-toast {
+        left: auto;
+        right: 32px;
+        bottom: 32px;
+        width: auto;
+    }
+}

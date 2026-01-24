@@ -1,14 +1,22 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { api } from '../services/api'
 import { cacheService, CACHE_KEYS } from '../services/cache/cacheService'
+import { useAuth } from '@thecoffeecream/ui-shared'
 
 const ProductContext = createContext()
 
 export function ProductProvider({ children }) {
+    const { isAuthenticated } = useAuth()
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+
+    // Use ref to access products in callbacks without adding dependencies
+    const productsRef = React.useRef(products)
+    useEffect(() => {
+        productsRef.current = products
+    }, [products])
 
     const loadMenu = useCallback(async (forceRefresh = false) => {
         try {
@@ -35,7 +43,7 @@ export function ProductProvider({ children }) {
         } catch (err) {
             console.error('Background sync failed:', err)
             // Only show error if we have no products at all
-            if (products.length === 0) {
+            if (productsRef.current.length === 0) {
                 setError(err)
             }
             setLoading(false)
@@ -76,8 +84,16 @@ export function ProductProvider({ children }) {
     }, [loadMenu])
 
     useEffect(() => {
-        loadMenu()
-    }, [loadMenu])
+        // Only load menu if user is authenticated
+        if (isAuthenticated) {
+            loadMenu()
+        } else {
+            // Clear products when not authenticated
+            setProducts([])
+            setCategories([])
+            setLoading(false)
+        }
+    }, [loadMenu, isAuthenticated])
 
     return (
         <ProductContext.Provider value={{ products, categories, loading, error, syncProducts }}>

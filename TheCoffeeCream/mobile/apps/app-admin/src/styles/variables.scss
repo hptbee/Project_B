@@ -1,0 +1,156 @@
+// Theme Definitions
+:root {
+    // Shared constants
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 28px;
+    --radius-full: 999px;
+    --font-main: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --trans-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --trans-bounce: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    // Accent Colors (Constant across themes)
+    --accent-amber: #ffab00;
+    --accent-amber-glow: rgba(255, 171, 0, 0.3);
+    --accent-red: #ff5252;
+    --accent-blue: #448aff;
+    --accent-green: #4caf50;
+
+    // Constant text colors
+    --text-on-accent: #000000;
+    --text-on-dark: #ffffff;
+
+    /* Light Theme (Normal Mode) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f6f7;
+    --bg-card: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --bg-overlay: rgba(0, 0, 0, 0.4);
+    --bg-logo: #ffffff;
+
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --text-muted: #888888;
+
+    --border-glass: #eeeeee;
+    --border-active: var(--accent-amber);
+
+    --logo-filter: contrast(1.2) brightness(0.8);
+    --logo-blend: normal;
+
+    --glass-blur: blur(0px);
+    --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    --toggle-track: #e0e0e0;
+    --bg-glass-active: rgba(0, 0, 0, 0.05);
+    --bg-darker: rgba(0, 0, 0, 0.06);
+
+    // Dynamic Mapped (Legacy Support)
+    --bg-white: #ffffff;
+    --bg-page: #f8f9fa;
+    --primary-color: #2f6bd8;
+    --primary-light: #e8f0ff;
+    --warning-bg: #fff3e0;
+    --warning-color: #e65100;
+    --success-bg: #e8f5e9;
+    --success-color: #2e7d32;
+    --danger-bg: #ffebee;
+    --danger-color: #c62828;
+}
+
+/* Dark Theme (Premium Mode) - Default */
+[data-theme='dark'] {
+    --bg-primary: #0f0f0f;
+    --bg-secondary: rgba(255, 255, 255, 0.05);
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-glass: rgba(30, 30, 30, 0.7);
+    --bg-overlay: rgba(0, 0, 0, 0.6);
+    --bg-logo: #ffffff;
+
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.3);
+
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --border-active: rgba(255, 171, 0, 0.5);
+
+    --logo-filter: invert(1) brightness(1.2) contrast(1.2);
+    --logo-blend: normal;
+
+    --glass-blur: blur(20px);
+    --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    --toggle-track: #000000;
+    --bg-glass-active: rgba(255, 255, 255, 0.12);
+    --bg-darker: rgba(0, 0, 0, 0.2);
+
+    --bg-white: var(--bg-card);
+    --bg-page: var(--bg-primary);
+    --primary-color: var(--accent-amber);
+    --primary-light: rgba(255, 171, 0, 0.1);
+    --warning-bg: rgba(255, 171, 0, 0.15);
+    --warning-color: var(--accent-amber);
+    --success-bg: rgba(76, 175, 80, 0.2);
+    --success-color: #4caf50;
+    --danger-bg: rgba(255, 82, 82, 0.15);
+    --danger-color: var(--accent-red);
+}
+
+// SCSS Mapping (for components and legacy styles)
+$bg-primary: var(--bg-primary);
+$bg-secondary: var(--bg-secondary);
+$bg-card: var(--bg-card);
+$bg-glass: var(--bg-glass);
+$bg-white: var(--bg-white);
+$bg-page: var(--bg-page);
+$bg-logo: var(--bg-logo);
+
+$primary-color: var(--primary-color);
+$primary-light: var(--primary-light);
+
+$accent-amber: var(--accent-amber);
+$accent-amber-glow: var(--accent-amber-glow);
+$accent-red: var(--accent-red);
+$accent-blue: var(--accent-blue);
+$accent-green: var(--accent-green);
+
+$warning-bg: var(--warning-bg);
+$warning-color: var(--warning-color);
+$success-bg: var(--success-bg);
+$success-color: var(--success-color);
+$danger-bg: var(--danger-bg);
+$danger-color: var(--danger-color);
+
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$text-muted: var(--text-muted);
+$text-on-accent: var(--text-on-accent);
+$text-on-dark: var(--text-on-dark);
+
+$border-glass: var(--border-glass);
+$border-active: var(--border-active);
+
+$glass-border: 1px solid var(--border-glass);
+$glass-blur: var(--glass-blur);
+$glass-shadow: var(--glass-shadow);
+
+$radius-sm: var(--radius-sm);
+$radius-md: var(--radius-md);
+$radius-lg: var(--radius-lg);
+$radius-xl: var(--radius-xl);
+$radius-full: var(--radius-full);
+
+$trans-fast: var(--trans-fast);
+$trans-smooth: var(--trans-smooth);
+$trans-bounce: var(--trans-bounce);
+
+// Static spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-xxl: 32px;

@@ -3,79 +3,31 @@ import { Link, useNavigate } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { useProducts } from '@/shared/contexts/ProductContext'
 import { useCartDispatch, useTableCartDispatch } from '@/shared/contexts/CartContext'
-import SearchBar from '@/shared/components/ui/SearchBar'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import { useState, useMemo, useEffect } from 'react'
+import { SearchBar, LoadingSpinner, useToast, Icon, IconChevron } from '@thecoffeecream/ui-shared'
 import { useSearchParams } from 'react-router-dom'
-import { useToast } from '@/shared/contexts/UIContext'
-import useDebounce from '@/shared/hooks/useDebounce'
+import { useProductFilter } from '../hooks/useProductFilter'
 import './ProductList.scss'
-import IconChevron from '@/shared/components/ui/IconChevron'
 
 export default function ProductList() {
-    const [searchParams, setSearchParams] = useSearchParams()
-    const initial = searchParams.get('q') || ''
-    const [q, setQ] = useState(initial)
-    const debouncedQ = useDebounce(q, 300)
-    const [selectedCat, setSelectedCat] = useState('all')
-
+    const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const tableId = searchParams.get('table')
-    const empty = !!searchParams.get('empty')
+    const { products, categories: sortedCategories, loading } = useProducts()
+
+    // Key Logic Extracted to Hook
+    const {
+        q, setQ,
+        selectedCat, setSelectedCat,
+        categories,
+        filteredProducts: filtered,
+        isSearching,
+        term
+    } = useProductFilter(products, sortedCategories)
 
     // Use table-specific dispatch if tableId is present
     const globalDispatch = useCartDispatch()
     const tableDispatch = useTableCartDispatch(tableId)
     const dispatch = tableId ? tableDispatch : globalDispatch
-
-    useEffect(() => {
-        setSearchParams(prev => {
-            const newParams = new URLSearchParams(prev)
-            if (debouncedQ) newParams.set('q', debouncedQ)
-            else newParams.delete('q')
-            return newParams
-        }, { replace: true })
-    }, [debouncedQ, setSearchParams])
-
-    // focus param: if present, focus and remove it from URL
-    useEffect(() => {
-        const f = searchParams.get('focus')
-        if (f) {
-            // remove focus param but keep q
-            const copy = Object.fromEntries([...searchParams.entries()].filter(([k]) => k !== 'focus'))
-            setSearchParams(copy, { replace: true })
-        }
-    }, [searchParams])
-
-    const { products, categories: sortedCategories, loading } = useProducts()
-
-    // Extract unique categories (prefer sorted list from API)
-    const categories = useMemo(() => {
-        if (sortedCategories && sortedCategories.length > 0) {
-            return ['all', ...sortedCategories]
-        }
-        const cats = new Set(products.map(p => p.category).filter(Boolean))
-        return ['all', ...Array.from(cats)]
-    }, [products, sortedCategories])
-
-    const filtered = useMemo(() => {
-        const term = (debouncedQ || '').trim().toLowerCase()
-        let res = products
-
-        // Filter by category
-        if (selectedCat !== 'all') {
-            res = res.filter(p => p.category === selectedCat)
-        }
-
-        // Filter by search
-        if (term) {
-            res = res.filter(p => p.title.toLowerCase().includes(term))
-        }
-
-        return res
-    }, [debouncedQ, products, selectedCat])
-
-    const term = (debouncedQ || '').trim()
 
     if (loading && products.length === 0) return <LoadingSpinner fullScreen message="Đang tải thực đơn..." />
 

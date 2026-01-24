@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCart, useCartDispatch } from '@/shared/contexts/CartContext'
 import { calculateCartTotal } from '@/shared/utils/calculations'
 import { formatPrice } from '@/shared/utils/formatters'
-import Icon from '@/shared/components/ui/Icon'
-import IconChevron from '@/shared/components/ui/IconChevron'
+import { Icon, IconChevron } from '@thecoffeecream/ui-shared'
 import './Cart.scss'
 
 export default function Cart() {
@@ -25,7 +24,7 @@ export default function Cart() {
 
             <div className="checkout">
                 <div className="summary-card">
-                    <div className="label">Tổng tiền hàng ({items.length})</div>
+                    <div className="label">Tổng tiền hàng ({(items || []).reduce((s, it) => s + (it.qty ?? it.quantity ?? 1), 0)})</div>
                     <div className="amount">{formatPrice(total, true)}</div>
                 </div>
 

@@ -20,6 +20,7 @@
     background: var(--primary-light);
     color: var(--accent-amber);
     padding: 4px 10px;
+    margin-left: 5px;
     border-radius: var(--radius-lg);
     font-size: 13px;
     cursor: pointer;
@@ -48,20 +49,20 @@
 }
 
 .order-item-list {
-    padding: 16px 16px 200px;
+    padding: 12px 12px 140px; // reduce bottom padding to roughly footer+fab height
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px; // slightly tighter stack for compact UX
 }
 
 .order-item {
-    padding: 16px;
+    padding: 12px;
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
     display: flex;
-    gap: var(--spacing-md);
+    gap: 12px;
     animation: fadeInUp 0.4s ease backwards;
 
     @for $i from 1 through 20 {
@@ -193,7 +194,7 @@
 }
 
 .fab {
-    bottom: 180px !important;
+    bottom: 140px !important;
 }
 
 .order-footer {
@@ -204,10 +205,10 @@
     background: var(--bg-glass);
     backdrop-filter: var(--glass-blur);
     border-top: 1px solid var(--border-glass);
-    padding: 20px 16px 24px;
+    padding: 16px 12px 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
     z-index: 100;
     box-shadow: var(--glass-shadow);
 

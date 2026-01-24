@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import Icon from '@/shared/components/ui/Icon'
+import { Icon } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@/shared/utils/formatters'
 import '@/styles/components.scss'
 

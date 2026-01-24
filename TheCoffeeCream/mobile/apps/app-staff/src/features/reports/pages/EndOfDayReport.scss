@@ -20,6 +20,33 @@
     flex: 1;
 }
 
+.date-picker-button {
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: var(--trans-fast);
+    min-width: 150px;
+    justify-content: center;
+
+    &:hover {
+        background: var(--bg-glass-active);
+    }
+
+    svg {
+        color: var(--text-primary);
+        width: 18px;
+        height: 18px;
+    }
+}
+
 .tab-button {
     flex: 1;
     padding: 10px 16px;
@@ -235,54 +262,131 @@
     cursor: pointer;
     transition: var(--trans-smooth);
 
-    &:active {
-        transform: scale(0.98);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:hover {
+        transform: translateX(4px);
+        background: rgba(255, 171, 0, 0.02);
         border-color: var(--border-active);
-        background: rgba(255, 171, 0, 0.05);
+    }
+
+    &:active {
+        transform: scale(0.985);
+    }
+
+    >div {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .card-title {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 900;
+    }
+
+    .card-value {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--text-primary);
     }
 
     .arrow {
-        color: var(--accent-amber);
-        font-size: 20px;
+        background: var(--accent-amber);
+        color: #000;
+        font-size: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
     }
 }
 
 // React Datepicker Dark Theme Overrides
+.datepicker-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 10010;
+}
+
 .datepicker-modal {
-    background: var(--bg-primary);
+    background: transparent;
     border-radius: var(--radius-xl);
-    border: 1px solid var(--border-glass);
+    border: 0;
     overflow: hidden;
+    z-index: 10020;
 
     .datepicker-header {
         background: var(--accent-amber);
         color: #000;
-        padding: 24px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
 
         h3 {
             font-weight: 900;
             letter-spacing: 1px;
+            margin: 0;
+            font-size: 20px;
         }
 
         button {
-            color: #000;
-            font-weight: 900;
+            margin-left: auto;
+            width: 36px;
+            height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            font-weight: 700;
+            cursor: pointer;
         }
     }
 
     .react-datepicker {
-        background: var(--bg-primary);
+        background: var(--bg-card);
         color: var(--text-primary);
         border: none;
+        padding: 14px 18px 20px;
+
+        .react-datepicker__navigation {
+            top: 18px;
+            line-height: 1;
+        }
+
+        select {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-right: 8px;
+        }
 
         &__header {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-glass);
+            background: transparent;
+            border-bottom: 0;
+            padding: 8px 0 12px;
         }
 
         &__current-month {
             color: var(--text-primary);
             font-weight: 900;
+            font-size: 16px;
         }
 
         &__day-name {
@@ -290,9 +394,17 @@
             font-weight: 800;
         }
 
+        &__month {
+            padding-top: 6px;
+        }
+
         &__day {
             color: var(--text-primary);
-            font-weight: 600;
+            font-weight: 700;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 8px;
 
             &:hover {
                 background: var(--bg-secondary);
@@ -301,13 +413,53 @@
             &--selected {
                 background: var(--accent-amber) !important;
                 color: #000 !important;
+                border-radius: 50% !important;
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
             }
 
             &--today {
                 color: var(--accent-amber);
-                border: 1px solid var(--accent-amber);
-                border-radius: 50%;
+                border: 1px solid rgba(255, 171, 0, 0.25);
+                border-radius: 8px;
             }
         }
+    }
+}
+
+/* Mobile: render datepicker as bottom sheet for small viewports */
+@media (max-width: 640px) {
+    .datepicker-overlay {
+        align-items: flex-end;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .datepicker-modal {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: 60vh;
+        border-radius: 12px 12px 0 0;
+        margin: 0;
+        overflow: auto;
+    }
+
+    .datepicker-header {
+        padding: 16px;
+    }
+}
+
+.date-picker-button[aria-expanded="true"] {
+    background: var(--accent-amber);
+    color: #000;
+    border-color: var(--accent-amber);
+    box-shadow: 0 4px 12px var(--accent-amber-glow);
+
+    svg {
+        color: #000;
     }
 }

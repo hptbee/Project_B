@@ -9,7 +9,7 @@ import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
 import { OfflineQueue } from '@/shared/services/offline/offlineQueue'
-import { Logger } from '@/shared/services/api/logger'
+import { Logger } from '@thecoffeecream/ui-shared'
 
 /**
  * Main application content with route and global effect logic
@@ -23,12 +23,15 @@ function AppContent() {
         const handleSync = async () => {
             if (!navigator.onLine) return
 
+            // Check if we have a token before trying to sync
+            if (!localStorage.getItem('auth_token')) return
+
             const queueItems = OfflineQueue.getQueue()
             if (queueItems.length === 0) return
 
             Logger.info(`[NETWORK] Online - Syncing ${queueItems.length} items from queue...`)
             await OfflineQueue.processQueue(async (orderData) => {
-                const { apiFetch } = await import('@/shared/services/api/client')
+                const { apiFetch } = await import('@thecoffeecream/ui-shared')
                 return apiFetch('/Orders', {
                     method: 'POST',
                     body: JSON.stringify(orderData)

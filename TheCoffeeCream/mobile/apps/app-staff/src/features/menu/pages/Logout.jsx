@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/shared/contexts/AuthContext'
+import { useAuth } from '@thecoffeecream/ui-shared'
 
 export default function Logout() {
     const { logout } = useAuth()

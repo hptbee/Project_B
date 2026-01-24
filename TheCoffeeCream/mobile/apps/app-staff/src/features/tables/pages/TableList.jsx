@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/shared/contexts/CartContext'
-import { useMenu } from '@/shared/contexts/UIContext'
+import { useMenu, Badge, IconChevron, Icon } from '@thecoffeecream/ui-shared'
 import { calculateCartTotal } from '@/shared/utils/calculations'
 import { formatPrice, formatTime } from '@/shared/utils/formatters'
-import Badge from '@/shared/components/ui/Badge'
-import Icon from '@/shared/components/ui/Icon'
 import './TableList.scss'
 
 export default function TableList() {
@@ -37,12 +35,13 @@ export default function TableList() {
         const tableCart = cart.tables[t.id] || { items: [] }
         const amount = calculateCartTotal(tableCart.items)
         const active = tableCart.items.length > 0
+        const itemsCount = (tableCart.items || []).reduce((sum, it) => sum + (it.qty ?? it.quantity ?? 1), 0)
         return {
             ...t,
             amount,
             active,
             createdAt: tableCart.createdAt,
-            itemsCount: tableCart.items.length,
+            itemsCount,
             status: tableCart.status || 'DRAFT'
         }
     })
@@ -60,7 +59,7 @@ export default function TableList() {
                 <button className="menu" onClick={() => menu.toggle()} aria-label="Menu">
                     <Icon name="menu" size={24} color="var(--text-primary)" />
                 </button>
-                <h2>Thế giới cà phê</h2>
+                <h2>An Thái Cà Phê</h2>
             </header>
 
             <div className="home-tabs">
@@ -75,9 +74,7 @@ export default function TableList() {
                         <div className="card-title">
                             {t.type === 'takeaway' && <span className="takeaway-icon">🛍️</span>}
                             {t.name}
-                            {t.active && t.status === 'DRAFT' && (
-                                <Badge variant="danger" size="sm" pill={false}>DRAFT</Badge>
-                            )}
+                            {t.active && <Badge variant="info" size="sm">{t.itemsCount} món</Badge>}
                         </div>
                         {t.active && (
                             <div className="card-info">

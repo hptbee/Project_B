@@ -1,11 +1,9 @@
 import React, { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useCartDispatch, useTableCart } from '@/shared/contexts/CartContext'
-import { useToast } from '@/shared/contexts/UIContext'
 import { useProducts } from '@/shared/contexts/ProductContext'
+import { Icon, useToast, IconChevron } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@/shared/utils/formatters'
-import Icon from '@/shared/components/ui/Icon'
-import IconChevron from '@/shared/components/ui/IconChevron'
 import './ProductDetail.scss'
 
 export default function ProductDetail() {

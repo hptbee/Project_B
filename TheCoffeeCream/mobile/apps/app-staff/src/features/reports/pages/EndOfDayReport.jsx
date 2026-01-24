@@ -1,4 +1,13 @@
 import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
+import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useRef } from 'react'
+import { LoadingSpinner } from '@thecoffeecream/ui-shared'
+import { api } from '@/shared/services/api'
+import { apiFetch } from '@thecoffeecream/ui-shared'
+import { IconChevron } from '@thecoffeecream/ui-shared'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import './EndOfDayReport.scss'
 
 export default function EndOfDayReport() {
     const navigate = useNavigate()
@@ -13,6 +22,12 @@ export default function EndOfDayReport() {
         const day = String(today.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
     })
+    const [loadingProducts, setLoadingProducts] = useState(false)
+    const [productSales, setProductSales] = useState([])
+    const [showDatePicker, setShowDatePicker] = useState(false)
+    const dateButtonRef = useRef(null)
+    const modalRef = useRef(null)
+    const closeBtnRef = useRef(null)
 
     useEffect(() => {
         const fetchReport = async () => {
@@ -54,8 +69,7 @@ export default function EndOfDayReport() {
                 const endDate = new Date(selectedDate)
                 endDate.setHours(23, 59, 59, 999)
 
-                const response = await fetch(`/api/Reports/products?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
-                const data = await response.json()
+                const data = await apiFetch(`/Reports/products?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`)
 
                 const sorted = (data || []).sort((a, b) => (b.revenue || 0) - (a.revenue || 0))
                 setProductSales(sorted)
@@ -68,6 +82,44 @@ export default function EndOfDayReport() {
         }
         fetchProductSales()
     }, [selectedTab, selectedDate])
+
+    useEffect(() => {
+        if (!showDatePicker) return
+
+        const prevActive = document.activeElement
+        // focus first meaningful control
+        setTimeout(() => closeBtnRef.current?.focus(), 0)
+
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                setShowDatePicker(false)
+                return
+            }
+
+            if (e.key === 'Tab') {
+                const container = modalRef.current
+                if (!container) return
+                const focusable = container.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+                if (!focusable || focusable.length === 0) return
+                const first = focusable[0]
+                const last = focusable[focusable.length - 1]
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault()
+                    last.focus()
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault()
+                    first.focus()
+                }
+            }
+        }
+
+        document.addEventListener('keydown', onKey)
+        return () => {
+            document.removeEventListener('keydown', onKey)
+            // return focus
+            try { prevActive?.focus?.() } catch { }
+        }
+    }, [showDatePicker])
 
     if (loading && !report) return <LoadingSpinner fullScreen message="Đang tải báo cáo..." />
 
@@ -100,8 +152,11 @@ export default function EndOfDayReport() {
                     </button>
                 </div>
                 <button
+                    ref={dateButtonRef}
                     className="date-picker-button"
                     onClick={() => setShowDatePicker(true)}
+                    aria-haspopup="dialog"
+                    aria-expanded={showDatePicker}
                 >
                     {(() => {
                         const date = new Date(selectedDate)
@@ -109,7 +164,7 @@ export default function EndOfDayReport() {
                         const month = date.getMonth() + 1
                         const year = date.getFullYear()
                         return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`
-                    })()} ▼
+                    })()}
                 </button>
             </div>
 
@@ -200,10 +255,10 @@ export default function EndOfDayReport() {
 
             {showDatePicker && (
                 <div className="datepicker-overlay" onClick={() => setShowDatePicker(false)}>
-                    <div className="datepicker-modal" onClick={e => e.stopPropagation()}>
+                    <div ref={modalRef} className="datepicker-modal" onClick={e => e.stopPropagation()}>
                         <div className="datepicker-header">
                             <h3>Chọn thời gian</h3>
-                            <button onClick={() => setShowDatePicker(false)}>✕</button>
+                            <button ref={closeBtnRef} onClick={() => setShowDatePicker(false)} aria-label="Đóng">✕</button>
                         </div>
                         <DatePicker
                             selected={new Date(selectedDate)}
@@ -225,6 +280,8 @@ export default function EndOfDayReport() {
                     </div>
                 </div>
             )}
+
+
         </div>
     )
 }

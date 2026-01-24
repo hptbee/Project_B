@@ -1,0 +1,10 @@
+.icon-chevron {
+    display: inline-block;
+    vertical-align: middle;
+    color: currentColor;
+    transition: transform var(--trans-smooth, 0.3s ease);
+}
+
+.icon-chevron--flip {
+    transform: scaleX(-1);
+}

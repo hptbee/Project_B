@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@/shared/contexts/AuthContext'
+import { useAuth } from '@thecoffeecream/ui-shared'
 import logo from '@/assets/icons/logo.png'
 import './Login.scss'
 

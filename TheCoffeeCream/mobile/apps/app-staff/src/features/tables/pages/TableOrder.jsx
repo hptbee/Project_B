@@ -5,12 +5,7 @@ import useAutoSave from '@/shared/hooks/useAutoSave'
 import { calculateCartTotal } from '@/shared/utils/calculations'
 import { formatPrice } from '@/shared/utils/formatters'
 import { api } from '@/shared/services/api'
-import Fab from '@/shared/components/ui/Fab'
-import Icon from '@/shared/components/ui/Icon'
-import ConfirmModal from '@/shared/components/ui/ConfirmModal'
-import LoadingSpinner from '@/shared/components/ui/LoadingSpinner'
-import IconChevron from '@/shared/components/ui/IconChevron'
-import Badge from '@/shared/components/ui/Badge'
+import { Fab, Icon, ConfirmModal, LoadingSpinner, IconChevron, Badge } from '@thecoffeecream/ui-shared'
 import './TableOrder.scss'
 
 export default function TableOrder() {
@@ -140,9 +135,6 @@ export default function TableOrder() {
                 <button onClick={openOrderNote} className="badge-note">
                     ✎ {tableCart.note || 'Ghi chú'}
                 </button>
-                <Badge variant={tableCart.status === 'SUCCESS' ? 'success' : 'warning'}>
-                    {tableCart.status || 'DRAFT'}
-                </Badge>
             </div>
 
             <div className="list order-item-list">
@@ -194,7 +186,7 @@ export default function TableOrder() {
             <div className="order-footer">
                 <div className="total-row">
                     <div className="label">
-                        Tổng tiền <span className="count-badge">{tableCart.items.length}</span>
+                        Tổng tiền <span className="count-badge">{(tableCart.items || []).reduce((s, it) => s + (it.qty ?? it.quantity ?? 1), 0)}</span>
                     </div>
                     <div className="amount">
                         {formatPrice(total, true)}

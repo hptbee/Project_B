@@ -1,4 +1,4 @@
-import { apiFetch } from './client'
+import { apiFetch } from '@thecoffeecream/ui-shared'
 
 /**
  * Products API
