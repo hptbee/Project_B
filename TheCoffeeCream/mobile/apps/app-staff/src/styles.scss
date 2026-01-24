@@ -1,5 +1,5 @@
-@import './styles/variables.scss';
-@import './styles/components.scss';
+@use './styles/variables' as *;
+@use './styles/components';
 
 * {
     box-sizing: border-box;

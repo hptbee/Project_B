@@ -94,4 +94,6 @@ cd android
 .\gradlew assembleDebug
 ```
 
-The APK will be generated at: `mobile\apps\app-staff\android\app\build\outputs\apk\debug\app-debug.apk`
+The APK will be generated at: `mobile\apps\app-staff\android\app\build\outputs\apk\debug\`.
+
+**Note:** The APK filename includes a timestamp to prevent file locking issues (e.g., `TheCoffeeCream-Staff-1.0-20240124182253.apk`).
