@@ -1,40 +1,54 @@
 @use '../../../styles/variables' as *;
 
 .orders-list {
-    padding: 12px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background: #f8f9fa;
-    min-height: calc(100vh - 64px);
+    gap: 16px;
+    background: var(--bg-primary);
+    min-height: calc(100vh - 84px);
 }
 
 .order-history-card {
-    background: $bg-white;
-    border-radius: $radius-lg;
-    padding: 16px;
-    border: 1px solid $border-color;
-    box-shadow: $shadow-sm;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: 20px;
     cursor: pointer;
-    transition: transform 0.1s;
+    transition: var(--trans-smooth);
+    animation: fadeInUp 0.4s ease backwards;
+
+    @for $i from 1 through 10 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.05}s;
+        }
+    }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.97);
+        border-color: var(--border-active);
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .order-head {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
 
         .order-id {
-            font-weight: 700;
-            color: $text-main;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-size: 16px;
         }
 
         .order-time {
             font-size: 13px;
-            color: $text-light;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--bg-secondary);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
         }
     }
 
@@ -46,58 +60,71 @@
         .order-info {
             .order-type {
                 font-size: 14px;
-                color: $text-muted;
+                font-weight: 600;
+                color: var(--text-secondary);
                 margin-bottom: 4px;
             }
 
             .order-items-count {
                 font-size: 13px;
-                color: $text-light;
+                font-weight: 500;
+                color: var(--text-muted);
             }
         }
 
         .order-total {
-            font-size: 18px;
-            font-weight: 700;
-            color: $primary-color;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--accent-amber);
         }
     }
 
     .order-status-line {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px dashed $border-light;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px dashed var(--border-glass);
         display: flex;
         justify-content: space-between;
         align-items: center;
 
         .payment-method {
             font-size: 12px;
-            color: $text-muted;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-badge {
             font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 900;
+            letter-spacing: 0.5px;
 
             &.success {
-                background: $success-bg;
-                color: $success-color;
+                background: rgba(76, 175, 80, 0.2);
+                color: #4caf50;
+                border: 1px solid rgba(76, 175, 80, 0.3);
             }
 
             &.draft {
-                background: $warning-bg;
-                color: $warning-color;
+                background: rgba(255, 171, 0, 0.2);
+                color: var(--accent-amber);
+                border: 1px solid rgba(255, 171, 0, 0.3);
             }
         }
     }
 }
 
 .empty-orders {
-    padding: 40px;
+    padding: 60px 40px;
     text-align: center;
-    color: $text-light;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    margin: 16px;
+    border: 1px solid var(--border-glass);
+    animation: fadeInUp 0.5s ease;
 }

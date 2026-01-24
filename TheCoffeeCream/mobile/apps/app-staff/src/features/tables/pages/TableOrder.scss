@@ -8,16 +8,17 @@
 }
 
 .badge-customer {
-    background: $primary-light;
-    color: $primary-color;
+    background: rgba($accent-amber, 0.1);
+    color: $accent-amber;
     padding: 4px 10px;
     border-radius: $radius-lg;
     font-size: 13px;
+    font-weight: 700;
 }
 
 .badge-note {
-    background: $warning-bg;
-    color: $warning-color;
+    background: rgba($accent-amber, 0.15);
+    color: $accent-amber;
     padding: 4px 10px;
     border-radius: $radius-lg;
     font-size: 13px;
@@ -25,6 +26,7 @@
     display: flex;
     align-items: center;
     gap: $spacing-xs;
+    border: 1px solid rgba($accent-amber, 0.2);
 }
 
 .badge-status {
@@ -32,78 +34,90 @@
     border-radius: $radius-lg;
     font-size: 13px;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 800;
 
     &.success {
-        background: $success-bg;
-        color: $success-color;
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
     }
 
     &.draft {
-        background: $warning-bg;
-        color: $warning-color;
+        background: rgba($accent-amber, 0.2);
+        color: $accent-amber;
     }
 }
 
 .order-item-list {
-    padding-bottom: 200px; // Enough space for footer (120px) + FAB
+    padding: 16px 16px 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .order-item {
-    padding: 16px 12px;
-    border-bottom: 1px solid $border-light;
+    padding: 16px;
+    background: $bg-card;
+    backdrop-filter: $glass-blur;
+    border: $glass-border;
+    border-radius: $radius-xl;
     display: flex;
     gap: $spacing-md;
+    animation: fadeInUp 0.4s ease backwards;
 
-    .thumb-container {
-        flex-shrink: 0;
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.05}s;
+        }
     }
 
     .item-content {
         flex: 1;
 
         .item-title {
-            font-weight: 600;
+            font-weight: 800;
+            font-size: 16px;
+            color: $text-primary;
             margin-bottom: 4px;
         }
 
         .item-toppings {
-            font-size: 13px;
-            color: $text-muted;
-            margin-bottom: 2px;
+            font-size: 12px;
+            color: $text-secondary;
+            margin-bottom: 6px;
         }
 
         .item-note-trigger {
             display: inline-block;
-            font-size: 12px;
-            margin-bottom: 6px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: $radius-sm;
+            transition: $trans-fast;
 
             &.has-note {
-                background: $warning-bg;
-                color: $warning-color;
-                font-weight: 500;
-                font-style: normal;
+                background: rgba($accent-amber, 0.2);
+                color: $accent-amber;
+                border: 1px solid rgba($accent-amber, 0.3);
             }
 
             &.no-note {
-                background: #f5f5f5;
+                background: $bg-secondary;
                 color: $text-muted;
-                border: 1px dashed $border-color;
+                border: 1px dashed var(--border-glass);
             }
 
             &:active {
-                opacity: 0.7;
-                transform: scale(0.98);
+                transform: scale(0.95);
             }
         }
 
         .item-price {
-            color: $text-main;
-            font-weight: 500;
+            display: block;
+            color: $accent-amber;
+            font-weight: 900;
+            font-size: 15px;
+            margin-top: 4px;
         }
     }
 
@@ -111,22 +125,23 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: $spacing-sm;
+        justify-content: space-between;
 
         .remove-btn {
-            background: $danger-bg;
-            border: none;
+            background: rgba($accent-red, 0.15);
+            border: 1px solid rgba($accent-red, 0.2);
+            color: $accent-red;
             width: 32px;
             height: 32px;
-            border-radius: $radius-sm;
+            border-radius: $radius-md;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.1s;
+            transition: $trans-fast;
 
             &:active {
-                opacity: 0.7;
+                transform: scale(0.9);
             }
         }
     }
@@ -135,23 +150,31 @@
 .qty-control {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    border: 1px solid $border-color;
-    border-radius: $radius-xl;
-    padding: 4px 8px;
+    gap: 12px;
+    background: $bg-secondary;
+    border: $glass-border;
+    border-radius: $radius-full;
+    padding: 4px 12px;
 
     button {
         background: none;
         border: none;
         font-size: 18px;
+        color: $text-primary;
         cursor: pointer;
-        padding: 0 4px;
+        padding: 4px;
+
+        &:active {
+            transform: scale(1.2);
+        }
     }
 
     span {
-        min-width: 20px;
+        min-width: 24px;
         text-align: center;
-        font-weight: 600;
+        font-weight: 900;
+        font-size: 15px;
+        color: $accent-amber;
     }
 }
 
@@ -160,13 +183,15 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: $bg-white;
-    border-top: 1px solid $border-color;
-    padding: 12px 16px;
+    background: var(--bg-glass);
+    backdrop-filter: $glass-blur;
+    border-top: $glass-border;
+    padding: 20px 16px 24px;
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
-    z-index: 10;
+    gap: 16px;
+    z-index: 100;
+    box-shadow: $glass-shadow;
 
     .total-row {
         display: flex;
@@ -174,160 +199,170 @@
         align-items: center;
 
         .label {
-            font-size: 14px;
-            color: $text-muted;
+            font-size: 13px;
+            font-weight: 800;
+            color: $text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .count-badge {
-            background: $primary-color;
-            color: $text-white;
-            padding: 2px 8px;
-            border-radius: 10px;
+            background: $bg-secondary;
+            color: $accent-amber;
+            padding: 2px 10px;
+            border-radius: $radius-full;
             font-size: 12px;
-            margin-left: 6px;
+            font-weight: 800;
+            border: $glass-border;
+            margin-left: 8px;
         }
 
         .amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: $primary-color;
+            font-size: 22px;
+            font-weight: 900;
+            color: $accent-amber;
         }
     }
 
     .footer-btns {
         display: flex;
-        gap: $spacing-sm;
+        gap: 12px;
 
         button {
             flex: 1;
-            padding: 12px;
-            border-radius: $radius-md;
-            font-weight: 600;
+            padding: 16px;
+            border-radius: $radius-lg;
+            font-weight: 900;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
+            transition: $trans-bounce;
+            border: none;
         }
 
         .btn-save-draft {
-            background: $bg-white;
-            border: 1px solid $primary-color;
-            color: $primary-color;
+            background: $bg-secondary;
+            color: $text-primary;
+            border: $glass-border;
         }
 
         .btn-checkout {
-            background: $primary-color;
-            border: none;
-            color: $text-white;
+            background: $accent-amber;
+            color: #000;
+            box-shadow: 0 10px 20px $accent-amber-glow;
         }
     }
 }
 
-// Modal Styles (Refined to match ConfirmModal)
+// Modal Styles - Premium Redesign
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.2s ease;
+    padding: 24px;
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-container {
-    background: $bg-white;
-    border-radius: $radius-lg;
+    background: $bg-card;
+    backdrop-filter: blur(30px);
+    border: $glass-border;
+    border-radius: $radius-xl;
     width: 100%;
     max-width: 400px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    animation: scaleUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: $glass-shadow;
+    animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     .modal-header {
-        padding: 16px 20px;
+        padding: 20px 24px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid $border-light;
+        border-bottom: 1px solid var(--border-glass);
 
         .modal-title {
             font-size: 18px;
-            font-weight: 700;
-            color: $text-main;
+            font-weight: 800;
+            color: $text-primary;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .close-btn {
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
             color: $text-muted;
+            transition: $trans-fast;
 
             &:hover {
-                color: $text-main;
+                color: $text-primary;
             }
         }
     }
 
     .modal-body {
-        padding: 0 20px 20px;
+        padding: 24px;
 
         textarea {
             width: 100%;
-            min-height: 120px;
-            padding: 12px;
-            border: 1.5px solid #ddd;
-            border-radius: $radius-sm;
+            min-height: 140px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1.5px solid var(--border-glass);
+            border-radius: $radius-lg;
+            color: $text-primary;
             outline: none;
-            font-size: 15px;
+            font-size: 16px;
             font-family: inherit;
             resize: none;
-            background: #fafafa;
-            transition: all 0.2s;
-            display: block; // Prevent any inline spacing
+            transition: $trans-fast;
 
             &:focus {
-                border-color: $primary-color;
-                background: $bg-white;
-                box-shadow: 0 0 0 3px rgba(47, 107, 216, 0.1);
+                border-color: $accent-amber;
+                background: rgba(255, 255, 255, 0.05);
+                box-shadow: 0 0 0 4px rgba($accent-amber, 0.1);
             }
         }
     }
 
     .modal-footer {
-        padding: 12px 20px;
+        padding: 16px 24px 24px;
         display: flex;
         gap: 12px;
-        border-top: 1px solid $border-light;
-        background: #fafafa;
+        background: transparent;
 
         button {
             flex: 1;
-            padding: 12px;
-            border-radius: $radius-sm;
+            padding: 14px;
+            border-radius: $radius-md;
             border: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 14px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: $trans-fast;
         }
 
         .btn-cancel {
-            background: #e0e0e0;
-            color: $text-main;
-
-            &:active {
-                background: #d0d0d0;
-            }
+            background: $bg-secondary;
+            color: $text-primary;
+            border: $glass-border;
         }
 
         .btn-confirm {
-            background: $primary-color;
-            color: $text-white;
-
-            &:active {
-                opacity: 0.9;
-            }
+            background: $accent-amber;
+            color: #000;
+            box-shadow: 0 8px 16px $accent-amber-glow;
         }
     }
 }

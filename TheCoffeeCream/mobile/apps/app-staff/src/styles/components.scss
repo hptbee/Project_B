@@ -1,69 +1,116 @@
 @use './variables' as *;
 
-.product-row-clickable {
-    cursor: pointer;
-}
+/* Common Components for Premium Dark Mode */
 
-.product-card-actions {
+.product-row {
     display: flex;
-    gap: $spacing-sm;
     align-items: center;
+    padding: 16px;
+    background: $bg-card;
+    backdrop-filter: $glass-blur;
+    border: $glass-border;
+    border-radius: $radius-lg;
+    margin-bottom: 12px;
+    transition: $trans-smooth;
+    text-decoration: none;
+    color: $text-primary;
+    animation: fadeInUp 0.4s ease backwards;
+
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.05}s;
+        }
+    }
+
+    &:active {
+        transform: scale(0.98);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: $border-active;
+    }
+
+    &.clickable {
+        cursor: pointer;
+    }
 }
 
-.icon-placeholder {
-    display: inline-block;
-}
-
-.side-link-icon {
-    display: inline-flex;
-    width: 28px;
+.thumb-small {
+    width: 64px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: $radius-md;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-right: $spacing-sm;
+    color: $text-muted;
+    font-size: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.toast-check-icon {
-    margin-right: $spacing-sm;
+.meta {
+    flex: 1;
+
+    .title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: $text-primary;
+    }
+
+    .price {
+        font-size: 14px;
+        font-weight: 800;
+        color: $accent-amber;
+    }
 }
 
 .fab {
     position: fixed;
     right: 20px;
     bottom: 110px;
-    width: 60px;
-    height: 60px;
-    background-color: #2f6bd8 !important;
-    color: #ffffff !important;
+    width: 64px;
+    height: 64px;
+    background: $accent-amber;
+    color: #000;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    font-weight: bold;
-    box-shadow: 0 6px 16px rgba(47, 107, 216, 0.5);
-    text-decoration: none;
-    z-index: 9999;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 28px;
+    box-shadow: 0 10px 25px rgba($accent-amber, 0.3);
     border: none;
-    outline: none;
+    z-index: 1000;
+    transition: $trans-bounce;
 
     &:active {
-        transform: scale(0.92);
-        box-shadow: 0 4px 8px rgba(47, 107, 216, 0.4);
+        transform: scale(0.9);
+        box-shadow: 0 5px 15px rgba($accent-amber, 0.2);
     }
 }
 
-// Sync button in side menu
-.sync-button {
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
+.add-btn {
+    width: 40px;
+    height: 40px;
+    background: $bg-secondary;
+    border: $glass-border;
+    border-radius: $radius-md;
+    color: $accent-amber;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: $trans-fast;
     cursor: pointer;
-    font-family: inherit;
 
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    &:active {
+        transform: scale(0.9);
+        background: rgba($accent-amber, 0.1);
     }
+}
+
+mark {
+    background: rgba($accent-amber, 0.2);
+    color: $accent-amber;
+    padding: 0 2px;
+    border-radius: 2px;
 }

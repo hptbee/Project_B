@@ -1,101 +1,126 @@
 @use '../../../styles/variables' as *;
 
-.home-header-actions {
-    margin-left: auto;
-    display: flex;
-    gap: $spacing-md;
-}
-
-.badge-draft {
-    font-size: 10px;
-    background: $warning-bg;
-    color: $warning-color;
-    padding: 1px 5px;
-    border-radius: 4px;
-    margin-left: 6px;
-    text-transform: uppercase;
-}
-
 .home-tabs {
     display: flex;
-    padding: 12px 16px;
-    gap: 8px;
-    background: #fff;
+    padding: 16px;
+    gap: 10px;
+    background: transparent;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .home-tab {
-    background: #f5f5f5;
-    color: $text-muted;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
+    background: $bg-secondary;
+    color: $text-secondary;
+    border: $glass-border;
+    padding: 10px 22px;
+    border-radius: $radius-full;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: $trans-fast;
     white-space: nowrap;
 
     &.active {
-        background-color: $primary-color !important;
-        color: #ffffff !important;
+        background: $accent-amber;
+        color: #000;
+        border-color: $accent-amber;
+        box-shadow: 0 0 15px $accent-amber-glow;
     }
 }
 
 .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 12px;
+    gap: 16px;
+    padding: 0 16px 16px;
 }
 
 .card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 18px;
-    border: 1px solid $border-color;
-    border-radius: $radius-lg;
-    background: #fff;
+    padding: 24px 20px;
+    background: $bg-card;
+    backdrop-filter: $glass-blur;
+    border: $glass-border;
+    border-radius: $radius-xl;
     text-decoration: none;
-    color: inherit;
-    min-height: 100px; // Enforce uniform height
-    transition: all 0.2s ease;
+    color: $text-primary;
+    min-height: 120px;
+    transition: $trans-smooth;
+    animation: fadeInUp 0.4s ease backwards;
+
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.05}s;
+        }
+    }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.96);
+        background: rgba(255, 255, 255, 0.08);
     }
 
     &.active {
-        background: $primary-light;
-        border-color: $primary-color;
+        border-color: $border-active;
+        background: rgba($accent-amber, 0.08);
+        box-shadow: 0 0 20px rgba($accent-amber, 0.05);
+
+        .card-title {
+            color: $accent-amber;
+        }
     }
 }
 
 .card-title {
-    font-weight: 600;
-    font-size: 16px;
-    margin-bottom: 8px;
+    font-weight: 800;
+    font-size: 17px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
+    letter-spacing: 0.5px;
 }
 
 .card-info {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    margin-top: auto;
 }
 
 .card-time {
     font-size: 13px;
-    color: $text-light;
+    font-weight: 600;
+    color: $text-secondary;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 10px;
+    border-radius: $radius-sm;
 }
 
 .card-amount {
-    color: $primary-color;
-    font-weight: 700;
-    font-size: 15px;
+    color: $accent-amber;
+    font-weight: 900;
+    font-size: 16px;
+}
+
+.badge-draft {
+    font-size: 10px;
+    background: rgba($accent-red, 0.15);
+    color: $accent-red;
+    padding: 2px 8px;
+    border-radius: $radius-sm;
+    margin-left: auto;
+    text-transform: uppercase;
+    font-weight: 900;
+    border: 1px solid rgba($accent-red, 0.2);
 }
 
 .takeaway-icon {
-    margin-right: 6px;
+    margin-right: 8px;
+    font-size: 20px;
 }

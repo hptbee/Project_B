@@ -1,22 +1,31 @@
 @use '../../../styles/variables' as *;
 
-.product-list-back {
-    font-size: 22px;
+.product-list-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text-primary;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.product-list-title {
-    font-size: 18px;
-    font-weight: 600;
-    flex: 1;
-    margin: 0;
+.list {
+    padding: 0 16px 20px;
 }
 
 .empty-list-container {
-    padding: 24px;
+    padding: 60px 40px;
     text-align: center;
-    color: $text-light;
+    color: $text-secondary;
+    background: $bg-card;
+    border-radius: $radius-xl;
+    margin: 16px;
+    border: $glass-border;
+    backdrop-filter: $glass-blur;
+    animation: fadeInUp 0.4s ease;
 
     small {
-        display: block; // Added for better spacing if needed
+        display: block;
+        margin-top: 8px;
+        opacity: 0.6;
     }
 }

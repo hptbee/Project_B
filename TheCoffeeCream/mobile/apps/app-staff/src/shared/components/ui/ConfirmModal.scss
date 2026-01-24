@@ -7,40 +7,46 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    padding: 20px;
-    animation: fadeIn 0.2s ease;
+    padding: 24px;
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-container {
-    background: $bg-white;
-    border-radius: $radius-lg;
+    background: var(--bg-card);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    animation: scaleUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--glass-shadow);
+    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
 
     .modal-header {
-        padding: 16px 20px;
-        border-bottom: 1px solid $border-light;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-glass);
 
         .modal-title {
             font-size: 18px;
-            font-weight: 700;
-            color: $text-main;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     }
 
     .modal-body {
-        padding: 20px;
+        padding: 24px;
         font-size: 15px;
-        color: $text-muted;
-        line-height: 1.5;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        font-weight: 500;
 
         p {
             margin: 0;
@@ -48,46 +54,50 @@
     }
 
     .modal-footer {
-        padding: 12px 20px;
+        padding: 16px 24px 24px;
         display: flex;
         justify-content: flex-end;
         gap: 12px;
-        background: #fafafa;
-        border-top: 1px solid $border-light;
+        background: transparent;
+        border-top: none;
 
         button {
-            padding: 10px 20px;
-            border-radius: $radius-sm;
-            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 800;
             font-size: 14px;
             cursor: pointer;
             border: none;
-            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--trans-fast);
         }
 
         .btn-secondary {
-            background: #e0e0e0;
-            color: $text-main;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
 
             &:active {
-                background: #d0d0d0;
+                transform: scale(0.95);
+                background: rgba(255, 255, 255, 0.1);
             }
         }
 
         .btn-primary {
-            background: $primary-color;
-            color: $text-white;
+            background: var(--accent-amber);
+            color: #000;
+            box-shadow: 0 5px 15px var(--accent-amber-glow);
 
             &:active {
-                opacity: 0.9;
+                transform: scale(0.95);
+                filter: brightness(0.9);
             }
 
             &.danger {
-                background: $danger-color;
-
-                &:active {
-                    background: color.adjust($danger-color, $lightness: -10%);
-                }
+                background: var(--accent-red);
+                color: #fff;
+                box-shadow: 0 5px 15px rgba(255, 82, 82, 0.3);
             }
         }
     }
@@ -105,7 +115,7 @@
 
 @keyframes scaleUp {
     from {
-        transform: scale(0.9);
+        transform: scale(0.95);
         opacity: 0;
     }
 

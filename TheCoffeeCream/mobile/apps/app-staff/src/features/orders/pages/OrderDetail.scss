@@ -2,42 +2,47 @@
 
 .order-detail-container {
     padding: 16px;
-    background: #f8f9fa;
-    min-height: calc(100vh - 64px);
+    background: var(--bg-primary);
+    min-height: calc(100vh - 84px);
 }
 
 .receipt-card {
-    background: $bg-white;
-    border-radius: $radius-lg;
-    padding: 20px;
-    border: 1px solid $border-color;
-    box-shadow: $shadow-sm;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    box-shadow: var(--glass-shadow);
     position: relative;
+    animation: scaleUp 0.4s ease;
 
     .receipt-header {
         text-align: center;
-        margin-bottom: 20px;
-        padding-bottom: 20px;
-        border-bottom: 1px dashed $border-light;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px dashed var(--border-glass);
 
         .receipt-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: $text-main;
-            margin-bottom: 4px;
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .receipt-subtitle {
             font-size: 13px;
-            color: $text-muted;
+            font-weight: 600;
+            color: var(--text-muted);
         }
     }
 
     .info-list {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-bottom: 20px;
+        gap: 12px;
+        margin-bottom: 24px;
 
         .info-row {
             display: flex;
@@ -45,30 +50,32 @@
             font-size: 14px;
 
             .label {
-                color: $text-muted;
+                color: var(--text-secondary);
+                font-weight: 700;
             }
 
             .value {
-                font-weight: 600;
-                color: $text-main;
+                font-weight: 800;
+                color: var(--text-primary);
             }
         }
     }
 
     .items-section {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
 
         .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: $text-muted;
+            font-size: 12px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
         .order-item-row {
-            padding: 10px 0;
-            border-bottom: 1px solid $border-light;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-glass);
 
             &:last-child {
                 border-bottom: none;
@@ -77,35 +84,40 @@
             .item-main {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 4px;
+                margin-bottom: 6px;
 
                 .item-name {
-                    font-weight: 600;
-                    color: $text-main;
+                    font-weight: 800;
+                    color: var(--text-primary);
+                    font-size: 15px;
                 }
 
                 .item-total {
-                    font-weight: 600;
+                    font-weight: 900;
+                    color: var(--accent-amber);
                 }
             }
 
             .item-meta {
                 font-size: 12px;
-                color: $text-light;
+                font-weight: 600;
+                color: var(--text-muted);
 
                 .toppings {
-                    font-style: italic;
+                    font-style: normal;
+                    display: block;
+                    margin-top: 2px;
                 }
             }
         }
     }
 
     .payment-summary {
-        padding-top: 16px;
-        border-top: 2px solid $text-main;
+        padding-top: 20px;
+        border-top: 2px solid var(--text-primary);
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
 
         .summary-row {
             display: flex;
@@ -113,20 +125,23 @@
             font-size: 15px;
 
             &.grand-total {
-                margin-top: 8px;
-                padding-top: 8px;
-                border-top: 1px solid $border-light;
-                font-size: 18px;
-                font-weight: 800;
-                color: $primary-color;
+                margin-top: 12px;
+                padding: 16px;
+                background: rgba(255, 171, 0, 0.08);
+                border: 1px solid var(--border-active);
+                border-radius: var(--radius-md);
+                font-size: 20px;
+                font-weight: 900;
+                color: var(--accent-amber);
             }
 
             .label {
-                color: $text-muted;
+                color: var(--text-secondary);
+                font-weight: 700;
             }
 
             .val {
-                font-weight: 600;
+                font-weight: 800;
             }
         }
     }

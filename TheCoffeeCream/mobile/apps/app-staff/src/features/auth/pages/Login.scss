@@ -1,12 +1,14 @@
+@use '../../../styles/variables' as *;
+
 .login-page {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0f0f0f;
+    background: var(--bg-primary);
     position: relative;
     overflow: hidden;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-main);
 
     .login-container {
         z-index: 2;
@@ -16,13 +18,13 @@
     }
 
     .login-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 28px;
+        background: var(--bg-card);
+        backdrop-filter: var(--glass-blur);
+        border: 1px solid var(--border-glass);
+        border-radius: var(--radius-xl);
         padding: 40px 30px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: var(--glass-shadow);
+        animation: slideUp 0.6s var(--trans-smooth);
     }
 
     .login-header {
@@ -30,95 +32,101 @@
         margin-bottom: 40px;
 
         .logo-placeholder {
-            font-size: 48px;
-            margin-bottom: 15px;
+            font-size: 54px;
+            margin-bottom: 16px;
             display: inline-block;
-            filter: drop-shadow(0 0 10px rgba(255, 171, 0, 0.3));
+            filter: drop-shadow(0 0 15px var(--accent-amber-glow));
         }
 
         h1 {
-            color: #fff;
-            font-size: 24px;
-            font-weight: 800;
+            color: var(--text-primary);
+            font-size: 26px;
+            font-weight: 900;
             letter-spacing: 2px;
             margin-bottom: 8px;
+            text-transform: uppercase;
         }
 
         p {
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
     }
 
     .login-form {
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
 
             label {
                 display: block;
-                color: rgba(255, 255, 255, 0.7);
-                font-size: 12px;
-                font-weight: 600;
+                color: var(--text-secondary);
+                font-size: 11px;
+                font-weight: 900;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: 1.5px;
                 margin-bottom: 8px;
                 padding-left: 4px;
             }
 
             input {
                 width: 100%;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                padding: 14px 16px;
-                color: #fff;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-glass);
+                border-radius: var(--radius-md);
+                padding: 16px;
+                color: var(--text-primary);
                 font-size: 16px;
-                transition: all 0.3s ease;
+                transition: var(--trans-fast);
+                font-weight: 600;
 
                 &:focus {
                     outline: none;
                     background: rgba(255, 255, 255, 0.08);
-                    border-color: #ffab00;
-                    box-shadow: 0 0 0 4px rgba(255, 171, 0, 0.1);
+                    border-color: var(--accent-amber);
+                    box-shadow: 0 0 0 5px var(--accent-amber-glow);
                 }
 
                 &::placeholder {
-                    color: rgba(255, 255, 255, 0.2);
+                    color: var(--text-muted);
+                    font-weight: 500;
                 }
             }
         }
     }
 
     .error-alert {
-        background: rgba(255, 82, 82, 0.1);
-        border: 1px solid rgba(255, 82, 82, 0.2);
-        color: #ff5252;
-        padding: 12px;
-        border-radius: 10px;
-        font-size: 13px;
+        background: rgba(255, 82, 82, 0.15);
+        border: 1px solid rgba(255, 82, 82, 0.3);
+        color: var(--accent-red);
+        padding: 14px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 700;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
         animation: shake 0.4s ease-in-out;
     }
 
     .login-btn {
         width: 100%;
-        background: #ffab00;
+        background: var(--accent-amber);
         color: #000;
         border: none;
-        border-radius: 14px;
-        padding: 16px;
-        font-size: 15px;
-        font-weight: 700;
+        border-radius: var(--radius-lg);
+        padding: 18px;
+        font-size: 16px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: var(--trans-bounce);
         margin-top: 10px;
 
         &:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(255, 171, 0, 0.4);
-            filter: brightness(1.1);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px var(--accent-amber-glow);
         }
 
         &:active:not(:disabled) {
@@ -126,8 +134,9 @@
         }
 
         &:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
+            box-shadow: none !important;
         }
 
         &.loading {
@@ -138,9 +147,9 @@
     }
 
     .spinner {
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(0, 0, 0, 0.1);
+        width: 22px;
+        height: 22px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
         border-top-color: #000;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
@@ -148,20 +157,22 @@
 
     .login-footer {
         text-align: center;
-        margin-top: 40px;
-        color: rgba(255, 255, 255, 0.3);
+        margin-top: 48px;
+        color: var(--text-muted);
         font-size: 12px;
+        font-weight: 600;
 
         p {
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         strong {
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
+            font-weight: 800;
         }
 
         .version {
-            opacity: 0.7;
+            opacity: 0.6;
         }
     }
 
@@ -178,32 +189,32 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.4;
-            animation: move 20s infinite alternate;
+            opacity: 0.35;
+            animation: move 25s infinite alternate;
         }
 
         .shape-1 {
-            width: 300px;
-            height: 300px;
-            background: #ffab00;
-            top: -50px;
-            left: -50px;
+            width: 350px;
+            height: 350px;
+            background: var(--accent-amber);
+            top: -100px;
+            left: -100px;
         }
 
         .shape-2 {
-            width: 400px;
-            height: 400px;
-            background: #ff5252;
-            bottom: -100px;
-            right: -100px;
+            width: 450px;
+            height: 450px;
+            background: var(--accent-red);
+            bottom: -150px;
+            right: -150px;
             animation-delay: -5s;
         }
 
         .shape-3 {
-            width: 250px;
-            height: 250px;
-            background: #448aff;
-            top: 40%;
+            width: 280px;
+            height: 280px;
+            background: var(--accent-blue);
+            top: 45%;
             right: 15%;
             animation-delay: -10s;
         }
@@ -213,7 +224,7 @@
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
 
     to {
@@ -236,11 +247,11 @@
     }
 
     25% {
-        transform: translateX(-5px);
+        transform: translateX(-6px);
     }
 
     75% {
-        transform: translateX(5px);
+        transform: translateX(6px);
     }
 }
 
@@ -250,6 +261,6 @@
     }
 
     to {
-        transform: translate(30px, 30px) scale(1.1);
+        transform: translate(50px, 40px) scale(1.15);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using TheCoffeeCream.Domain.Entities;
 using TheCoffeeCream.Application.Interfaces;
@@ -22,7 +23,7 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
 
             foreach (var row in rows)
             {
-                if (row.Count < 3) continue;
+                if (row.Length < 3) continue;
 
                 var rowUsername = row[2]?.ToString() ?? string.Empty;
                 if (string.Equals(rowUsername, username, StringComparison.OrdinalIgnoreCase))
@@ -41,7 +42,7 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
 
             foreach (var row in rows)
             {
-                if (row.Count < 1) continue;
+                if (row.Length < 1) continue;
 
                 var rowId = row[0]?.ToString() ?? string.Empty;
                 if (string.Equals(rowId, id, StringComparison.OrdinalIgnoreCase))

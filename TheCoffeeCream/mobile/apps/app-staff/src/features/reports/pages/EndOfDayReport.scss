@@ -4,10 +4,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    background: $bg-white;
-    border-bottom: 1px solid $border-light;
+    padding: 16px;
+    background: var(--bg-glass);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--border-glass);
     gap: $spacing-md;
+    position: sticky;
+    top: 0;
+    z-index: 50;
 }
 
 .report-tabs {
@@ -18,23 +22,27 @@
 
 .tab-button {
     flex: 1;
-    padding: 8px 16px;
-    background: #f5f5f5;
-    border: none;
-    border-radius: $radius-md;
-    font-weight: 600;
-    font-size: 14px;
-    color: $text-muted;
+    padding: 10px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--trans-fast);
 
     &.active {
-        background: $primary-color;
-        color: $text-white;
+        background: var(--accent-amber);
+        color: #000;
+        border-color: var(--accent-amber);
+        box-shadow: 0 4px 12px var(--accent-amber-glow);
     }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.96);
     }
 }
 
@@ -42,47 +50,36 @@
     position: relative;
 
     input[type="date"] {
-        padding: 8px 12px 8px 36px;
-        border: 1.5px solid $border-color;
-        border-radius: $radius-md;
-        font-size: 13px;
-        font-weight: 600;
-        color: $text-main;
+        padding: 10px 12px 10px 38px;
+        border: 1px solid var(--border-glass);
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
         outline: none;
         cursor: pointer;
-        background: $bg-white;
-        transition: all 0.2s;
-        min-width: 140px;
-
-        &:hover {
-            border-color: $primary-color;
-            box-shadow: 0 2px 8px rgba(47, 107, 216, 0.1);
-        }
+        background: var(--bg-secondary);
+        transition: var(--trans-fast);
+        min-width: 150px;
 
         &:focus {
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba(47, 107, 216, 0.1);
+            border-color: var(--accent-amber);
+            background: rgba(255, 171, 0, 0.05);
         }
 
-        // Custom calendar icon
         &::-webkit-calendar-picker-indicator {
             position: absolute;
             left: 10px;
             cursor: pointer;
+            filter: invert(1); // Dark mode visibility
             opacity: 0.6;
-            transition: opacity 0.2s;
-
-            &:hover {
-                opacity: 1;
-            }
         }
     }
 
-    // Add calendar icon using pseudo-element
     &::before {
         content: '📅';
         position: absolute;
-        left: 10px;
+        left: 12px;
         top: 50%;
         transform: translateY(-50%);
         font-size: 16px;
@@ -91,32 +88,86 @@
     }
 }
 
+.report-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg-primary);
+    min-height: calc(100vh - 84px);
+}
+
+.report-card {
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    animation: fadeInUp 0.4s ease backwards;
+
+    .card-title {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        letter-spacing: 1.5px;
+    }
+
+    .card-value {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--text-primary);
+
+        &.primary {
+            color: var(--accent-amber);
+        }
+    }
+
+    .card-subtext {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-top: 6px;
+    }
+}
+
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
 .product-sales-list {
-    background: $bg-white;
-    border-radius: $radius-lg;
+    background: var(--bg-card);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
     overflow: hidden;
-    margin: 16px;
+    margin: 8px 0;
 }
 
 .product-sales-header {
-    background: #f8f9fa;
-    padding: 12px 16px;
-    border-bottom: 2px solid $border-color;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-glass);
 
     .header-title {
-        font-size: 12px;
-        font-weight: 700;
-        color: $text-muted;
-        margin-bottom: 8px;
+        font-size: 11px;
+        font-weight: 900;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
     }
 
     .header-summary {
         display: grid;
         grid-template-columns: 1fr 80px 120px;
         gap: 12px;
-        font-weight: 700;
-        color: $text-main;
-        font-size: 14px;
+        font-weight: 800;
+        color: var(--text-primary);
+        font-size: 13px;
 
         span:nth-child(2),
         span:nth-child(3) {
@@ -125,254 +176,12 @@
     }
 }
 
-// DatePicker Styles
-.date-picker-button {
-    padding: 8px 16px;
-    background: $bg-white;
-    border: 1.5px solid $border-color;
-    border-radius: $radius-md;
-    font-size: 13px;
-    font-weight: 600;
-    color: $text-main;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-
-    &:hover {
-        border-color: $primary-color;
-    }
-
-    &:active {
-        transform: scale(0.98);
-    }
-}
-
-.datepicker-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.2s ease;
-}
-
-.datepicker-modal {
-    background: $bg-white;
-    border-radius: $radius-lg;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 16px;
-    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-
-    .datepicker-header {
-        background: $primary-color;
-        color: $text-white;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-
-        h3 {
-            margin: 0 0 8px 0;
-            font-size: 16px;
-            font-weight: 600;
-            opacity: 0.9;
-        }
-
-        button {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: $text-white;
-            cursor: pointer;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.9;
-
-            &:active {
-                opacity: 0.6;
-            }
-        }
-    }
-
-    .react-datepicker {
-        border: none;
-        width: 100%;
-        font-family: inherit;
-        background: $bg-white;
-
-        &__header {
-            background: $bg-white;
-            border-bottom: none;
-            padding: 16px 16px 8px;
-        }
-
-        &__current-month {
-            font-size: 16px;
-            font-weight: 700;
-            color: $text-main;
-            margin-bottom: 16px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        &__month-dropdown-container,
-        &__year-dropdown-container {
-            margin: 0 4px;
-        }
-
-        &__month-dropdown,
-        &__year-dropdown {
-            background: $bg-white;
-            border: 1.5px solid $border-color;
-            border-radius: $radius-md;
-            padding: 4px 8px;
-            font-size: 15px;
-            font-weight: 700;
-            color: $text-main;
-            cursor: pointer;
-
-            &:hover {
-                border-color: $primary-color;
-            }
-        }
-
-        &__month-select,
-        &__year-select {
-            background: $bg-white;
-            border: 1.5px solid $border-color;
-            border-radius: $radius-md;
-            padding: 6px 8px;
-            font-size: 15px;
-            font-weight: 700;
-            color: $text-main;
-            cursor: pointer;
-            outline: none;
-
-            &:hover,
-            &:focus {
-                border-color: $primary-color;
-            }
-        }
-
-        &__day-names {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 8px;
-        }
-
-        &__day-name {
-            color: $text-muted;
-            font-size: 13px;
-            font-weight: 600;
-            width: 40px;
-            line-height: 40px;
-        }
-
-        &__month {
-            margin: 0;
-            padding: 12px;
-        }
-
-        &__week {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        &__day {
-            width: 40px;
-            height: 40px;
-            line-height: 40px;
-            margin: 4px 0;
-            border-radius: 50%;
-            color: $text-main;
-            font-size: 14px;
-            font-weight: 500;
-
-            &:hover {
-                background: #f0f0f0;
-            }
-
-            &--selected {
-                background: $primary-color !important;
-                color: $text-white !important;
-                font-weight: 700;
-            }
-
-            &--keyboard-selected {
-                background: rgba(47, 107, 216, 0.1);
-            }
-
-            &--today {
-                font-weight: 700;
-                color: $primary-color;
-            }
-
-            &--disabled {
-                color: $text-light;
-                cursor: not-allowed;
-
-                &:hover {
-                    background: transparent;
-                }
-            }
-
-            &--outside-month {
-                color: $text-light;
-            }
-        }
-
-        &__navigation {
-            top: 16px;
-
-            &--previous {
-                left: 20px;
-            }
-
-            &--next {
-                right: 20px;
-            }
-
-            &-icon::before {
-                border-color: $text-main;
-                border-width: 2px 2px 0 0;
-                height: 8px;
-                width: 8px;
-            }
-        }
-    }
-}
-
-@keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
-}
-
 .product-item {
     display: grid;
     grid-template-columns: 1fr 80px 120px;
     gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid $border-light;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-glass);
     align-items: center;
 
     &:last-child {
@@ -381,84 +190,20 @@
 
     .product-name {
         font-size: 14px;
-        color: $text-main;
+        font-weight: 600;
+        color: var(--text-primary);
     }
 
     .product-quantity {
         text-align: right;
-        font-weight: 600;
-        color: $text-main;
+        font-weight: 800;
+        color: var(--text-secondary);
     }
 
     .product-revenue {
         text-align: right;
-        font-weight: 700;
-        color: $primary-color;
-    }
-}
-
-.report-container {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    background: #f8f9fa;
-    min-height: calc(100vh - 64px);
-}
-
-.report-card {
-    background: $bg-white;
-    border-radius: $radius-lg;
-    padding: 16px;
-    border: 1px solid $border-color;
-    box-shadow: $shadow-sm;
-
-    .card-title {
-        font-size: 14px;
-        color: $text-muted;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-        font-weight: 600;
-    }
-
-    .card-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: $text-main;
-
-        &.primary {
-            color: $primary-color;
-        }
-    }
-
-    .card-subtext {
-        font-size: 13px;
-        color: $text-light;
-        margin-top: 4px;
-    }
-}
-
-.report-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.clickable-card {
-    cursor: pointer;
-    transition: transform 0.1s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    &:active {
-        transform: scale(0.98);
-        background: #fafafa;
-    }
-
-    .arrow {
-        color: $text-light;
-        font-size: 18px;
+        font-weight: 900;
+        color: var(--accent-amber);
     }
 }
 
@@ -466,19 +211,103 @@
     margin-top: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 
     .row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         font-size: 15px;
 
         .label {
-            color: $text-muted;
+            color: var(--text-secondary);
+            font-weight: 700;
         }
 
         .val {
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+    }
+}
+
+.clickable-card {
+    cursor: pointer;
+    transition: var(--trans-smooth);
+
+    &:active {
+        transform: scale(0.98);
+        border-color: var(--border-active);
+        background: rgba(255, 171, 0, 0.05);
+    }
+
+    .arrow {
+        color: var(--accent-amber);
+        font-size: 20px;
+    }
+}
+
+// React Datepicker Dark Theme Overrides
+.datepicker-modal {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-glass);
+    overflow: hidden;
+
+    .datepicker-header {
+        background: var(--accent-amber);
+        color: #000;
+        padding: 24px;
+
+        h3 {
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        button {
+            color: #000;
+            font-weight: 900;
+        }
+    }
+
+    .react-datepicker {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        border: none;
+
+        &__header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        &__current-month {
+            color: var(--text-primary);
+            font-weight: 900;
+        }
+
+        &__day-name {
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        &__day {
+            color: var(--text-primary);
             font-weight: 600;
+
+            &:hover {
+                background: var(--bg-secondary);
+            }
+
+            &--selected {
+                background: var(--accent-amber) !important;
+                color: #000 !important;
+            }
+
+            &--today {
+                color: var(--accent-amber);
+                border: 1px solid var(--accent-amber);
+                border-radius: 50%;
+            }
         }
     }
 }

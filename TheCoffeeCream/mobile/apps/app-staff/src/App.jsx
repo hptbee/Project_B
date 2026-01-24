@@ -8,6 +8,7 @@ import { CartProvider } from '@/shared/contexts/CartContext'
 import { UIProvider } from '@/shared/contexts/UIContext'
 import { ProductProvider } from '@/shared/contexts/ProductContext'
 import { AuthProvider } from '@/shared/contexts/AuthContext'
+import { ThemeProvider } from '@/shared/contexts/ThemeContext'
 import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
@@ -80,16 +81,18 @@ function AppContent() {
     }, [navigate, location])
 
     return (
-        <AuthProvider>
-            <CartProvider>
-                <UIProvider>
-                    <ProductProvider>
-                        <SideMenu />
-                        <AppRoutes />
-                    </ProductProvider>
-                </UIProvider>
-            </CartProvider>
-        </AuthProvider>
+        <ThemeProvider>
+            <AuthProvider>
+                <CartProvider>
+                    <UIProvider>
+                        <ProductProvider>
+                            <SideMenu />
+                            <AppRoutes />
+                        </ProductProvider>
+                    </UIProvider>
+                </CartProvider>
+            </AuthProvider>
+        </ThemeProvider>
     )
 }
 
