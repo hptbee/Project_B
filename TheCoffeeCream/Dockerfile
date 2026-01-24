@@ -4,7 +4,7 @@ WORKDIR /src
 
 # copy everything into the build context and restore
 COPY . .
-RUN dotnet restore TheCoffeeCream.slnx
+RUN dotnet restore TheCoffeeCream/TheCoffeeCream.csproj
 
 # publish
 RUN dotnet publish TheCoffeeCream/TheCoffeeCream.csproj -c Release -o /app/publish
