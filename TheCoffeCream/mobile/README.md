@@ -1,4 +1,4 @@
-# TheCoffeCream Mobile
+# TheCoffeeCream Mobile
 
 Monorepo containing two Vite React apps and a shared UI package.
 

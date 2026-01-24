@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TheCoffeeCream.Application/TheCoffeeCream.Application.csproj" />
+  <Project Path="TheCoffeeCream.Domain/TheCoffeeCream.Domain.csproj" />
+  <Project Path="TheCoffeeCream/TheCoffeeCream.csproj" />
+</Solution>

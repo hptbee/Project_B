@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@thecoffecream/ui-shared'
+import { Button } from '@thecoffeecream/ui-shared'
 
 export default function App() {
     return (
