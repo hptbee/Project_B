@@ -1,0 +1,17 @@
+name: Keep Alive
+
+on:
+  schedule:
+    # Run every 14 minutes from 00:00 UTC (7:00 AM VN) to 14:59 UTC (21:59 PM VN)
+    # This covers 07:00 to 22:00 GMT+7
+    - cron: '*/14 0-14 * * *'
+  workflow_dispatch: # Allow manual run
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Health Check
+        run: |
+          # Replace with your actual Render URL
+          curl -I https://thecoffeecream-api.onrender.com/health || echo "Ping failed"

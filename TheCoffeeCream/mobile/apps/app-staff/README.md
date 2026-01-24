@@ -71,3 +71,27 @@ npm run build
 - **Orders**: Draft saving, auto-save, table management.
 - **Checkout**: Cash/Transfer/Combined payments with validation.
 - **UI**: Responsive SideMenu, Debounced Search, Optimized Lists.
+
+## 📱 Android Build
+
+To build the APK for Android, make sure you have the JDK 17 and Android SDK installed.
+
+**Prerequisites Environment Variables:**
+- `JAVA_HOME`: Path to JDK 17 (e.g., `C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot`)
+- `ANDROID_HOME`: Path to Android SDK (e.g., `C:\Users\NCPC\Android\Sdk`)
+
+**Build Commands:**
+
+```powershell
+# 1. Build web assets
+npm run build
+
+# 2. Sync Capacitor
+npx cap sync android
+
+# 3. Build APK
+cd android
+.\gradlew assembleDebug
+```
+
+The APK will be generated at: `mobile\apps\app-staff\android\app\build\outputs\apk\debug\app-debug.apk`
