@@ -1,83 +1,96 @@
-import React from 'react'
-import { BrowserRouter } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { BrowserRouter, useNavigate, useLocation } from 'react-router-dom'
+import { App as CapacitorApp } from '@capacitor/app'
+import { Dialog } from '@capacitor/dialog'
+
 import './styles.scss'
 import { CartProvider } from '@/shared/contexts/CartContext'
 import { UIProvider } from '@/shared/contexts/UIContext'
-import SideMenu from '@/shared/components/layout/SideMenu'
 import { ProductProvider } from '@/shared/contexts/ProductContext'
+import { AuthProvider } from '@/shared/contexts/AuthContext'
+import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
-import { App as CapacitorApp } from '@capacitor/app';
-import { Dialog } from '@capacitor/dialog';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
-import { OfflineQueue } from '@/shared/services/offline/offlineQueue';
-import { ordersApi } from '@/shared/services/api/orders';
-import { Logger } from '@/shared/services/api/logger';
+import { OfflineQueue } from '@/shared/services/offline/offlineQueue'
+import { Logger } from '@/shared/services/api/logger'
 
 function AppContent() {
-    const navigate = useNavigate();
-    const location = useLocation();
+    const navigate = useNavigate()
+    const location = useLocation()
 
     // Background Sync for Offline Orders
     useEffect(() => {
         const handleSync = async () => {
-            Logger.info('[NETWORK] Device is online. Attempting to sync offline queue...');
+            if (!navigator.onLine) return
+
+            const queueItems = OfflineQueue.getQueue()
+            if (queueItems.length === 0) return
+
+            Logger.info(`[NETWORK] Online - Syncing ${queueItems.length} items from queue...`)
             await OfflineQueue.processQueue(async (orderData) => {
-                // We use the original API service to send the order
-                // Note: We bypass the ordersApi.createOrder wrapper here to avoid 
-                // re-adding it to the queue if it fails again (it's already in the queue)
-                const { apiFetch } = await import('@/shared/services/api/client');
+                const { apiFetch } = await import('@/shared/services/api/client')
                 return apiFetch('/Orders', {
                     method: 'POST',
                     body: JSON.stringify(orderData)
-                });
-            });
-        };
-
-        window.addEventListener('online', handleSync);
-
-        // Initial check on mount
-        if (navigator.onLine) {
-            handleSync();
+                })
+            })
         }
 
-        return () => window.removeEventListener('online', handleSync);
-    }, []);
+        window.addEventListener('online', handleSync)
+        window.addEventListener('trigger-sync', handleSync)
 
-    useEffect(() => {
-        const backListener = CapacitorApp.addListener('backButton', async ({ canGoBack }) => {
-            if (location.pathname === '/' || location.pathname === '/home' || location.pathname === '/login') {
-                const { value } = await Dialog.confirm({
-                    title: 'Exit App',
-                    message: 'Are you sure you want to exit?',
-                    okButtonTitle: 'Exit',
-                    cancelButtonTitle: 'Cancel'
-                });
-
-                if (value) {
-                    CapacitorApp.exitApp();
-                }
-            } else {
-                navigate(-1);
+        const interval = setInterval(() => {
+            if (OfflineQueue.getQueue().length > 0) {
+                handleSync()
             }
-        });
+        }, 2 * 60 * 1000)
+
+        handleSync()
 
         return () => {
-            backListener.then(handler => handler.remove());
-        };
-    }, [navigate, location]);
+            window.removeEventListener('online', handleSync)
+            window.removeEventListener('trigger-sync', handleSync)
+            clearInterval(interval)
+        }
+    }, [])
+
+    // Capacitor Hardware Back Button
+    useEffect(() => {
+        const backListener = CapacitorApp.addListener('backButton', async () => {
+            const isRootPath = location.pathname === '/' || location.pathname === '/home' || location.pathname === '/login'
+            if (isRootPath) {
+                const { value } = await Dialog.confirm({
+                    title: 'Thoát ứng dụng',
+                    message: 'Bạn có chắc chắn muốn thoát?',
+                    okButtonTitle: 'Thoát',
+                    cancelButtonTitle: 'Hủy'
+                })
+
+                if (value) {
+                    CapacitorApp.exitApp()
+                }
+            } else {
+                navigate(-1)
+            }
+        })
+
+        return () => {
+            backListener.then(handler => handler.remove())
+        }
+    }, [navigate, location])
 
     return (
-        <CartProvider>
-            <UIProvider>
-                <ProductProvider>
-                    <SideMenu />
-                    <AppRoutes />
-                </ProductProvider>
-            </UIProvider>
-        </CartProvider>
-    );
+        <AuthProvider>
+            <CartProvider>
+                <UIProvider>
+                    <ProductProvider>
+                        <SideMenu />
+                        <AppRoutes />
+                    </ProductProvider>
+                </UIProvider>
+            </CartProvider>
+        </AuthProvider>
+    )
 }
 
 export default function App() {

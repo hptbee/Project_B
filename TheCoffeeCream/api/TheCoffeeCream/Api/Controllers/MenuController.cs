@@ -8,6 +8,7 @@ namespace TheCoffeeCream.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class MenuController : ControllerBase
     {
         private readonly ProductService _productService;

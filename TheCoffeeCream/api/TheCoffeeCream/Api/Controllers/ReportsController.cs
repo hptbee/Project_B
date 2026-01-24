@@ -7,6 +7,7 @@ namespace TheCoffeeCream.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class ReportsController : ControllerBase
     {
         private readonly IReportService _reportService;

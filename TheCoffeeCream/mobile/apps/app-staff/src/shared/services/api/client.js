@@ -35,10 +35,12 @@ async function apiFetch(url, options = {}, retries = API_CONFIG.MAX_RETRIES) {
     const isJsonRequest = method !== 'GET' && method !== 'HEAD';
 
     try {
+        const token = localStorage.getItem('auth_token');
         const fetchOptions = {
             ...options,
             headers: {
                 ...(isJsonRequest ? { 'Content-Type': 'application/json' } : {}),
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
                 ...options.headers
             }
         };

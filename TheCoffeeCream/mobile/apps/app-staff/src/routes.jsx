@@ -1,6 +1,9 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/shared/contexts/AuthContext'
 
+// Pages
+import Login from '@/features/auth/pages/Login'
 import TableList from '@/features/tables/pages/TableList'
 import ProductList from '@/features/products/pages/ProductList'
 import ProductDetail from '@/features/products/pages/ProductDetail'
@@ -21,28 +24,46 @@ import Support from '@/features/menu/pages/Support'
 import SyncData from '@/features/menu/pages/SyncData'
 import Terms from '@/features/menu/pages/Terms'
 
+/**
+ * ProtectedRoute component - redirects to /login if not authenticated
+ */
+function ProtectedRoute({ children }) {
+    const { isAuthenticated, loading } = useAuth()
+    const location = useLocation()
+
+    if (loading) return null
+
+    if (!isAuthenticated) {
+        return <Navigate to="/login" state={{ from: location }} replace />
+    }
+
+    return children
+}
+
 export default function AppRoutes() {
     return (
         <Routes>
-            <Route path="/" element={<TableList />} />
-            <Route path="/table/:tableId" element={<TableOrder />} />
-            <Route path="/checkout/:tableId" element={<Checkout />} />
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/sync" element={<SyncData />} />
-            <Route path="/kitchen" element={<KitchenNotifications />} />
-            <Route path="/requests" element={<PaymentRequests />} />
-            <Route path="/orders" element={<OrderHistory />} />
-            <Route path="/orders/:id" element={<OrderDetail />} />
-            <Route path="/receipts" element={<Receipts />} />
-            <Route path="/report" element={<EndOfDayReport />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/lang" element={<Language />} />
-            <Route path="/logout" element={<Logout />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route path="/" element={<ProtectedRoute><TableList /></ProtectedRoute>} />
+            <Route path="/table/:tableId" element={<ProtectedRoute><TableOrder /></ProtectedRoute>} />
+            <Route path="/checkout/:tableId" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="/products" element={<ProtectedRoute><ProductList /></ProtectedRoute>} />
+            <Route path="/products/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+            <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/sync" element={<ProtectedRoute><SyncData /></ProtectedRoute>} />
+            <Route path="/kitchen" element={<ProtectedRoute><KitchenNotifications /></ProtectedRoute>} />
+            <Route path="/requests" element={<ProtectedRoute><PaymentRequests /></ProtectedRoute>} />
+            <Route path="/orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+            <Route path="/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+            <Route path="/receipts" element={<ProtectedRoute><Receipts /></ProtectedRoute>} />
+            <Route path="/report" element={<ProtectedRoute><EndOfDayReport /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/help" element={<ProtectedRoute><Help /></ProtectedRoute>} />
+            <Route path="/terms" element={<ProtectedRoute><Terms /></ProtectedRoute>} />
+            <Route path="/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
+            <Route path="/lang" element={<ProtectedRoute><Language /></ProtectedRoute>} />
+            <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />
         </Routes>
     )
 }

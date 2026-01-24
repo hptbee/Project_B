@@ -11,6 +11,7 @@ namespace TheCoffeeCream.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly OrderService _orderService;

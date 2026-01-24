@@ -36,13 +36,41 @@ builder.Services.Configure<TheCoffeeCream.Shared.Middleware.ApiKeyOptions>(build
 // Bind GoogleSheets options from configuration
 builder.Services.Configure<TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetsOptions>(builder.Configuration.GetSection("GoogleSheets"));
 
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JWT");
+var keyString = jwtSettings["Key"] ?? "TheCoffeeCream_Super_Secret_Key_2026_!@#";
+var key = System.Text.Encoding.UTF8.GetBytes(keyString);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"] ?? "TheCoffeeCream",
+        ValidAudience = jwtSettings["Audience"] ?? "TheCoffeeCreamStaff",
+        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
+
 // Register Google Sheets client and repositories
 builder.Services.AddSingleton<TheCoffeeCream.Infrastructure.GoogleSheets.IGoogleSheetsClient, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetsClient>();
 builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IOrderRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetOrderRepository>();
 builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IProductRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetProductRepository>();
+builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IUserRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetUserRepository>();
 
 builder.Services.AddScoped<TheCoffeeCream.Application.Services.OrderService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Services.ProductService>();
+builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IAuthService, TheCoffeeCream.Application.Services.AuthService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IReportService, TheCoffeeCream.Application.Services.ReportService>();
 
 var app = builder.Build();
@@ -56,6 +84,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // 2. Health check before any middleware (allows monitoring without API key)
 app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));

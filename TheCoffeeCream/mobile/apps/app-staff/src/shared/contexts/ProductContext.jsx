@@ -40,7 +40,7 @@ export function ProductProvider({ children }) {
             }
             setLoading(false)
         }
-    }, [products.length])
+    }, [])
 
     const processMenuData = (data) => {
         const catMap = {}
