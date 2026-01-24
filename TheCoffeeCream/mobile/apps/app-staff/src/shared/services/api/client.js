@@ -1,6 +1,7 @@
 // API Client - Base configuration and utilities
 
 import { API_CONFIG } from '@/shared/constants/config';
+import { Logger } from './logger';
 
 const API_BASE = API_CONFIG.BASE_URL;
 
@@ -23,32 +24,50 @@ async function fetchWithTimeout(resource, options = {}) {
 }
 
 async function apiFetch(url, options = {}, retries = API_CONFIG.MAX_RETRIES) {
+    const fullUrl = `${API_BASE}${url}`;
+    const method = options.method || 'GET';
+
+    Logger.info(`[API REQUEST] ${method} ${fullUrl}`);
+    if (options.body) {
+        Logger.info(`[API BODY] ${options.body}`);
+    }
+
+    const isJsonRequest = method !== 'GET' && method !== 'HEAD';
+
     try {
-        const response = await fetchWithTimeout(`${API_BASE}${url}`, {
+        const fetchOptions = {
+            ...options,
             headers: {
-                'Content-Type': 'application/json',
+                ...(isJsonRequest ? { 'Content-Type': 'application/json' } : {}),
                 ...options.headers
-            },
-            ...options
-        });
+            }
+        };
+
+        const response = await fetchWithTimeout(fullUrl, fetchOptions);
+
+        Logger.info(`[API RESPONSE] ${method} ${fullUrl} - Status: ${response.status}`);
 
         if (!response.ok) {
             // If 503 (Service Unavailable) or 504 (Gateway Timeout), it might be waking up
             if ((response.status === 503 || response.status === 504) && retries > 0) {
-                console.log(`Server sleeping? Retrying... (${retries} attempts left)`);
+                Logger.warn(`[API RETRY] Server sleeping? Retrying... (${retries} attempts left)`);
                 await new Promise(r => setTimeout(r, 2000)); // Wait 2s
                 return apiFetch(url, options, retries - 1);
             }
 
-            const error = await response.text();
-            throw new Error(error || `API Error: ${response.status}`);
+            const errorText = await response.text();
+            Logger.error(`[API ERROR RESPONSE] ${method} ${fullUrl} - ${errorText}`);
+            throw new Error(errorText || `API Error: ${response.status}`);
         }
 
-        return response.json();
+        const data = await response.json();
+        return data;
     } catch (error) {
+        Logger.error(`[API FETCH ERROR] ${method} ${fullUrl} - ${error.message}`);
+
         if (retries > 0 && (error.name === 'AbortError' || error.message.includes('Failed to fetch'))) {
             // Retry on timeout or network error (server possibly down/sleeping)
-            console.log(`Fetch failed/timeout. Retrying... (${retries} attempts left)`);
+            Logger.warn(`[API RETRY] Fetch failed/timeout. Retrying... (${retries} attempts left)`);
             await new Promise(r => setTimeout(r, 3000)); // Wait 3s
             return apiFetch(url, options, retries - 1);
         }

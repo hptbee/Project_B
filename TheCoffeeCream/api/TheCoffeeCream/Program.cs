@@ -47,6 +47,9 @@ builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IReportService,
 
 var app = builder.Build();
 
+// 1. CORS MUST be at the top to handle preflight and add headers to all responses
+app.UseCors("AllowFrontend");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -54,15 +57,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+// 2. Health check before any middleware (allows monitoring without API key)
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
-// API key middleware
+app.UseHttpsRedirection();
+
+// 3. API key middleware
 app.UseMiddleware<TheCoffeeCream.Shared.Middleware.ApiKeyMiddleware>();
 
 app.UseAuthorization();
-
-app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
 app.MapControllers();
 

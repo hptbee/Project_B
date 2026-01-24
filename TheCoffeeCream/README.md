@@ -11,4 +11,4 @@ Render's free tier spins down after 15 minutes of inactivity. To prevent this:
 1.  Use a monitoring service (e.g., **UptimeRobot**, **Cron-job.org**).
 2.  Configure it to ping your API's health check endpoint:
     - URL: `https://<your-app-url>/health`
-    - Interval: **Every 13 minutes** (Safe buffer before 15min timeout).
+    - Interval: **Every 14 minutes** (Safe buffer before 15min timeout).

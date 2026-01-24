@@ -74,26 +74,39 @@ npm run build
 
 ## 📱 Android Build
 
-To build the APK for Android, make sure you have the JDK 17 and Android SDK installed.
+To build the APK for Android, make sure you have **JDK 17** and **Android SDK** installed.
 
 **Prerequisites Environment Variables:**
 - `JAVA_HOME`: Path to JDK 17 (e.g., `C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot`)
 - `ANDROID_HOME`: Path to Android SDK (e.g., `C:\Users\NCPC\Android\Sdk`)
 
-**Build Commands:**
-
+**One-liner Build Command:**
+Run this from the `mobile\apps\app-staff` directory:
 ```powershell
-# 1. Build web assets
+npm run build; npx cap sync android; cd android; .\gradlew assembleDebug; cd ..
+```
+
+**Step-by-Step Build:**
+
+1. **Build web assets:**
+```bash
 npm run build
+```
 
-# 2. Sync Capacitor
+2. **Sync with Android project:**
+```bash
 npx cap sync android
+```
 
-# 3. Build APK
+3. **Build APK:**
+```powershell
 cd android
 .\gradlew assembleDebug
 ```
 
+**Output:**
 The APK will be generated at: `mobile\apps\app-staff\android\app\build\outputs\apk\debug\`.
 
-**Note:** The APK filename includes a timestamp to prevent file locking issues (e.g., `TheCoffeeCream-Staff-1.0-20240124182253.apk`).
+> [!TIP]
+> The APK filename includes a timestamp to prevent file locking: 
+> `TheCoffeeCream-Staff-1.0-YYYYMMDDHHMMSS.apk`
