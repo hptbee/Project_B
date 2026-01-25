@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
 import { calculateCartTotal, formatPrice, useAutoSave, useTranslation } from '@thecoffeecream/ui-shared'
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
-import { Fab, Icon, ConfirmModal, LoadingSpinner, IconChevron, Badge } from '@thecoffeecream/ui-shared'
+import { Fab, Icon, ConfirmModal, IconChevron, Badge } from '@thecoffeecream/ui-shared'
 import './TableOrder.scss'
 
 export default function TableOrder() {
@@ -16,7 +16,6 @@ export default function TableOrder() {
     const [noteText, setNoteText] = useState('')
     const [editingItemKey, setEditingItemKey] = useState(null)
     const [confirmDelete, setConfirmDelete] = useState({ show: false, key: null })
-    const [processing, setProcessing] = useState(false)
 
     // On first mount, if table is empty -> go to ProductList.
     // But when items later become empty (e.g. after deleting last item), do NOT redirect.
@@ -240,7 +239,7 @@ export default function TableOrder() {
                 type="danger"
             />
 
-            {processing && <LoadingSpinner fullScreen message={t('common.processing')} />}
+
         </div>
     )
 }

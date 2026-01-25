@@ -4,7 +4,7 @@ import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContex
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
 import { calculateCartTotal, calculateDiscount, calculateTotal } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
-import { ConfirmModal, LoadingSpinner, IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
+import { IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
 import './Checkout.scss'
 
 export default function Checkout() {
@@ -18,8 +18,7 @@ export default function Checkout() {
     const [paymentMethod, setPaymentMethod] = useState('CASH') // CASH, TRANSFER, COMBINED
     const [cashAmount, setCashAmount] = useState(0)
     const [transferAmount, setTransferAmount] = useState(0)
-    const [modal, setModal] = useState({ show: false, title: '', message: '', onConfirm: null })
-    const [loading, setLoading] = useState(false)
+
 
     // Discount State
     const [discountType, setDiscountType] = useState('AMOUNT') // AMOUNT, PERCENTAGE
@@ -236,20 +235,14 @@ export default function Checkout() {
                 <button
                     onClick={handleFinalize}
                     className="btn-checkout btn-primary"
-                    disabled={loading || (paymentMethod === 'COMBINED' && cashAmount + transferAmount !== total)}
+                    disabled={paymentMethod === 'COMBINED' && cashAmount + transferAmount !== total}
                 >
-                    {loading ? t('common.processing') : `${t('common.pay')}: ${formatPrice(total)}`}
+                    {`${t('common.pay')}: ${formatPrice(total)}`}
                 </button>
             </div>
 
-            <ConfirmModal
-                show={modal.show}
-                title={modal.title}
-                message={modal.message}
-                onConfirm={modal.onConfirm}
-                confirmText={t('common.agree')}
-            />
-            {loading && <LoadingSpinner fullScreen />}
+
+
         </div>
     )
 }
