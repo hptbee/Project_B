@@ -1,0 +1,164 @@
+// Design System Definitions
+:root {
+    // Shared constants
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 28px;
+    --radius-full: 999px;
+    --font-main: "Inter", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-heading: "Inter", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-number: "Inter", monospace; // For price and stats
+
+    // Font Scale (Mobile First)
+    --text-xs: 11.5px;
+    --text-sm: 13px;
+    --text-md: 15px; // Base
+    --text-lg: 17px;
+    --text-xl: 20px;
+    --text-2xl: 26px;
+    --text-3xl: 34px;
+
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-heading: -0.04em;
+
+    --trans-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --trans-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --trans-bounce: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    // "Premium Coffee" Palette (Toasted Gold)
+    --accent-amber: #D4A373; // Toasted Gold (Brand Primary)
+    --accent-amber-glow: rgba(212, 163, 115, 0.3);
+    --accent-cream: #FAEDCD;
+    --accent-latte: #E9D8A6;
+
+    --accent-red: #ff5252;
+    --accent-red-light: rgba(255, 82, 82, 0.1);
+    --accent-blue: #448aff;
+    --accent-blue-light: rgba(68, 138, 255, 0.1);
+    --accent-green: #4caf50;
+    --accent-green-light: rgba(76, 175, 80, 0.1);
+    --accent-purple: #9c27b0;
+    --accent-purple-light: rgba(156, 39, 176, 0.1);
+    --accent-amber-vibrant: #ffc107;
+    --accent-amber-vibrant-light: rgba(255, 193, 7, 0.1);
+
+    // Constant text colors
+    --text-on-accent: #000000;
+    --text-on-dark: #ffffff;
+
+    /* Light Theme (Normal Mode) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f6f6f7;
+    --bg-card: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --bg-overlay: rgba(0, 0, 0, 0.4);
+
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --text-muted: #888888;
+
+    --border-glass: #eeeeee;
+    --border-active: var(--accent-amber);
+
+    // Status Colors
+    --success-bg: rgba(76, 175, 80, 0.1);
+    --success-color: #2e7d32;
+    --warning-bg: rgba(255, 152, 0, 0.1);
+    --warning-color: #ef6c00;
+    --danger-bg: rgba(211, 47, 47, 0.1);
+    --danger-color: #c62828;
+    --info-bg: rgba(2, 136, 209, 0.1);
+    --info-color: #01579b;
+    --bg-darker: #f0f0f0;
+
+    --glass-blur: blur(0px);
+    --glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --bg-glass-active: rgba(0, 0, 0, 0.05);
+
+    // Premium Gradients
+    --grad-premium: linear-gradient(135deg, var(--accent-amber) 0%, #B08968 100%);
+
+    --primary-color: var(--accent-amber);
+    --primary-color: var(--accent-amber);
+    --primary-light: rgba(212, 163, 115, 0.1);
+
+    // Spacing Scale
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 20px;
+    --spacing-xxl: 32px;
+}
+
+/* Dark Theme (Premium Mode) - Default */
+[data-theme='dark'] {
+    --bg-primary: #0A0A0B; // Espresso Charcoal
+    --bg-secondary: rgba(255, 255, 255, 0.05);
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-glass: rgba(18, 18, 20, 0.7);
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-muted: rgba(255, 255, 255, 0.3);
+
+    --border-glass: rgba(255, 255, 255, 0.1);
+    --border-active: rgba(212, 163, 115, 0.5);
+
+    --glass-blur: blur(20px);
+    --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --bg-glass-active: rgba(255, 255, 255, 0.12);
+
+    // Dark Mode Status Overrides
+    --success-bg: rgba(76, 175, 80, 0.2);
+    --success-color: #81c784;
+    --warning-bg: rgba(255, 152, 0, 0.2);
+    --warning-color: #ffb74d;
+    --danger-bg: rgba(211, 47, 47, 0.2);
+    --danger-color: #e57373;
+    --info-bg: rgba(2, 136, 209, 0.2);
+    --info-color: #4fc3f7;
+    --bg-darker: rgba(255, 255, 255, 0.1);
+
+    // Dynamic Mapped
+    --primary-color: var(--accent-amber);
+    --primary-light: rgba(212, 163, 115, 0.1);
+}
+
+// ==========================================
+// SCSS Variables Map
+// ==========================================
+
+$bg-primary: var(--bg-primary);
+$bg-secondary: var(--bg-secondary);
+$bg-card: var(--bg-card);
+$bg-glass: var(--bg-glass);
+$text-primary: var(--text-primary);
+$text-secondary: var(--text-secondary);
+$text-muted: var(--text-muted);
+$accent-amber: var(--accent-amber);
+$accent-amber-glow: var(--accent-amber-glow);
+$accent-cream: var(--accent-cream);
+$accent-latte: var(--accent-latte);
+$accent-red: var(--accent-red);
+$border-glass: var(--border-glass);
+
+$radius-sm: var(--radius-sm);
+$radius-md: var(--radius-md);
+$radius-lg: var(--radius-lg);
+$radius-xl: var(--radius-xl);
+$radius-full: var(--radius-full);
+
+$trans-smooth: var(--trans-smooth);
+$trans-fast: var(--trans-fast);
+$font-main: var(--font-main);
+$font-number: var(--font-number);
+
+$spacing-xs: var(--spacing-xs);
+$spacing-sm: var(--spacing-sm);
+$spacing-md: var(--spacing-md);
+$spacing-lg: var(--spacing-lg);
+$spacing-xl: var(--spacing-xl);
+$spacing-xxl: var(--spacing-xxl);

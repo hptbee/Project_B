@@ -1,43 +1,43 @@
+@use '../../../styles/variables' as *;
+
 .data-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
+    @include flex-between;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg) var(--spacing-xl);
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-glass);
     border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-    gap: 20px;
 
     .pagination-info {
         font-size: var(--text-xs);
-        color: var(--text-muted);
         font-weight: 600;
+        color: var(--text-muted);
 
         span {
-            color: var(--text-primary);
-            font-weight: 800;
             margin: 0 4px;
+            font-weight: 800;
+            color: var(--text-primary);
         }
     }
 
     .pagination-controls {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: var(--spacing-lg);
         margin-left: auto;
     }
 
     .page-size-selector {
         select {
-            background: var(--bg-glass);
-            border: 1px solid var(--border-glass);
-            color: var(--text-primary);
             padding: 6px 12px;
-            border-radius: var(--radius-md);
             font-size: var(--text-xs);
             font-weight: 700;
-            outline: none;
+            color: var(--text-primary);
             cursor: pointer;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            outline: none;
             transition: all 0.3s;
 
             &:hover {
@@ -47,29 +47,27 @@
     }
 
     .page-nav {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: var(--bg-glass);
+        @include flex-center;
+        gap: var(--spacing-md);
         padding: 4px;
-        border-radius: var(--radius-lg);
+        background: var(--bg-glass);
         border: 1px solid var(--border-glass);
+        border-radius: var(--radius-lg);
 
         .nav-btn {
+            @include flex-center;
+            @include clickable-bounce;
             width: 32px;
             height: 32px;
             padding: 0;
-            border-radius: var(--radius-md);
+            color: var(--text-primary);
             background: transparent;
             border: none;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: var(--radius-md);
 
             &:hover:not(:disabled) {
-                background: var(--bg-glass-active);
                 color: var(--accent-amber);
+                background: var(--bg-glass-active);
             }
 
             &:disabled {
@@ -78,14 +76,14 @@
         }
 
         .page-indicator {
-            font-size: var(--text-xs);
-            color: var(--text-secondary);
-            font-weight: 600;
             padding: 0 4px;
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--text-secondary);
 
             strong {
-                color: var(--text-primary);
                 font-weight: 900;
+                color: var(--text-primary);
             }
         }
     }
@@ -95,12 +93,12 @@
     .data-pagination {
         flex-direction: column;
         align-items: stretch;
-        padding: 20px;
-        gap: 16px;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-xl);
 
         .pagination-controls {
-            margin-left: 0;
             justify-content: space-between;
+            margin-left: 0;
         }
 
         .pagination-info {

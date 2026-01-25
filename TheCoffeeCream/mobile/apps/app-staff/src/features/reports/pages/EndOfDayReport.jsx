@@ -212,7 +212,7 @@ export default function EndOfDayReport() {
                     {selectedTab === 'products' && (
                         <div className="report-container">
                             {loadingProducts ? (
-                                <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>Đang tải...</div>
+                                <div className="report-status-msg">Đang tải...</div>
                             ) : (
                                 <div className="product-sales-list">
                                     <div className="product-sales-header">
@@ -224,7 +224,7 @@ export default function EndOfDayReport() {
                                         </div>
                                     </div>
                                     {productSales.length === 0 ? (
-                                        <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+                                        <div className="report-status-msg">
                                             {t('common.no_data')}
                                         </div>
                                     ) : (

@@ -125,3 +125,19 @@
     margin-right: 8px;
     font-size: 20px;
 }
+
+// Skeleton Classes
+.skeleton-tab {
+    border-radius: var(--radius-full);
+}
+
+.skeleton-card {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.skeleton-title {
+    margin-bottom: 12px;
+}

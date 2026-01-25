@@ -47,7 +47,7 @@
 
             &:hover {
                 background: var(--accent-amber);
-                color: #000;
+                color: var(--text-on-accent);
                 transform: rotate(90deg) scale(1.1);
                 border-color: var(--accent-amber);
             }
@@ -189,7 +189,7 @@
                 .check-box {
                     background: var(--accent-amber);
                     border-color: var(--accent-amber);
-                    color: #000;
+                    color: var(--text-on-accent);
                 }
 
                 .name {
@@ -258,7 +258,7 @@
 
         .btn-primary {
             background: var(--accent-amber);
-            color: #000;
+            color: var(--text-on-accent);
             border: none;
             box-shadow: 0 10px 30px var(--accent-amber-glow);
 
@@ -312,7 +312,7 @@
             right: 0;
             background: var(--bg-card);
             padding: 20px;
-            box-shadow: 0 -15px 45px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--glass-shadow);
             z-index: 100;
 
             button {

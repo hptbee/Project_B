@@ -10,7 +10,7 @@ export function LoadingSpinner({ fullScreen = false, message }) {
         <div className="spinner-wrapper">
             <div className="spinner"></div>
             <div className="spinner-logo">
-                <img src={logo} alt="Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+                <img src={logo} alt="Logo" />
             </div>
         </div>
     )

@@ -181,8 +181,8 @@
 
         &.plus {
             background: var(--accent-amber);
-            color: #fff;
-            box-shadow: 0 4px 12px var(--accent-amber-glow);
+            color: var(--text-on-dark);
+            box-shadow: var(--glass-shadow);
         }
     }
 
@@ -294,7 +294,7 @@
         font-size: 80px;
         margin-bottom: 24px;
         opacity: 0.9;
-        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+        filter: drop-shadow(0 10px 20px var(--bg-overlay));
         animation: float 3s ease-in-out infinite;
     }
 
@@ -313,6 +313,11 @@
         line-height: 1.6;
         color: var(--text-secondary);
         font-weight: 500;
+
+        .accent-bold {
+            color: var(--accent-amber);
+            font-weight: 900;
+        }
     }
 }
 

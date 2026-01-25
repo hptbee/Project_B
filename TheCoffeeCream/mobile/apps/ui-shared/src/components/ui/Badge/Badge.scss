@@ -1,9 +1,7 @@
 @use '../../../styles/variables' as *;
 
 .app-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -11,18 +9,18 @@
 
     // Sizes
     &.size-sm {
-        font-size: 10px;
         padding: 2px 8px;
+        font-size: 10px;
     }
 
     &.size-md {
-        font-size: 11px;
         padding: 4px 10px;
+        font-size: 11px;
     }
 
     &.size-lg {
-        font-size: 13px;
         padding: 6px 14px;
+        font-size: 13px;
     }
 
     &.is-pill {
@@ -35,45 +33,45 @@
 
     // Variants
     &.variant-primary {
-        background: var(--primary-light);
         color: var(--accent-amber);
+        background: var(--primary-light);
         border: 1px solid var(--border-active);
     }
 
     &.variant-success {
-        background: var(--success-bg);
         color: var(--success-color);
+        background: var(--success-bg);
         border: 1px solid var(--border-glass);
     }
 
     &.variant-warning {
-        background: var(--warning-bg);
         color: var(--warning-color);
+        background: var(--warning-bg);
         border: 1px solid var(--border-glass);
     }
 
     &.variant-danger {
-        background: var(--danger-bg);
         color: var(--danger-color);
+        background: var(--danger-bg);
         border: 1px solid var(--border-glass);
     }
 
     &.variant-draft {
-        background: var(--bg-darker);
         color: var(--text-secondary);
+        background: var(--bg-darker);
         border: 1px solid var(--border-glass);
     }
 
     &.variant-muted {
-        background: var(--bg-secondary);
         color: var(--text-muted);
+        background: var(--bg-secondary);
         border: 1px solid var(--border-glass);
     }
 
     &.variant-info {
-        background: var(--primary-light);
+        margin-left: var(--spacing-xs);
         color: var(--accent-blue);
+        background: var(--primary-light);
         border: 1px solid var(--border-glass);
-        margin-left: 5px;
     }
 }

@@ -104,11 +104,11 @@
             }
 
             [data-theme='light'] & {
-                background: #f0f0f0;
-                border-color: #ddd;
+                background: var(--bg-secondary);
+                border-color: var(--border-glass);
 
                 &:hover {
-                    background: #e8e8e8;
+                    background: var(--bg-glass-active);
                 }
             }
 

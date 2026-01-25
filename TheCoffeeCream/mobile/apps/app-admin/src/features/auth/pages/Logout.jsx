@@ -17,14 +17,7 @@ export default function Logout() {
     }, [logout, navigate])
 
     return (
-        <div className="admin-logout-page" style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100vh',
-            background: 'var(--bg-primary)',
-            color: 'var(--text-primary)'
-        }}>
+        <div className="admin-logout-page full-center">
             <p>Đang đăng xuất khỏi hệ thống quản trị...</p>
         </div>
     )

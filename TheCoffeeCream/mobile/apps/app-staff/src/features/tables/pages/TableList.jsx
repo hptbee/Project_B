@@ -63,14 +63,14 @@ export default function TableList() {
                     <Skeleton width="150px" height="24px" />
                 </header>
                 <div className="home-tabs">
-                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
-                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
-                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
+                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
+                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
+                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
                 </div>
                 <div className="grid">
                     {Array.from({ length: 12 }).map((_, i) => (
-                        <div className="glass-card" key={i} style={{ height: '120px' }}>
-                            <Skeleton width="60%" height="20px" style={{ marginBottom: '12px' }} />
+                        <div className="glass-card skeleton-card" key={i}>
+                            <Skeleton width="60%" height="20px" className="skeleton-title" />
                             <Skeleton width="40%" height="16px" />
                         </div>
                     ))}

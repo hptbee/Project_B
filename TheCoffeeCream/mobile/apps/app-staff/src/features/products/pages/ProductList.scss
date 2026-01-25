@@ -1,37 +1,33 @@
 @use '@ui-shared/styles/variables' as *;
 
 .product-list-title {
+    margin: 0;
     font-size: 22px;
     font-weight: 950;
+    line-height: 1.2;
     color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    margin: 0;
 }
 
 .list {
-    padding: 0 16px 32px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--spacing-lg);
+    padding: 0 var(--spacing-lg) var(--spacing-xxl);
 }
 
 .empty-list-container {
-    padding: 80px 40px;
+    @include glass-panel(80px 40px);
+    margin: var(--spacing-xl) var(--spacing-lg);
     text-align: center;
     color: var(--text-secondary);
-    background: var(--bg-card);
-    border-radius: var(--radius-xl);
-    margin: 24px 16px;
-    border: 1px solid var(--border-glass);
-    backdrop-filter: var(--glass-blur);
     animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: var(--glass-shadow);
 
     small {
         display: block;
-        margin-top: 12px;
-        opacity: 0.6;
+        margin-top: var(--spacing-md);
         font-weight: 600;
+        opacity: 0.6;
     }
 }

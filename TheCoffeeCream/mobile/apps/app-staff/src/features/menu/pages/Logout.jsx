@@ -14,7 +14,7 @@ export default function Logout() {
 
     return (
         <div className="page">
-            <div className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <div className="page-content content-center">
                 <p>Đang đăng xuất...</p>
             </div>
         </div>

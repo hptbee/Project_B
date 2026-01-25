@@ -1,34 +1,25 @@
 @use '../../../styles/variables' as *;
 
 .modal-overlay {
+    @include flex-center;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--bg-overlay, rgba(0, 0, 0, 0.6));
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    inset: 0;
     z-index: 10000;
-    padding: 24px;
+    padding: var(--spacing-lg);
+    background: var(--bg-overlay);
+    backdrop-filter: blur(8px);
     animation: fadeIn 0.3s ease;
 }
 
 .modal-container {
-    background: var(--bg-card);
-    backdrop-filter: blur(25px);
-    border: 1px solid var(--border-glass);
-    border-radius: var(--radius-xl);
+    @include glass-panel(0);
     width: 100%;
     max-width: 400px;
-    box-shadow: var(--glass-shadow);
     animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
 
     .modal-header {
-        padding: 20px 24px;
+        padding: var(--spacing-xl) var(--spacing-xxl);
         border-bottom: 1px solid var(--border-glass);
 
         .modal-title {
@@ -41,11 +32,11 @@
     }
 
     .modal-body {
-        padding: 24px;
-        font-size: 15px;
-        color: var(--text-secondary);
-        line-height: 1.6;
+        padding: var(--spacing-xxl);
+        font-size: var(--text-md);
         font-weight: 500;
+        line-height: 1.6;
+        color: var(--text-secondary);
 
         p {
             margin: 0;
@@ -53,50 +44,37 @@
     }
 
     .modal-footer {
-        padding: 16px 24px 24px;
-        display: flex;
+        @include flex-between;
         justify-content: flex-end;
-        gap: 12px;
-        background: transparent;
-        border-top: none;
+        gap: var(--spacing-md);
+        padding: var(--spacing-lg) var(--spacing-xxl) var(--spacing-xxl);
 
         button {
+            @include clickable-bounce;
             padding: 12px 24px;
-            border-radius: var(--radius-md);
-            font-weight: 800;
             font-size: 14px;
-            cursor: pointer;
-            border: none;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: var(--trans-fast);
+            border: none;
+            border-radius: var(--radius-md);
         }
 
         .btn-secondary {
-            background: var(--bg-secondary);
             color: var(--text-primary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-glass);
-
-            &:active {
-                transform: scale(0.95);
-                background: rgba(255, 255, 255, 0.1);
-            }
         }
 
         .btn-primary {
+            color: var(--text-on-accent);
             background: var(--accent-amber);
-            color: #000;
             box-shadow: 0 5px 15px var(--accent-amber-glow);
 
-            &:active {
-                transform: scale(0.95);
-                filter: brightness(0.9);
-            }
-
             &.danger {
+                color: var(--text-on-dark);
                 background: var(--accent-red);
-                color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 82, 82, 0.3);
+                box-shadow: 0 5px 15px var(--accent-red-light);
             }
         }
     }

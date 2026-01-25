@@ -47,7 +47,7 @@
 
             &:hover {
                 background: var(--accent-amber);
-                color: #000;
+                color: var(--text-on-accent);
                 transform: rotate(90deg);
             }
         }
@@ -162,7 +162,7 @@
                     border: 1px solid var(--border-glass);
                     border-radius: 14px;
                     overflow: hidden;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                    box-shadow: var(--glass-shadow);
                     z-index: 100;
                     animation: fadeIn 0.2s ease-out;
 
@@ -184,7 +184,7 @@
                         }
 
                         &.selected {
-                            background: rgba(255, 193, 7, 0.1);
+                            background: var(--accent-amber-glow);
                             color: var(--accent-amber);
                             font-weight: 800;
                         }
@@ -248,8 +248,8 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-amber), #ff8f00);
-            color: #000;
+            background: var(--grad-premium);
+            color: var(--text-on-accent);
             border: none;
             box-shadow: 0 8px 25px var(--accent-amber-glow);
 
@@ -298,7 +298,7 @@
             background: var(--bg-card);
             z-index: 100;
             padding: 16px 20px;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--glass-shadow);
 
             button {
                 flex: 1;

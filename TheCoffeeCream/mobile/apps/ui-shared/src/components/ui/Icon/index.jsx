@@ -124,8 +124,18 @@ const icons = {
 
 export function Icon({ name, size = 20, className = '', color = 'currentColor' }) {
     const fn = icons[name]
-    if (!fn) return <span style={{ width: size, height: size, display: 'inline-block' }} className={`icon-placeholder ${className}`} />
-    return <span className={`custom-icon ${className}`} style={{ display: 'inline-flex' }}>
-        {fn(size, color)}
-    </span>
+    const dimensionStyle = { width: size, height: size }
+
+    if (!fn) return (
+        <span
+            style={dimensionStyle}
+            className={`icon-placeholder ${className}`}
+        />
+    )
+
+    return (
+        <span className={`custom-icon ${className}`} style={dimensionStyle}>
+            {fn(size, color)}
+        </span>
+    )
 }

@@ -71,7 +71,7 @@
 
             &.open {
                 pointer-events: auto;
-                background: var(--bg-overlay, rgba(0, 0, 0, 0.5));
+                background: var(--bg-overlay);
             }
         }
 

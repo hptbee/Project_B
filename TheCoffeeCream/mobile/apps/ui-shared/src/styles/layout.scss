@@ -1,24 +1,23 @@
 @use './variables' as *;
 
+@use './variables' as *;
+
 .page {
-    min-height: 100vh;
-    padding-bottom: env(safe-area-inset-bottom);
-    animation: pageFadeIn var(--trans-smooth);
-    background: var(--bg-primary);
     position: relative;
     z-index: 1;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--bg-primary);
+    animation: pageFadeIn var(--trans-smooth);
 
     &::before {
         content: '';
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at top right, var(--accent-amber-glow), transparent 40%),
-            radial-gradient(circle at bottom left, rgba(255, 82, 82, 0.03), transparent 30%);
-        pointer-events: none;
+        inset: 0;
         z-index: -1;
+        background: radial-gradient(circle at top right, var(--accent-amber-glow), transparent 40%),
+            radial-gradient(circle at bottom left, var(--accent-red-light), transparent 30%);
+        pointer-events: none;
     }
 }
 
@@ -28,40 +27,57 @@
 }
 
 .page-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     display: flex;
     align-items: center;
     gap: 12px;
+    min-height: 80px;
     padding: 24px 16px;
     background: var(--bg-glass);
     backdrop-filter: var(--glass-blur);
     border-bottom: 1px solid var(--border-glass);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    min-height: 80px;
 
     h2 {
-        font-size: var(--text-lg);
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        margin: 0;
-        text-transform: uppercase;
-        color: var(--text-primary);
         position: relative;
         z-index: 2;
+        margin: 0;
+        font-size: var(--text-lg);
+        font-weight: 800;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 }
 
 .glass-card {
-    background: var(--bg-card);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-glass);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    transition: var(--trans-fast);
-    box-shadow: var(--glass-shadow);
+    @include glass-panel;
+    @include clickable-bounce;
+}
 
-    &:active {
-        transform: scale(0.98);
-    }
+.custom-icon {
+    @include flex-center;
+    display: inline-flex;
+}
+
+.icon-placeholder {
+    display: inline-block;
+}
+
+.full-center {
+    @include flex-center;
+    width: 100%;
+    height: 100vh;
+}
+
+.content-center {
+    @include flex-center;
+    flex: 1;
+    min-height: 100%;
+}
+
+.sort-icon-inactive {
+    opacity: 0.25;
+    transition: var(--trans-fast);
 }

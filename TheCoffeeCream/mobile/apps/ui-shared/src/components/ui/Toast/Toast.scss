@@ -19,15 +19,15 @@
     .toast-inner {
         max-width: fit-content;
         margin: 0 auto;
-        background: var(--accent-amber, #ffab00);
-        color: var(--text-on-accent, #000);
+        background: var(--accent-amber);
+        color: var(--text-on-accent);
         padding: 12px 24px;
         border-radius: var(--radius-full, 99px);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 10px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        box-shadow: var(--glass-shadow);
         font-weight: 800;
         font-size: var(--text-sm);
         white-space: nowrap;

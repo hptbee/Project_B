@@ -81,7 +81,7 @@
 
         .add-btn {
             background: var(--accent-amber);
-            color: #000;
+            color: var(--text-on-accent);
             border: none;
             padding: 0 24px;
             height: 48px;
@@ -134,7 +134,7 @@
                 &.active {
                     background: var(--bg-card);
                     color: var(--accent-amber);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    box-shadow: var(--glass-shadow);
                 }
 
                 &:active {
@@ -164,7 +164,7 @@
 
         &:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--glass-shadow);
             border-color: var(--accent-amber);
             background: var(--bg-glass-active);
 
@@ -215,13 +215,13 @@
                 top: 14px;
                 left: 14px;
                 background: var(--accent-amber);
-                color: #000;
+                color: var(--text-on-accent);
                 padding: 4px 12px;
                 border-radius: 6px;
                 font-size: 10px;
                 font-weight: 950;
                 text-transform: uppercase;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                box-shadow: var(--glass-shadow);
                 z-index: 2;
             }
 
@@ -234,7 +234,7 @@
             flex-direction: column;
             gap: 20px;
             flex: 1;
-            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+            background: linear-gradient(to bottom, transparent, var(--bg-overlay));
 
             .card-info-header {
                 display: flex;
@@ -245,11 +245,11 @@
                     font-size: 11px;
                     color: var(--accent-amber);
                     font-weight: 800;
-                    background: rgba(212, 163, 115, 0.1);
+                    background: var(--accent-amber-glow);
                     padding: 4px 10px;
                     border-radius: 6px;
                     font-family: var(--font-number);
-                    border: 1px solid rgba(212, 163, 115, 0.2);
+                    border: 1px solid var(--border-glass);
                 }
             }
 
@@ -374,7 +374,7 @@
         .text-btn {
             background: var(--accent-amber);
             border: none;
-            color: #000;
+            color: var(--text-on-accent);
             padding: 12px 24px;
             border-radius: var(--radius-lg);
             font-weight: 900;

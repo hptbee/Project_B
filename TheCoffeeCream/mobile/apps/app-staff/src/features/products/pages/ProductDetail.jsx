@@ -129,8 +129,8 @@ export default function ProductDetail() {
                                             <Icon name="minus" size={14} color="var(--text-primary)" />
                                         </button>
                                         <div className="qty-val">{t.qty}</div>
-                                        <button className="icon-btn plus" style={{ background: 'var(--accent-amber)', color: '#fff' }} onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>
-                                            <Icon name="plus" size={14} color="#fff" />
+                                        <button className="icon-btn plus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>
+                                            <Icon name="plus" size={14} color="var(--text-on-accent)" />
                                         </button>
                                     </div>
                                 ) : (
@@ -159,7 +159,7 @@ export default function ProductDetail() {
                 </button>
                 <div className="adj-val">{qty}</div>
                 <button className="adj-btn active" onClick={() => setQty(qty + 1)}>
-                    <Icon name="plus" size={24} color="#000" />
+                    <Icon name="plus" size={24} color="var(--text-on-accent)" />
                 </button>
             </div>
 

@@ -141,7 +141,7 @@ export default function TableOrder() {
                         <div className="empty-emoji">🍽️</div>
                         <div className="empty-text">{t('cart.empty_title')}</div>
                         <div className="empty-cta">
-                            {t('cart.empty_instruction_prefix')} <span style={{ color: 'var(--accent-amber)', fontWeight: 800 }}>+</span> {t('cart.empty_instruction_suffix')}
+                            {t('cart.empty_instruction_prefix')} <span className="accent-bold">+</span> {t('cart.empty_instruction_suffix')}
                         </div>
                     </div>
                 ) : (
@@ -179,8 +179,8 @@ export default function TableOrder() {
                                         <Icon name="minus" size={14} color="var(--text-primary)" />
                                     </button>
                                     <span className="qty-val">{item.qty}</span>
-                                    <button className="icon-btn plus" style={{ background: 'var(--accent-amber)', color: '#fff' }} onClick={() => handleQtyChange(item.key, 1)} aria-label="Tăng">
-                                        <Icon name="plus" size={14} color="#fff" />
+                                    <button className="icon-btn plus" onClick={() => handleQtyChange(item.key, 1)} aria-label="Tăng">
+                                        <Icon name="plus" size={14} color="var(--text-on-accent)" />
                                     </button>
                                 </div>
                             </div>

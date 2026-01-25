@@ -113,7 +113,7 @@ export default function OrderList() {
     }
 
     const getSortIcon = (key) => {
-        if (sortConfig.key !== key) return <Icon name="chevron-down" size={12} style={{ opacity: 0.2 }} />
+        if (sortConfig.key !== key) return <Icon name="chevron-down" size={12} className="sort-icon-inactive" />
         return sortConfig.direction === 'asc'
             ? <Icon name="chevron-up" size={12} color="var(--accent-amber)" />
             : <Icon name="chevron-down" size={12} color="var(--accent-amber)" />

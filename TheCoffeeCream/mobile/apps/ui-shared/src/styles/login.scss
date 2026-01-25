@@ -35,13 +35,13 @@
             width: 140px;
             height: 140px;
             margin: 0 auto 32px;
-            background: #ffffff; // Added white background to make black logo pop
+            background: var(--bg-primary); // Use primary bg for logo container
             border-radius: 50%;
             border: 4px solid var(--border-glass);
             // Enhanced prominence with layered shadows
             box-shadow:
-                0 0 40px rgba(212, 163, 115, 0.5),
-                inset 0 0 15px rgba(212, 163, 115, 0.3);
+                0 0 40px var(--accent-amber-glow),
+                inset 0 0 15px var(--accent-amber-glow);
             filter: drop-shadow(0 0 10px var(--accent-amber-glow));
             overflow: hidden;
             display: flex;
@@ -211,7 +211,7 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.35;
+            opacity: 0.3;
             animation: move 25s infinite alternate;
         }
 

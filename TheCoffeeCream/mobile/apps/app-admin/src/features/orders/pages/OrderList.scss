@@ -49,8 +49,8 @@
 
         .export-btn {
             background: var(--bg-secondary);
-            border: 1px solid #4CAF50;
-            color: #4CAF50;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
             padding: 0 20px;
             height: 44px;
             border-radius: var(--radius-md);
@@ -63,8 +63,8 @@
             transition: all 0.2s ease;
 
             &:hover {
-                background: #4CAF50;
-                color: #fff;
+                background: var(--accent-green);
+                color: var(--text-on-dark);
             }
         }
     }
@@ -134,7 +134,7 @@
                     &.active {
                         background: var(--bg-card);
                         color: var(--accent-amber);
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        box-shadow: var(--glass-shadow);
                         transform: scale(1.05);
                     }
 
@@ -179,7 +179,7 @@
 
             .apply-btn {
                 background: var(--accent-amber);
-                color: #000;
+                color: var(--text-on-accent);
                 border: none;
                 padding: 0 24px;
                 height: 44px;
@@ -290,7 +290,7 @@
                 &.active {
                     background: var(--bg-card);
                     color: var(--accent-amber);
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    box-shadow: var(--glass-shadow);
                 }
 
                 &:active {
@@ -315,7 +315,7 @@
             &:hover {
                 transform: translateY(-2px) scale(1.01);
                 border-color: var(--accent-amber);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                box-shadow: var(--glass-shadow);
             }
 
             &.is-removed {

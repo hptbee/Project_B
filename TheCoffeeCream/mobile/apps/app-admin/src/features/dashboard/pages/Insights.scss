@@ -68,7 +68,7 @@
             &:hover {
                 transform: translateY(-5px);
                 border-color: var(--accent-amber);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                box-shadow: var(--glass-shadow);
             }
 
             .icon-box {
@@ -82,18 +82,18 @@
                 font-size: 24px;
 
                 &.purple {
-                    background: rgba(156, 39, 176, 0.1);
-                    color: #9c27b0;
+                    background: var(--accent-purple-light);
+                    color: var(--accent-purple);
                 }
 
                 &.amber {
-                    background: rgba(255, 193, 7, 0.1);
-                    color: #ffc107;
+                    background: var(--accent-amber-vibrant-light);
+                    color: var(--accent-amber-vibrant);
                 }
 
                 &.green {
-                    background: rgba(76, 175, 80, 0.1);
-                    color: #4caf50;
+                    background: var(--accent-green-light);
+                    color: var(--accent-green);
                 }
             }
 
@@ -310,12 +310,12 @@
                     }
 
                     &.text-highlight {
-                        color: #2196F3;
+                        color: var(--accent-blue);
                     }
                 }
 
                 tbody tr:hover {
-                    background: rgba(255, 255, 255, 0.02);
+                    background: var(--bg-glass-active);
                 }
             }
         }

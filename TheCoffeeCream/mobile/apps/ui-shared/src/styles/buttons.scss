@@ -52,13 +52,13 @@ button,
 }
 
 .btn-danger {
-    background: rgba(255, 82, 82, 0.1);
+    background: var(--accent-red-light);
     color: var(--accent-red);
-    border-color: rgba(255, 82, 82, 0.2);
+    border-color: var(--accent-red-light);
 
     &:active {
         background: var(--accent-red);
-        color: #fff;
+        color: var(--text-on-dark);
     }
 }
 
@@ -81,7 +81,7 @@ button,
     }
 
     &.danger:active {
-        background: rgba(255, 82, 82, 0.2);
+        background: var(--accent-red-light);
         color: var(--accent-red);
     }
 

@@ -115,7 +115,7 @@ export default function OrderDetail() {
                             <span className="val">{formatPrice(order.total, true)}</span>
                         </div>
 
-                        <div style={{ marginTop: 12 }}>
+                        <div className="payment-breakdown">
                             <div className="summary-row">
                                 <span className="label">{t('common.payment')}:</span>
                                 <span className="val">

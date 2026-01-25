@@ -44,7 +44,7 @@
     &:hover {
         transform: translateY(-4px);
         border-color: var(--accent-amber);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--glass-shadow);
     }
 
     .item-info {
