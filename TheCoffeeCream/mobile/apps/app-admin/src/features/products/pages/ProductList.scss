@@ -160,14 +160,21 @@
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         box-shadow: var(--glass-shadow);
+        cursor: pointer;
 
         &:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
             border-color: var(--accent-amber);
+            background: var(--bg-glass-active);
 
             .card-thumb {
-                transform: scale(1.05);
+                transform: scale(1.02);
+            }
+
+            .status-toggle-badge {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
@@ -206,7 +213,7 @@
             .topping-tag {
                 position: absolute;
                 top: 14px;
-                right: 14px;
+                left: 14px;
                 background: var(--accent-amber);
                 color: #000;
                 padding: 4px 12px;
@@ -215,6 +222,42 @@
                 font-weight: 950;
                 text-transform: uppercase;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                z-index: 2;
+            }
+
+            .status-toggle-badge {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                opacity: 0.6;
+                transform: scale(0.9);
+                z-index: 3;
+
+                &:hover {
+                    background: var(--accent-amber);
+                    color: #000;
+                    transform: scale(1.1) !important;
+                    opacity: 1 !important;
+                }
+
+                &.inactive {
+                    background: var(--accent-red);
+                    color: #fff;
+                    opacity: 1;
+                    transform: scale(1);
+                }
             }
         }
 
@@ -269,40 +312,6 @@
                         color: var(--text-muted);
                         margin-top: 2px;
                         font-weight: 600;
-                    }
-                }
-
-                .card-actions {
-                    display: flex;
-                    gap: 10px;
-
-                    .action-btn {
-                        width: 44px;
-                        height: 44px;
-                        background: var(--bg-secondary);
-                        border: 1px solid var(--border-glass);
-                        border-radius: 14px;
-                        color: var(--text-secondary);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        cursor: pointer;
-                        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-                        &:hover {
-                            background: var(--accent-amber);
-                            color: #000;
-                            transform: scale(1.1) rotate(5deg);
-                            border-color: var(--accent-amber);
-                            box-shadow: 0 4px 15px var(--accent-amber-glow);
-                        }
-
-                        &.danger:hover {
-                            background: var(--accent-red);
-                            color: #fff;
-                            border-color: var(--accent-red);
-                            box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
-                        }
                     }
                 }
             }

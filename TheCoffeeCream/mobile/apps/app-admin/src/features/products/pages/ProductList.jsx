@@ -167,10 +167,25 @@ export default function ProductList() {
                 {paginatedProducts.length > 0 ? (
                     <div className="products-grid">
                         {paginatedProducts.map(product => (
-                            <div key={product.id} className={`product-card-admin glass-card ${!product.isActive ? 'is-inactive' : ''}`}>
+                            <div
+                                key={product.id}
+                                className={`product-card-admin glass-card ${!product.isActive ? 'is-inactive' : ''}`}
+                                onClick={() => handleEdit(product)}
+                            >
                                 <div className="card-thumb" style={{ backgroundImage: `url(${product.imageUrl})` }}>
                                     {!product.isActive && <div className="status-overlay">{t('status.removed')}</div>}
                                     {product.isTopping && <div className="topping-tag">{t('nav.topping')}</div>}
+
+                                    <button
+                                        className={`status-toggle-badge ${product.isActive ? 'active' : 'inactive'}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleToggleStatus(product);
+                                        }}
+                                        title={product.isActive ? t('status.active') : t('status.draft')}
+                                    >
+                                        <Icon name={product.isActive ? 'eye' : 'eye-off'} size={14} />
+                                    </button>
                                 </div>
                                 <div className="card-content">
                                     <div className="card-top">
@@ -182,18 +197,6 @@ export default function ProductList() {
                                         <div className="price-section">
                                             <div className="price">{formatPrice(product.price, true)}</div>
                                             <div className="cost">{t('common.cost')} {formatPrice(product.cost, true)}</div>
-                                        </div>
-                                        <div className="card-actions">
-                                            <button className="action-btn" onClick={() => handleEdit(product)} title={t('action.edit')}>
-                                                <Icon name="edit" size={16} />
-                                            </button>
-                                            <button
-                                                className={`action-btn ${product.isActive ? 'danger' : 'success'}`}
-                                                onClick={() => handleToggleStatus(product)}
-                                                title={product.isActive ? t('status.active') : t('status.draft')}
-                                            >
-                                                <Icon name={product.isActive ? 'eye-off' : 'eye'} size={16} />
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
