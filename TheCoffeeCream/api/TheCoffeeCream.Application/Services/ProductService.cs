@@ -24,11 +24,10 @@ namespace TheCoffeeCream.Application.Services
         public async Task<MenuDto> GetMenuAsync()
         {
             var products = (await _productRepository.GetAllAsync()).ToList();
-            var categories = (await _productRepository.GetCategoriesAsync()).ToList();
-
+            var categories = await _productRepository.GetCategoriesAsync();
             var productsById = products.ToDictionary(p => p.Id);
 
-            var dto = new MenuDto
+            return new MenuDto
             {
                 Categories = categories.Select(c => new CategoryDto { Id = c.Id, Name = c.Name, Rank = c.Rank }).ToList(),
                 Products = products.Select(p => new ProductMenuDto
@@ -41,30 +40,19 @@ namespace TheCoffeeCream.Application.Services
                     ImageUrl = p.ImageUrl,
                     IsActive = p.IsActive,
                     IsTopping = p.IsTopping,
-                    Toppings = (p.Toppings != null && p.Toppings.Any()
-                        ? p.Toppings
-                        : (string.IsNullOrWhiteSpace(p.ToppingMapping)
-                            ? Enumerable.Empty<TheCoffeeCream.Domain.Entities.Product>()
-                            : p.ToppingMapping.Split(';').Select(s =>
-                            {
-                                return Guid.TryParse(s.Trim(), out var gid) && productsById.ContainsKey(gid) ? productsById[gid] : null;
-                            }).Where(x => x != null).Cast<TheCoffeeCream.Domain.Entities.Product>()
-                        )
-                    ).Select(t => new ProductDto
-                    {
-                        Id = t.Id,
-                        Name = t.Name,
-                        Category = t.Category,
-                        Code = t.Code,
-                        Price = t.Price,
-                        ImageUrl = t.ImageUrl,
-                        IsActive = t.IsActive,
-                        IsTopping = t.IsTopping
-                    }).ToList()
+                    Toppings = ResolveToppings(p, productsById).Select(MapToDto).ToList()
                 }).ToList()
             };
+        }
 
-            return dto;
+        private static IEnumerable<Product> ResolveToppings(Product product, Dictionary<Guid, Product> productsById)
+        {
+            if (product.Toppings?.Any() == true) return product.Toppings;
+            if (string.IsNullOrWhiteSpace(product.ToppingMapping)) return Enumerable.Empty<Product>();
+
+            return product.ToppingMapping.Split(';')
+                .Select(s => Guid.TryParse(s.Trim(), out var gid) && productsById.TryGetValue(gid, out var topping) ? topping : null)
+                .Where(t => t != null)!;
         }
 
         public async Task<IEnumerable<CategoryResponse>> GetCategoriesAsync()

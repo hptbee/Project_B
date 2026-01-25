@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { LoadingSpinner, Badge, ConfirmModal, Icon, useToast, SearchBar, Pagination, useTranslation, usersApi as userApi } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, Badge, ConfirmModal, Icon, useToast, SearchBar, Pagination, useTranslation, PageHeaderSkeleton, TableSkeleton, usersApi as userApi } from '@thecoffeecream/ui-shared'
 import UserModal from '../components/UserModal'
 import './UserList.scss'
 
@@ -110,7 +110,12 @@ export default function UserList() {
     }
 
     if (loading && users.length === 0) {
-        return <LoadingSpinner fullScreen message={t('common.loading')} />
+        return (
+            <div className="user-list-page page">
+                <PageHeaderSkeleton hasAction={true} />
+                <TableSkeleton rows={10} cols={5} />
+            </div>
+        )
     }
 
     return (

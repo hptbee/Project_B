@@ -80,7 +80,7 @@ export const vi = {
         topping_count: 'TOPPING',
         cash_label: 'Tiền mặt:',
         transfer_label: 'Chuyển khoản:',
-        daily_report: 'BÁO CAO CUỐI NGÀY',
+        daily_report: 'BÁO CÁO CUỐI NGÀY',
         summary: 'TỔNG HỢP',
         goods: 'HÀNG HÓA',
         cost_price: 'Giá vốn:',

@@ -8,7 +8,7 @@ import { IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
 import './Checkout.scss'
 
 export default function Checkout() {
-    const { t } = useTranslation() // Missing hook call
+    const { t } = useTranslation()
     const { tableId } = useParams()
     const nav = useNavigate()
     const tableCart = useTableCart(tableId)

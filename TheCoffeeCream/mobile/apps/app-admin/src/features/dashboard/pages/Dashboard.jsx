@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Skeleton, dashboardApi, StatCard } from '@thecoffeecream/ui-shared'
+import { Skeleton, dashboardApi, StatCard, StatsSkeleton, PageHeaderSkeleton } from '@thecoffeecream/ui-shared'
 import RevenueChart from '../components/RevenueChart'
 import RecentOrders from '../components/RecentOrders'
 import './Dashboard.scss'
@@ -43,29 +43,18 @@ export default function Dashboard() {
     if (loading) {
         return (
             <div className="dashboard-page" data-theme="dark">
-                <div className="dashboard-header">
-                    <Skeleton width="200px" height="32px" />
-                    <Skeleton width="100px" height="40px" variant="rect" />
-                </div>
-                <div className="stats-grid">
-                    {[1, 2, 3, 4].map(i => (
-                        <div className="glass-card stat-skeleton-card" key={i}>
-                            <Skeleton width="40px" height="40px" variant="circle" className="mb-16" />
-                            <Skeleton width="60%" height="16px" className="mb-8" />
-                            <Skeleton width="80%" height="28px" />
-                        </div>
-                    ))}
-                </div>
+                <PageHeaderSkeleton />
+                <StatsSkeleton count={4} />
                 <div className="dashboard-content">
-                    <div className="glass-card chart-skeleton">
+                    <div className="glass-card chart-skeleton" style={{ height: '300px' }}>
                         <Skeleton width="100%" height="100%" variant="rect" />
                     </div>
                     <div className="glass-card orders-skeleton">
                         <Skeleton width="150px" height="24px" className="mb-20" />
                         {[1, 2, 3, 4, 5].map(i => (
-                            <div key={i} className="recent-order-skeleton">
+                            <div key={i} className="recent-order-skeleton" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                                 <Skeleton width="40px" height="40px" variant="rect" />
-                                <div className="info">
+                                <div className="info" style={{ flex: 1 }}>
                                     <Skeleton width="40%" height="16px" className="mb-4" />
                                     <Skeleton width="30%" height="12px" />
                                 </div>

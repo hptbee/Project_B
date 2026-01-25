@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/shared/contexts/CartContext'
-import { useMenu, Badge, Icon, Skeleton, useTranslation } from '@thecoffeecream/ui-shared'
+import { useMenu, Badge, Icon, useTranslation, PageHeaderSkeleton, GridSkeleton } from '@thecoffeecream/ui-shared'
 import { calculateCartTotal } from '@thecoffeecream/ui-shared'
 import { formatPrice, formatTime } from '@thecoffeecream/ui-shared'
 import './TableList.scss'
@@ -10,37 +10,24 @@ export default function TableList() {
     const { t } = useTranslation()
     const cart = useCart()
     const menu = useMenu()
-    const [_now, setNow] = useState(Date.now())
     const [tab, setTab] = useState('all') // 'all', 'active', 'empty'
 
-    useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 60000)
-        return () => clearInterval(interval)
-    }, [])
-
-    // Takeaway "table"
-    const takeaway = { id: 'takeaway', name: t('pos.takeaway'), type: 'takeaway' }
-
-    // Generate table data
-    const rawTables = Array.from({ length: 12 }).map((_, i) => {
-        const id = i + 1
-        return {
-            id: id.toString(),
-            name: `Bàn ${id}`,
-            type: 'table'
-        }
-    })
-
     // Combine and enrich with cart data
-    const allItems = [takeaway, ...rawTables].map(t => {
-        const tableCart = cart.tables[t.id] || { items: [] }
-        const amount = calculateCartTotal(tableCart.items)
-        const active = tableCart.items.length > 0
+    const takeawayTable = { id: 'takeaway', name: t('pos.takeaway'), type: 'takeaway' }
+    const floorTables = Array.from({ length: 12 }).map((_, i) => ({
+        id: (i + 1).toString(),
+        name: `Bàn ${i + 1}`,
+        type: 'table'
+    }))
+
+    const allItems = [takeawayTable, ...floorTables].map(t => {
+        const tableCart = cart?.tables?.[t.id] || { items: [] }
         const itemsCount = (tableCart.items || []).reduce((sum, it) => sum + (it.qty ?? it.quantity ?? 1), 0)
+
         return {
             ...t,
-            amount,
-            active,
+            amount: calculateCartTotal(tableCart.items),
+            active: tableCart.items.length > 0,
             createdAt: tableCart.createdAt,
             itemsCount,
             status: tableCart.status || 'DRAFT'
@@ -54,27 +41,16 @@ export default function TableList() {
         return true
     })
 
-    // Loading Skeleton
     if (!cart) {
         return (
             <div className="page">
-                <header className="page-header">
-                    <Skeleton width="40px" height="40px" variant="rect" />
-                    <Skeleton width="150px" height="24px" />
-                </header>
+                <PageHeaderSkeleton hasAction={false} />
                 <div className="home-tabs">
-                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
-                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
-                    <Skeleton width="80px" height="36px" variant="circle" className="skeleton-tab" />
+                    <div className="skeleton-tab" style={{ background: 'var(--bg-glass)', width: '80px', height: '36px', borderRadius: '18px' }} />
+                    <div className="skeleton-tab" style={{ background: 'var(--bg-glass)', width: '80px', height: '36px', borderRadius: '18px' }} />
+                    <div className="skeleton-tab" style={{ background: 'var(--bg-glass)', width: '80px', height: '36px', borderRadius: '18px' }} />
                 </div>
-                <div className="grid">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                        <div className="glass-card skeleton-card" key={i}>
-                            <Skeleton width="60%" height="20px" className="skeleton-title" />
-                            <Skeleton width="40%" height="16px" />
-                        </div>
-                    ))}
-                </div>
+                <GridSkeleton count={12} className="skeleton-grid" />
             </div>
         )
     }

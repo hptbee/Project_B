@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Icon, useToast, LoadingSpinner, Badge, DateRangePicker, ConfirmModal, useTranslation, SearchBar, Pagination, ordersApi as orderApi, reportsApi as reportApi } from '@thecoffeecream/ui-shared'
+import { Icon, useToast, LoadingSpinner, Badge, DateRangePicker, ConfirmModal, useTranslation, SearchBar, Pagination, PageHeaderSkeleton, TableSkeleton, ordersApi as orderApi, reportsApi as reportApi } from '@thecoffeecream/ui-shared'
 import OrderEditModal from '../components/OrderEditModal'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './OrderList.scss'
@@ -134,7 +134,12 @@ export default function OrderList() {
     // }
 
     if (loading && orders.length === 0) {
-        return <LoadingSpinner fullScreen />
+        return (
+            <div className="order-list-page page">
+                <PageHeaderSkeleton hasAction={true} />
+                <TableSkeleton rows={10} cols={7} />
+            </div>
+        )
     }
 
     return (

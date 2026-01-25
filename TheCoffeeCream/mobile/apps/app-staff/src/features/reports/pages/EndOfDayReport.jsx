@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { LoadingSpinner, DatePicker, useTranslation, apiFetch, IconChevron, cacheService, CACHE_KEYS, reportsApi as api } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, DatePicker, useTranslation, apiFetch, IconChevron, cacheService, CACHE_KEYS, reportsApi as api, EmptyState } from '@thecoffeecream/ui-shared'
 import './EndOfDayReport.scss'
 
 export default function EndOfDayReport() {
@@ -159,12 +159,11 @@ export default function EndOfDayReport() {
             </div>
 
             {!hasData ? (
-                <div className="report-container">
-                    <div className="empty-state">
-                        <h3>Chưa có dữ liệu nào cho ngày này.</h3>
-                        <p>Hãy hoàn thành các đơn hàng để xem báo cáo.</p>
-                    </div>
-                </div>
+                <EmptyState
+                    icon="chart"
+                    title="Chưa có báo cáo nào"
+                    subtitle="Dữ liệu sẽ xuất hiện sau khi bạn hoàn thành đơn hàng đầu tiên."
+                />
             ) : (
                 <>
                     {selectedTab === 'summary' && (

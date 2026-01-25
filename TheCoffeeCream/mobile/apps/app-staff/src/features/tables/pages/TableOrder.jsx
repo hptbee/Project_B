@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
 import { calculateCartTotal, formatPrice, useAutoSave, useTranslation } from '@thecoffeecream/ui-shared'
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
-import { Fab, Icon, ConfirmModal, IconChevron, Badge } from '@thecoffeecream/ui-shared'
+import { Fab, Icon, ConfirmModal, IconChevron, Badge, EmptyState } from '@thecoffeecream/ui-shared'
 import './TableOrder.scss'
 
 export default function TableOrder() {
@@ -137,13 +137,12 @@ export default function TableOrder() {
 
             <div className="list order-item-list">
                 {(tableCart?.items || []).length === 0 ? (
-                    <div className="empty-table-state">
-                        <div className="empty-emoji">🍽️</div>
-                        <div className="empty-text">{t('cart.empty_title')}</div>
-                        <div className="empty-cta">
-                            {t('cart.empty_instruction_prefix')} <span className="accent-bold">+</span> {t('cart.empty_instruction_suffix')}
-                        </div>
-                    </div>
+                    <EmptyState
+                        icon="coffee"
+                        title={t('cart.empty_title')}
+                        subtitle={`${t('cart.empty_instruction_prefix')} + ${t('cart.empty_instruction_suffix')}`}
+                        variant="transparent"
+                    />
                 ) : (
                     (tableCart?.items || []).map(item => (
                         <div key={item.key} className="order-item">

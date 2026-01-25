@@ -20,71 +20,96 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
         {
-            // idempotency check - allow if it's a draft update
             var existing = await _orderRepository.GetByClientOrderIdAsync(request.ClientOrderId);
             if (existing != null && existing.Status != OrderStatus.DRAFT)
                 throw new InvalidOperationException("This order has already been finalized and cannot be modified.");
 
-            if (!Enum.TryParse<OrderType>(request.OrderType, true, out var orderType))
-                throw new ArgumentException("Invalid orderType", nameof(request.OrderType));
-
-            // Load all products to lookup toppings
+            var orderType = ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN);
             var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
 
             var items = request.Items.Select(i =>
             {
+                var itemDiscountType = ParseNullableEnum<DiscountType>(i.DiscountType);
                 System.Collections.Generic.List<OrderItemTopping>? selected = null;
-                DiscountType? itemDiscountType = null;
-                if (!string.IsNullOrEmpty(i.DiscountType) && Enum.TryParse<DiscountType>(i.DiscountType, true, out var dt))
-                    itemDiscountType = dt;
 
-                if (allProducts.TryGetValue(i.ProductId, out var product))
+                if (allProducts.TryGetValue(i.ProductId, out var product) && i.SelectedToppingNames?.Any() == true)
                 {
-                    if (i.SelectedToppingNames != null && i.SelectedToppingNames.Any())
-                    {
-                        // Match selected topping names with product's available toppings
-                        var productToppings = product.Toppings.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
-
-                        selected = i.SelectedToppingNames
-                            .Where(name => productToppings.ContainsKey(name))
-                            .Select(name => new OrderItemTopping(productToppings[name].Id, productToppings[name].Name, productToppings[name].Price))
-                            .ToList();
-                    }
+                    var productToppings = product.Toppings.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
+                    selected = i.SelectedToppingNames
+                        .Where(name => productToppings.ContainsKey(name))
+                        .Select(name => new OrderItemTopping(productToppings[name].Id, productToppings[name].Name, productToppings[name].Price))
+                        .ToList();
                 }
 
                 return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue, i.Note);
             });
-
-            DiscountType? orderDiscountType = null;
-            if (!string.IsNullOrEmpty(request.DiscountType) && Enum.TryParse<DiscountType>(request.DiscountType, true, out var odt))
-                orderDiscountType = odt;
-
-            if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
-                paymentMethod = PaymentMethod.CASH;
-
-            if (!Enum.TryParse<OrderStatus>(request.Status, true, out var status))
-                status = OrderStatus.SUCCESS;
-
-            Guid? existingId = existing?.Id;
 
             var order = new Order(
                 request.ClientOrderId,
                 orderType,
                 items,
                 request.TableNumber,
-                paymentMethod,
+                ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
                 request.CashAmount,
                 request.TransferAmount,
-                orderDiscountType,
+                ParseNullableEnum<DiscountType>(request.DiscountType),
                 request.DiscountValue,
-                status,
+                ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
                 request.Note,
-                existingId);
+                existing?.Id);
 
             await _orderRepository.AddAsync(order);
-
             return order;
         }
+
+        public async Task UpdateOrderAsync(Guid id, CreateOrderRequest request)
+        {
+            var existing = await _orderRepository.GetByIdAsync(id);
+            if (existing == null) throw new ArgumentException("Order not found");
+
+            var items = request.Items.Select(i => new OrderItem(
+                i.ProductId,
+                i.Name,
+                i.UnitPrice,
+                i.Quantity,
+                null,
+                ParseNullableEnum<DiscountType>(i.DiscountType),
+                i.DiscountValue,
+                i.Note));
+
+            var order = new Order(
+                request.ClientOrderId,
+                ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN),
+                items,
+                request.TableNumber,
+                ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
+                request.CashAmount,
+                request.TransferAmount,
+                ParseNullableEnum<DiscountType>(request.DiscountType),
+                request.DiscountValue,
+                ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
+                request.Note,
+                id)
+            {
+                CreatedAt = existing.CreatedAt,
+                IsActive = existing.IsActive
+            };
+
+            await _orderRepository.UpdateAsync(order);
+        }
+
+        private static T ParseEnum<T>(string value, T defaultValue) where T : struct
+        {
+            if (string.IsNullOrEmpty(value)) return defaultValue;
+            return Enum.TryParse<T>(value, true, out var result) ? result : defaultValue;
+        }
+
+        private static T? ParseNullableEnum<T>(string value) where T : struct
+        {
+            if (string.IsNullOrEmpty(value)) return null;
+            return Enum.TryParse<T>(value, true, out var result) ? result : (T?)null;
+        }
+
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
         {
             return await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
@@ -98,59 +123,6 @@ namespace TheCoffeeCream.Application.Services
         public async Task SoftDeleteOrderAsync(Guid id)
         {
             await _orderRepository.ToggleActiveAsync(id);
-        }
-
-        public async Task UpdateOrderAsync(Guid id, CreateOrderRequest request)
-        {
-            var existing = await _orderRepository.GetByIdAsync(id);
-            if (existing == null) throw new ArgumentException("Order not found");
-
-            // Reuse logic from CreateOrderAsync but keep the original ID if necessary
-            // In our repository, AddAsync handles update if ClientOrderId matches.
-            // But here we might want to update by ID.
-            
-            if (!Enum.TryParse<OrderType>(request.OrderType, true, out var orderType))
-                throw new ArgumentException("Invalid orderType", nameof(request.OrderType));
-
-            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
-
-            var items = request.Items.Select(i =>
-            {
-                DiscountType? itemDiscountType = null;
-                if (!string.IsNullOrEmpty(i.DiscountType) && Enum.TryParse<DiscountType>(i.DiscountType, true, out var dt))
-                    itemDiscountType = dt;
-
-                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, null, itemDiscountType, i.DiscountValue, i.Note);
-            });
-
-            DiscountType? orderDiscountType = null;
-            if (!string.IsNullOrEmpty(request.DiscountType) && Enum.TryParse<DiscountType>(request.DiscountType, true, out var odt))
-                orderDiscountType = odt;
-
-            if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
-                paymentMethod = PaymentMethod.CASH;
-
-            if (!Enum.TryParse<OrderStatus>(request.Status, true, out var status))
-                status = OrderStatus.SUCCESS;
-
-            var order = new Order(
-                request.ClientOrderId,
-                orderType,
-                items,
-                request.TableNumber,
-                paymentMethod,
-                request.CashAmount,
-                request.TransferAmount,
-                orderDiscountType,
-                request.DiscountValue,
-                status,
-                request.Note,
-                id);
-            
-            order.CreatedAt = existing.CreatedAt; // Preserve original creation time
-            order.IsActive = existing.IsActive;
-
-            await _orderRepository.UpdateAsync(order);
         }
     }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { LoadingSpinner, IconChevron, Badge, useTranslation, formatPrice, cacheService, CACHE_KEYS, ordersApi as api } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, IconChevron, Badge, useTranslation, formatPrice, cacheService, CACHE_KEYS, ordersApi as api, EmptyState } from '@thecoffeecream/ui-shared'
 import './OrderHistory.scss'
 
 export default function OrderHistory() {
@@ -67,7 +67,11 @@ export default function OrderHistory() {
 
             <div className="orders-list">
                 {orders.length === 0 ? (
-                    <div className="empty-orders">{t('common.no_orders_today')}</div>
+                    <EmptyState
+                        icon="history"
+                        title={t('common.no_orders_today')}
+                        subtitle="Hãy hoàn thành đơn hàng đầu tiên trong ngày nhé!"
+                    />
                 ) : (
                     orders.map(order => (
                         <div
