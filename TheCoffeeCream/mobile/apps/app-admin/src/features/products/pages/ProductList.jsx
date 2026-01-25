@@ -175,17 +175,6 @@ export default function ProductList() {
                                 <div className="card-thumb" style={{ backgroundImage: `url(${product.imageUrl})` }}>
                                     {!product.isActive && <div className="status-overlay">{t('status.removed')}</div>}
                                     {product.isTopping && <div className="topping-tag">{t('nav.topping')}</div>}
-
-                                    <button
-                                        className={`status-toggle-badge ${product.isActive ? 'active' : 'inactive'}`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleToggleStatus(product);
-                                        }}
-                                        title={product.isActive ? t('status.active') : t('status.draft')}
-                                    >
-                                        <Icon name={product.isActive ? 'eye' : 'eye-off'} size={14} />
-                                    </button>
                                 </div>
                                 <div className="card-content">
                                     <div className="card-top">
