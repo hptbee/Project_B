@@ -231,7 +231,7 @@ export default function Insights() {
                             <div key={idx} className="payment-item">
                                 <div className="payment-info">
                                     <span className="method">{p.paymentMethod}</span>
-                                    <span className="count">{p.orderCount} {t('nav.orders').toLowerCase()}</span>
+                                    <span className="count">{p.orderCount} {t('common.order_count')}</span>
                                 </div>
                                 <div className="payment-bar-bg">
                                     <div

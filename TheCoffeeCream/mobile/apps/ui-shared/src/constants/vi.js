@@ -145,6 +145,8 @@ export const vi = {
         all_categories: 'Tất cả danh mục',
         developed_by: 'Phát triển bởi',
         version: 'Phiên bản',
+        role: 'Vai trò',
+        order_count: 'đơn hàng',
         dark_mode: 'Chế độ tối',
         pick_date: 'Chọn ngày',
         cost: 'Giá vốn',

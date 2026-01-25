@@ -199,7 +199,7 @@ export default function OrderList() {
                                         Thời gian {getSortIcon('createdAt')}
                                     </th>
                                     <th className="sortable" onClick={() => requestSort('id')}>
-                                        {t('report.orders')} {getSortIcon('id')}
+                                        {t('common.code')} {getSortIcon('id')}
                                     </th>
                                     <th>{t('common.table')}</th>
                                     <th>{t('common.payment_method')}</th>

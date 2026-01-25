@@ -145,6 +145,8 @@ export const en = {
         all_categories: 'All Categories',
         developed_by: 'Developed by',
         version: 'Version',
+        role: 'Role',
+        order_count: 'orders',
         dark_mode: 'Dark Mode',
         pick_date: 'Select Date',
         cost: 'Cost',
