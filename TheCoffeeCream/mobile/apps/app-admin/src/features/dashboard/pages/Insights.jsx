@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { reportApi } from '@/shared/services/api/report'
-import { LoadingSpinner, Icon, Badge, DateRangePicker, useTranslation } from '@thecoffeecream/ui-shared'
-import { formatPrice } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, Icon, DateRangePicker, useTranslation, reportsApi as reportApi, formatPrice } from '@thecoffeecream/ui-shared'
 import './Insights.scss'
 
 export default function Insights() {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart, useCartDispatch } from '@/shared/contexts/CartContext'
 import { calculateCartTotal } from '@thecoffeecream/ui-shared'

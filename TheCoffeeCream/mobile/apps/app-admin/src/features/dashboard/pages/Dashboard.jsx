@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { LoadingSpinner, Skeleton } from '@thecoffeecream/ui-shared'
-import StatCard from '../components/StatCard'
-import RevenueChart from '../components/RevenueChart'
-import RecentOrders from '../components/RecentOrders'
-import { dashboardApi } from '@/shared/services/api/dashboard'
+import { useState, useEffect } from 'react'
+import { Skeleton, dashboardApi, StatCard } from '@thecoffeecream/ui-shared'
 import './Dashboard.scss'
 
 export default function Dashboard() {
@@ -31,7 +27,7 @@ export default function Dashboard() {
             setRevenueData(revenueChartData)
             setRecentOrders(ordersData)
         } catch (error) {
-            console.error('Failed to load dashboard:', error)
+            // console.error('Failed to load dashboard:', error)
         } finally {
             setLoading(false)
             setRefreshing(false)

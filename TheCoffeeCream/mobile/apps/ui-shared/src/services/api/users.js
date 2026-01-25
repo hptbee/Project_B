@@ -1,6 +1,6 @@
-import { apiFetch } from '@thecoffeecream/ui-shared'
+import { apiFetch } from './client'
 
-export const userApi = {
+export const usersApi = {
     getAllUsers: () => apiFetch('/Users'),
     getUserById: (id) => apiFetch(`/Users/${id}`),
     createUser: (userData) => apiFetch('/Users', {

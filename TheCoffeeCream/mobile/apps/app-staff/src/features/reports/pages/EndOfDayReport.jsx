@@ -1,10 +1,6 @@
-import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
 import { useNavigate } from 'react-router-dom'
-import React, { useState, useEffect, useRef } from 'react'
-import { LoadingSpinner, DatePicker, useTranslation } from '@thecoffeecream/ui-shared'
-import { api } from '@/shared/services/api'
-import { apiFetch } from '@thecoffeecream/ui-shared'
-import { IconChevron } from '@thecoffeecream/ui-shared'
+import { useState, useEffect, useRef } from 'react'
+import { LoadingSpinner, DatePicker, useTranslation, apiFetch, IconChevron, cacheService, CACHE_KEYS, reportsApi as api } from '@thecoffeecream/ui-shared'
 import './EndOfDayReport.scss'
 
 export default function EndOfDayReport() {

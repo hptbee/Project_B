@@ -4,20 +4,21 @@ The core bridge of The Coffee Cream ecosystem. Provides a unified Design System,
 
 ## 🚀 Shared Architecture
 This package is the "Single Source of Truth" for:
-- **UI Kit**: High-performance, consistent UI components (Glassmorphism theme).
-- **API Services**: Centralized fetch logic with built-in synchronization.
-- **Business Logic**: Price calculations, currency formatting, and state management hooks.
+- **UI Kit**: High-performance, consistent UI components (Vibrant glassmorphism theme).
+- **API Services**: Centralized fetch logic (`ordersApi`, `productsApi`, `reportsApi`, `usersApi`, `dashboardApi`).
+- **Offline Sync**: Global `OfflineQueue` for zero-latency order processing across all apps.
+- **Design System**: Centralized SCSS modules for buttons, layouts, and animations.
 
 ## 📦 What's Inside
-- **`/components`**: Reusable Atoms and Layouts (SideMenu, Buttons, Modals).
-- **`/services`**: Unified API clients and Logging.
-- **`/utils`**: Business logic standardizes (Calculations, Formatters).
+- **`/components`**: Reusable Atoms (Badge, Icon, Spinner) and Layouts (SideMenu, StatCard, Modals).
+- **`/services`**: Unified API clients with built-in caching and offline support.
+- **`/utils`**: Business logic standardizes (Calculations, Price/Date Formatters).
 - **`/styles`**: Centralized design tokens and CSS variables.
 
 ## 🛠️ Usage
-Everything is exported via a clean Barrel export:ss                                      ê
+Everything is exported via a clean Barrel export:
 ```javascript
-import { apiFetch, formatPrice, SideMenu } from '@thecoffeecream/ui-shared';
+import { ordersApi, formatPrice, SideMenu, StatCard } from '@thecoffeecream/ui-shared';
 ```
 
 ---

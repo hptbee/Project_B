@@ -1,5 +1,5 @@
-import React from 'react';
 import { IconChevron } from '../IconChevron';
+import { Select } from '../Select';
 import './Pagination.scss';
 
 export function Pagination({
@@ -33,14 +33,13 @@ export function Pagination({
 
             <div className="pagination-controls">
                 <div className="page-size-selector">
-                    <select
+                    <Select
                         value={itemsPerPage}
                         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-                    >
-                        {pageSizeOptions.map(size => (
-                            <option key={size} value={size}>{size} / trang</option>
-                        ))}
-                    </select>
+                        options={pageSizeOptions.map(size => ({ value: size, label: `${size} / trang` }))}
+                        placeholder={false}
+                        fullWidth={false}
+                    />
                 </div>
 
                 <div className="page-nav">

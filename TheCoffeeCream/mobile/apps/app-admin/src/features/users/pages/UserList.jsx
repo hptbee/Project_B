@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { userApi } from '@/shared/services/api/user'
-import { LoadingSpinner, Badge, ConfirmModal, Icon, useToast, SearchBar, Pagination, useTranslation } from '@thecoffeecream/ui-shared'
+import { useState, useEffect, useMemo } from 'react'
+import { LoadingSpinner, Badge, ConfirmModal, Icon, useToast, SearchBar, Pagination, useTranslation, usersApi as userApi } from '@thecoffeecream/ui-shared'
 import UserModal from '../components/UserModal'
 import './UserList.scss'
 

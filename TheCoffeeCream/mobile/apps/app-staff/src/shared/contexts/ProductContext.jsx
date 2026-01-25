@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { api } from '../services/api'
-import { cacheService, CACHE_KEYS } from '../services/cache/cacheService'
-import { useAuth } from '@thecoffeecream/ui-shared'
+import { productsApi as api, cacheService, CACHE_KEYS, useAuth } from '@thecoffeecream/ui-shared'
 
 const ProductContext = createContext()
 
@@ -23,7 +21,7 @@ export function ProductProvider({ children }) {
             // 1. Try to load from cache first for instant UI
             const cachedMenu = cacheService.get(CACHE_KEYS.MENU)
             if (cachedMenu && !forceRefresh) {
-                console.log('Instant load from cache')
+                // console.log('Instant load from cache')
                 processMenuData(cachedMenu)
                 setLoading(false)
             } else {
@@ -31,7 +29,7 @@ export function ProductProvider({ children }) {
             }
 
             // 2. Fetch from API in background (SWR)
-            console.log('Updating menu from API in background')
+            // console.log('Updating menu from API in background')
             const data = await api.getMenu()
 
             // 3. Save to cache and update UI

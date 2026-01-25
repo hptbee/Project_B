@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { useTranslation } from '../../../contexts/LanguageContext'
 import { Icon } from '../Icon'
 

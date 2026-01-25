@@ -1,4 +1,4 @@
-import { apiFetch } from '@thecoffeecream/ui-shared'
+import { apiFetch } from './client'
 
 /**
  * Dashboard API
@@ -8,12 +8,9 @@ export const dashboardApi = {
      * Get overall dashboard statistics
      */
     getDashboardStats: async () => {
-        // For now, aggregate from existing endpoints
         const today = new Date().toISOString().split('T')[0]
-
         try {
             const report = await apiFetch(`/Reports/daily?date=${today}`)
-
             return {
                 todayRevenue: report.totalRevenue || 0,
                 todayOrders: report.totalOrders || 0,
@@ -54,12 +51,10 @@ export const dashboardApi = {
     getRevenueData: async (days = 7) => {
         const data = []
         const today = new Date()
-
         for (let i = days - 1; i >= 0; i--) {
             const date = new Date(today)
             date.setDate(date.getDate() - i)
             const dateStr = date.toISOString().split('T')[0]
-
             try {
                 const report = await apiFetch(`/Reports/daily?date=${dateStr}`)
                 data.push({
@@ -75,7 +70,6 @@ export const dashboardApi = {
                 })
             }
         }
-
         return data
     }
 }

@@ -1,5 +1,4 @@
 import { apiFetch } from './client'
-import { Logger } from './logger'
 
 // Note: Offline support logic is kept as it was in staff app
 // Admin app just uses the standard methods
@@ -26,12 +25,25 @@ export const ordersApi = {
     },
 
     /**
-     * Create order (with offline support if window.dispatchEvent is available)
+     * Create order (with optional offline support)
      */
-    createOrder: async (orderData) => {
-        // Staff app specific offline logic - if OfflineQueue is available globally or we handle it here
-        // For now, keeping the implementation simple and unified
-        // In the future, we can move OfflineQueue to ui-shared as well
+    createOrder: async (orderData, { useOffline = false } = {}) => {
+        if (useOffline) {
+            const { OfflineQueue } = await import('../offline/OfflineQueue');
+            await OfflineQueue.addOrder(orderData);
+
+            // Trigger background sync
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('trigger-sync'));
+            }, 100);
+
+            return {
+                id: orderData.id || orderData.ClientOrderId || 'offline-pending',
+                status: 'PENDING_SYNC',
+                message: 'Đã lưu. Đang đồng bộ ngầm...'
+            };
+        }
+
         return apiFetch('/Orders', {
             method: 'POST',
             body: JSON.stringify(orderData)

@@ -158,7 +158,9 @@ export const vi = {
         update_success_msg: 'Đã cập nhật {name}',
         add_to_table_success: '{name} đã thêm vào Bàn {table}',
         add_to_cart_success: '{name} đã thêm vào giỏ',
-        subtitle: 'Phần mềm Order'
+        subtitle: 'Phần mềm Order',
+        topping: 'Topping',
+        toping: 'Topping'
     },
     modal: {
         edit_product: 'Chỉnh sửa mặt hàng',

@@ -1,4 +1,3 @@
-import React from 'react'
 import './IconChevron.scss'
 
 export function IconChevron({ direction = 'left', size = 20, className = '' }) {

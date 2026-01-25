@@ -1,22 +1,25 @@
-import React from 'react'
-import './StatCard.scss'
+import React from 'react';
+import './StatCard.scss';
 
-export default function StatCard({ icon, label, value, format = 'number', trend, trendValue }) {
+/**
+ * StatCard component for displaying key metrics with icons and trends.
+ */
+export const StatCard = ({ icon, label, value, format = 'number', trend, trendValue }) => {
     const formatValue = (val) => {
         if (format === 'currency') {
             return new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND'
-            }).format(val)
+            }).format(val);
         }
         if (format === 'percentage') {
-            return `${val}%`
+            return `${val}%`;
         }
-        return new Intl.NumberFormat('vi-VN').format(val)
-    }
+        return new Intl.NumberFormat('vi-VN').format(val);
+    };
 
     return (
-        <div className="stat-card">
+        <div className="stat-card glass-card">
             <div className="stat-icon">{icon}</div>
             <div className="stat-content">
                 <div className="stat-label">{label}</div>
@@ -28,5 +31,5 @@ export default function StatCard({ icon, label, value, format = 'number', trend,
                 )}
             </div>
         </div>
-    )
-}
+    );
+};

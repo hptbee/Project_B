@@ -1,5 +1,4 @@
-import React from 'react'
-import { AuthProvider, ThemeProvider, UIProvider, Toast, LanguageProvider } from '@thecoffeecream/ui-shared'
+import { BaseCoreProvider } from '@thecoffeecream/ui-shared'
 import { CartProvider } from './CartContext'
 import { ProductProvider } from './ProductContext'
 
@@ -8,18 +7,12 @@ import { ProductProvider } from './ProductContext'
  */
 export function CoreProvider({ children }) {
     return (
-        <ThemeProvider>
-            <UIProvider ToastComponent={Toast}>
-                <LanguageProvider>
-                    <AuthProvider>
-                        <CartProvider>
-                            <ProductProvider>
-                                {children}
-                            </ProductProvider>
-                        </CartProvider>
-                    </AuthProvider>
-                </LanguageProvider>
-            </UIProvider>
-        </ThemeProvider>
+        <BaseCoreProvider>
+            <CartProvider>
+                <ProductProvider>
+                    {children}
+                </ProductProvider>
+            </CartProvider>
+        </BaseCoreProvider>
     )
 }

@@ -3,14 +3,14 @@
 Modern point-of-sale and order management for staff.
 
 ## ✨ Features
-- **Offline-First**: Instant feedback when creating orders; auto-syncs when online.
+- **Offline-First Ready**: Powered by `@thecoffeecream/ui-shared/OfflineQueue` for zero-latency order submission.
 - **Table Management**: Real-time table status and order tracking.
 - **Flexible Checkout**: Supports Cash, Transfer, and split payments.
-- **Menu Sync**: One-tap synchronization with centralized product database.
+- **Universal Sync**: One-tap synchronization of Menu, Orders, and Reports via centralized API services.
 
-## 🔄 Sync Engine
-- Uses `localStorage` queue for zero-latency order submission.
-- Background worker automatically resolves the queue once internet is restored.
+## 🔄 Core Architecture
+- **API Connectivity**: Consumes `ordersApi`, `productsApi`, and `reportsApi` from the shared library.
+- **Persistence**: Hybrid caching using `cacheService` for optimal offline performance.
 
 ## 🚀 Quick Start
 ```bash
@@ -23,8 +23,6 @@ npm run dev
 npm run build
 npx cap sync android
 cd android; ./gradlew assembleDebug
-
-cd mobile\apps\app-staff; npm run build; npx cap sync android; cd android; ./gradlew assembleDebug
 ```
 *Output: `TheCoffeeCream-Staff-1.0-YYYYMMDDHHMMSS.apk`*
 

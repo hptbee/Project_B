@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { productApi } from '@/shared/services/api/product'
-import { Icon, useToast, LoadingSpinner, useTranslation } from '@thecoffeecream/ui-shared'
+import { useState, useEffect } from 'react'
+import { Icon, useToast, LoadingSpinner, useTranslation, productsApi as productApi, Select } from '@thecoffeecream/ui-shared'
 import './ProductModal.scss'
 
 export default function ProductModal({ product, onClose, onSave }) {
@@ -133,17 +132,13 @@ export default function ProductModal({ product, onClose, onSave }) {
                                             placeholder="CODE"
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>{t('form.category')}</label>
-                                        <select
-                                            value={formData.category}
-                                            onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                        >
-                                            {categories.map(c => (
-                                                <option key={c.id} value={c.name}>{c.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    <Select
+                                        label={t('form.category')}
+                                        value={formData.category}
+                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                        options={categories.map(c => ({ value: c.name, label: c.name }))}
+                                        placeholder={false}
+                                    />
                                 </div>
 
                                 <div className="form-row">

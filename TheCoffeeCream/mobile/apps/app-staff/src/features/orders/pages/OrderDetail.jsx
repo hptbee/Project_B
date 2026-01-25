@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { api } from '@/shared/services/api'
+import { ordersApi as api } from '@thecoffeecream/ui-shared'
 import { LoadingSpinner, IconChevron, Badge, useTranslation } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './OrderDetail.scss'

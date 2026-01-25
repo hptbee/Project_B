@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Icon, useToast, LoadingSpinner, Badge, DateRangePicker, ConfirmModal, useTranslation, SearchBar, Pagination } from '@thecoffeecream/ui-shared'
-import { orderApi } from '@/shared/services/api/orders'
-import { reportApi } from '@/shared/services/api/report'
+import { useState, useEffect, useMemo } from 'react'
+import { Icon, useToast, LoadingSpinner, Badge, DateRangePicker, ConfirmModal, useTranslation, SearchBar, Pagination, ordersApi as orderApi, reportsApi as reportApi } from '@thecoffeecream/ui-shared'
 import OrderEditModal from '../components/OrderEditModal'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './OrderList.scss'
@@ -34,7 +32,7 @@ export default function OrderList() {
         try {
             const data = await orderApi.getOrders(dateRange.start, dateRange.end)
             setOrders(data)
-        } catch (error) {
+        } catch (err) { // eslint-disable-line no-unused-vars
             showToast(t('modal.load_orders_error'), 'error')
         } finally {
             setLoading(false)
@@ -51,7 +49,7 @@ export default function OrderList() {
             await orderApi.deleteOrder(order.id)
             showToast(t('modal.delete_order_success'))
             fetchOrders()
-        } catch (error) {
+        } catch (err) { // eslint-disable-line no-unused-vars
             showToast(t('modal.delete_order_error'), 'error')
         } finally {
             setConfirmDelete({ show: false, order: null })
@@ -67,7 +65,7 @@ export default function OrderList() {
             a.href = url
             a.download = `orders_${dateRange.start}_${dateRange.end}.csv`
             a.click()
-        } catch (error) {
+        } catch (err) { // eslint-disable-line no-unused-vars
             showToast(t('modal.export_error'), 'error')
         }
     }
@@ -131,9 +129,9 @@ export default function OrderList() {
         return labels[status.toUpperCase()] || status
     }
 
-    const formatCurrency = (val) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val)
-    }
+    // const formatCurrency = (val) => {
+    //     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val)
+    // }
 
     if (loading && orders.length === 0) {
         return <LoadingSpinner fullScreen />

@@ -1,5 +1,4 @@
-import { cacheService } from '../cache/cacheService';
-import { Logger } from '@thecoffeecream/ui-shared';
+import { Logger } from '../api/logger';
 
 const QUEUE_KEY = 'app_offline_orders_queue';
 
@@ -24,9 +23,7 @@ export const OfflineQueue = {
             // Update existing item
             queue[existingIndex].data = orderData;
             queue[existingIndex].timestamp = Date.now();
-            // Keep the same ID and attempts? 
-            // Reset attempts because it's a new version of data? 
-            // Better to reset attempts to give it a fresh chance
+            // Reset attempts because it's a new version of data
             queue[existingIndex].attempts = 0;
 
             Logger.info(`[OFFLINE] Updated existing order in queue: ${orderData.ClientOrderId}`);
@@ -97,10 +94,8 @@ export const OfflineQueue = {
                     localStorage.setItem(QUEUE_KEY, JSON.stringify(currentQueue));
                 }
 
-                // If it's a permanent error (not network), we might want to remove it 
-                // but for now we'll keep trying until user clears it or network works.
+                // If it's a permanent error (not network), we might want to remove it
                 if (error.message && !error.message.includes('fetch') && !error.message.includes('timeout')) {
-                    // Critical error, stop processing this item for now
                     break;
                 }
             }

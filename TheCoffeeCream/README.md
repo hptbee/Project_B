@@ -5,10 +5,10 @@ A premium, end-to-end coffee shop management system featuring a high-performance
 ## 📂 Project Structure
 
 - **[api/](file:///d:/Project/Project_B/TheCoffeeCream/api)**: ASP.NET Core Web API using Clean Architecture and Google Sheets as a database.
-- **[mobile/](file:///d:/Project/Project_B/TheCoffeeCream/mobile)**: A standard monorepo containing:
+- **[mobile/](file:///d:/Project/Project_B/TheCoffeeCream/mobile)**: A modern monorepo containing:
   - **[app-staff](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-staff)**: Order taking and payment app for staff.
   - **[app-admin](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-admin)**: Management dashboard and business insights.
-  - **[ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: Shared UI kit, API services, and business logic.
+  - **[ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: Single Source of Truth for UI, API services, and Offline logic.
 - **publish/**: Build artifacts and deployment scripts.
 
 ## 🚀 Quickstart (Local Development)
@@ -16,7 +16,7 @@ A premium, end-to-end coffee shop management system featuring a high-performance
 ### Prerequisites
 - .NET 8 SDK
 - Node.js 20+ and npm
-- Android Studio (for native builds)
+- Android Studio (for native APK builds)
 
 ### 1. Root Setup
 ```bash
@@ -36,13 +36,13 @@ npm run dev --workspaces
 ```
 
 ## 🌐 Architecture Highlights
-- **Backend**: Domain-Driven Design (DDD) with a Google Sheets repository implementation for lightweight but powerful data management.
-- **Frontend Monorepo**: Shared business logic and UI components ensure 100% consistency across staff and admin apps.
-- **Offline-First**: Reliable order processing even with intermittent connectivity.
+- **Centralized API Layer**: All mobile apps share a unified service layer in `ui-shared`, ensuring zero logic duplication.
+- **Global Offline Sync**: Reliable order processing powered by a shared `OfflineQueue`.
+- **Backend DDD**: Clean Architecture with a Google Sheets repository for lightweight data management.
 
 ## 🛠️ Build & Deploy
 - **Docker**: Root-level `Dockerfile` for backend deployment.
-- **Mobile**: Capacitor-based native Android builds with timestamped APK generation.
+- **Mobile APKs**: Timestamped builds located in `android/app/build/outputs/apk/debug/` for each app.
 
 ---
 Proprietary © 2026 The Coffee Cream

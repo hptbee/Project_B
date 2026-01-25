@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { productApi } from '@/shared/services/api/product'
-import { LoadingSpinner, Badge, Icon, useToast, ConfirmModal, SearchBar, Pagination, useTranslation } from '@thecoffeecream/ui-shared'
+import { useState, useEffect, useMemo } from 'react'
+import { LoadingSpinner, Badge, Icon, useToast, ConfirmModal, SearchBar, Pagination, useTranslation, productsApi as productApi, Select } from '@thecoffeecream/ui-shared'
 import ProductModal from '../components/ProductModal'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './ProductList.scss'
@@ -121,15 +120,17 @@ export default function ProductList() {
                         onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                         placeholder={t('common.search_placeholder')}
                     />
-                    <select
-                        className="category-select glass-card"
+                    <Select
+                        className="category-select-wrapper"
                         value={selectedCategory}
                         onChange={e => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
-                    >
-                        {categories.map(cat => (
-                            <option key={cat} value={cat}>{cat === 'All' ? t('common.all_categories') : cat}</option>
-                        ))}
-                    </select>
+                        options={categories.map(cat => ({
+                            value: cat,
+                            label: cat === 'All' ? t('common.all_categories') : cat
+                        }))}
+                        placeholder={false}
+                        fullWidth={false}
+                    />
 
                     <button className="add-btn" onClick={handleCreate}>
                         <Icon name="plus" size={18} /> <span className="desktop-only">{t('action.add_new')}</span>

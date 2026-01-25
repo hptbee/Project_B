@@ -1,9 +1,6 @@
-import React, { useState } from 'react'
-import { useMenu, useToast, SideMenu as SharedSideMenu, useTranslation } from '@thecoffeecream/ui-shared'
+import { useState } from 'react'
+import { useToast, SideMenu as SharedSideMenu, useTranslation, ordersApi, reportsApi, cacheService, CACHE_KEYS } from '@thecoffeecream/ui-shared'
 import { useProducts } from '@/shared/contexts/ProductContext'
-import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
-import { ordersApi } from '@/shared/services/api/orders'
-import { reportsApi } from '@/shared/services/api/reports'
 import logo from '@/assets/icons/logo.png'
 
 export default function SideMenu() {

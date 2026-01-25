@@ -1,4 +1,3 @@
-import React from 'react'
 import './RecentOrders.scss'
 
 export default function RecentOrders({ orders }) {

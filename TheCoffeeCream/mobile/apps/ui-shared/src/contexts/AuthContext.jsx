@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { apiFetch } from '../services/api/client'
 
 const AuthContext = createContext()
@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         const handleUnauthorized = () => {
-            console.log('Session expired, logging out...')
+            // console.log('Session expired, logging out...')
             logout()
         }
 

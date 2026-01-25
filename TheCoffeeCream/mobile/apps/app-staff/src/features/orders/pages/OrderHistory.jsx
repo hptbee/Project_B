@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api } from '@/shared/services/api'
-import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
-import { LoadingSpinner, IconChevron, Badge, useTranslation } from '@thecoffeecream/ui-shared'
-import { formatPrice } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, IconChevron, Badge, useTranslation, formatPrice, cacheService, CACHE_KEYS, ordersApi as api } from '@thecoffeecream/ui-shared'
 import './OrderHistory.scss'
 
 export default function OrderHistory() {

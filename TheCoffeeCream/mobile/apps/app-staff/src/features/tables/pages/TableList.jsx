@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/shared/contexts/CartContext'
-import { useMenu, Badge, IconChevron, Icon, Skeleton, useTranslation } from '@thecoffeecream/ui-shared'
+import { useMenu, Badge, Icon, Skeleton, useTranslation } from '@thecoffeecream/ui-shared'
 import { calculateCartTotal } from '@thecoffeecream/ui-shared'
 import { formatPrice, formatTime } from '@thecoffeecream/ui-shared'
 import './TableList.scss'
@@ -10,7 +10,7 @@ export default function TableList() {
     const { t } = useTranslation()
     const cart = useCart()
     const menu = useMenu()
-    const [now, setNow] = useState(Date.now())
+    const [_now, setNow] = useState(Date.now())
     const [tab, setTab] = useState('all') // 'all', 'active', 'empty'
 
     useEffect(() => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@thecoffeecream/ui-shared'
 import Login from '@/features/auth/pages/Login'

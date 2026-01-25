@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { userApi } from '@/shared/services/api/user'
-import { Icon, useToast, LoadingSpinner, useTranslation } from '@thecoffeecream/ui-shared'
+import { Icon, useToast, LoadingSpinner, useTranslation, usersApi as userApi } from '@thecoffeecream/ui-shared'
 import './UserModal.scss'
 
 export default function UserModal({ user, onClose, onSave }) {

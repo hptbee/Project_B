@@ -1,4 +1,3 @@
-import React from 'react'
 import './RevenueChart.scss'
 
 export default function RevenueChart({ data }) {

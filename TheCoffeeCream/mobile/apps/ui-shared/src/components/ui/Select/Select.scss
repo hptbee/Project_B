@@ -1,0 +1,75 @@
+@import '../../../styles/variables.scss';
+
+.select-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    &.full-width {
+        width: 100%;
+    }
+
+    .select-label {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: var(--text-secondary);
+
+        .required {
+            color: var(--accent-red);
+        }
+    }
+
+    .select-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        select {
+            width: 100%;
+            height: 48px;
+            padding: 0 40px 0 16px;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--text-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+
+            &:focus {
+                border-color: var(--accent-amber);
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            option {
+                background: #1a1a1a;
+                color: white;
+                padding: 12px;
+            }
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            pointer-events: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    &.has-error {
+        .select-input {
+            border-color: var(--accent-red);
+        }
+
+        .select-error {
+            color: var(--accent-red);
+            font-size: var(--text-xs);
+        }
+    }
+}

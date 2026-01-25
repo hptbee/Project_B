@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useCartDispatch, useTableCart } from '@/shared/contexts/CartContext'
 import { useProducts } from '@/shared/contexts/ProductContext'

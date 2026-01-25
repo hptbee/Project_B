@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { orderApi } from '@/shared/services/api/orders'
-import { Icon, useToast, LoadingSpinner, useTranslation } from '@thecoffeecream/ui-shared'
-import { formatPrice } from '@thecoffeecream/ui-shared'
+import { Icon, useToast, LoadingSpinner, useTranslation, ordersApi as orderApi, formatPrice, Select, ConfirmModal } from '@thecoffeecream/ui-shared'
 import './OrderEditModal.scss'
 
 export default function OrderEditModal({ order, onClose, onSave }) {
@@ -15,18 +13,19 @@ export default function OrderEditModal({ order, onClose, onSave }) {
         note: order.note
     })
 
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
     const handleDelete = async () => {
-        if (window.confirm(t('modal.delete_order_confirm'))) {
-            try {
-                setLoading(true)
-                await orderApi.deleteOrder(order.id)
-                showToast(t('modal.delete_order_success'))
-                onSave()
-            } catch (error) {
-                showToast(t('modal.delete_order_error'), 'error')
-            } finally {
-                setLoading(false)
-            }
+        try {
+            setLoading(true)
+            await orderApi.deleteOrder(order.id)
+            showToast(t('modal.delete_order_success'))
+            onSave()
+        } catch (err) { // eslint-disable-line no-unused-vars
+            showToast(t('modal.delete_order_error'), 'error')
+        } finally {
+            setLoading(false)
+            setShowDeleteConfirm(false)
         }
     }
 
@@ -60,7 +59,7 @@ export default function OrderEditModal({ order, onClose, onSave }) {
             await orderApi.updateOrder(order.id, updateRequest)
             showToast(t('modal.update_success'))
             onSave()
-        } catch (error) {
+        } catch (err) { // eslint-disable-line no-unused-vars
             showToast(t('modal.save_error'), 'error')
         } finally {
             setLoading(false)
@@ -90,18 +89,18 @@ export default function OrderEditModal({ order, onClose, onSave }) {
                             </div>
                         </section>
 
-                        <div className="form-group">
-                            <label>{t('form.order_status')}</label>
-                            <select
-                                value={formData.status}
-                                onChange={e => setFormData({ ...formData, status: e.target.value })}
-                            >
-                                <option value="SUCCESS">{t('status.paid')}</option>
-                                <option value="PENDING">{t('status.pending')}</option>
-                                <option value="DRAFT">{t('status.draft')}</option>
-                                <option value="REMOVED">{t('status.removed')}</option>
-                            </select>
-                        </div>
+                        <Select
+                            label={t('form.order_status')}
+                            value={formData.status}
+                            onChange={e => setFormData({ ...formData, status: e.target.value })}
+                            options={[
+                                { value: 'SUCCESS', label: t('status.paid') },
+                                { value: 'PENDING', label: t('status.pending') },
+                                { value: 'DRAFT', label: t('status.draft') },
+                                { value: 'REMOVED', label: t('status.removed') }
+                            ]}
+                            placeholder={false}
+                        />
 
                         <div className="form-group">
                             <label>{t('form.order_note')}</label>
@@ -130,7 +129,7 @@ export default function OrderEditModal({ order, onClose, onSave }) {
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn-danger" onClick={handleDelete} disabled={loading}>{t('action.delete')}</button>
+                        <button type="button" className="btn-danger" onClick={() => setShowDeleteConfirm(true)} disabled={loading}>{t('action.delete')}</button>
                         <div className="footer-right">
                             <button type="button" className="btn-secondary" onClick={onClose}>{t('action.cancel')}</button>
                             <button type="submit" className="btn-primary" disabled={loading}>
@@ -141,6 +140,16 @@ export default function OrderEditModal({ order, onClose, onSave }) {
                 </form>
 
                 {loading && <LoadingSpinner fullScreen={true} />}
+
+                <ConfirmModal
+                    show={showDeleteConfirm}
+                    title={t('modal.confirm_delete_order_title')}
+                    message={t('modal.confirm_delete_order_msg', { id: order.id.split('-')[0] })}
+                    onConfirm={handleDelete}
+                    onCancel={() => setShowDeleteConfirm(false)}
+                    confirmText={t('action.delete')}
+                    variant="danger"
+                />
             </div>
         </div>,
         document.body

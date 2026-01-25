@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { BrowserRouter, useNavigate, useLocation } from 'react-router-dom'
 import { App as CapacitorApp } from '@capacitor/app'
 import { Dialog } from '@capacitor/dialog'
@@ -8,8 +8,7 @@ import { CoreProvider } from '@/shared/contexts/CoreProvider'
 import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
-import { OfflineQueue } from '@/shared/services/offline/offlineQueue'
-import { Logger, useTranslation } from '@thecoffeecream/ui-shared'
+import { OfflineQueue, Logger, useTranslation } from '@thecoffeecream/ui-shared'
 
 /**
  * Main application content with route and global effect logic

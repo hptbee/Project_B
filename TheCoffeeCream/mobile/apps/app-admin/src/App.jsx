@@ -1,4 +1,3 @@
-import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { CoreProvider } from '@/shared/contexts/CoreProvider'
 import MainLayout from '@/shared/components/layout/MainLayout'

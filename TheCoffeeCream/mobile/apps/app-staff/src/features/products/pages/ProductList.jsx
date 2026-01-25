@@ -1,6 +1,5 @@
-import React from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { SearchBar, LoadingSpinner, useToast, Icon, IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
+import { SearchBar, LoadingSpinner, useToast, IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
 import { useProductFilter } from '../hooks/useProductFilter'
 import ProductCard from '../components/ProductCard'
 import './ProductList.scss'
@@ -20,7 +19,7 @@ export default function ProductList() {
         selectedCat, setSelectedCat,
         categories,
         filteredProducts: filtered,
-        isSearching,
+        // isSearching,
         term
     } = useProductFilter(products, sortedCategories)
 
@@ -43,10 +42,10 @@ export default function ProductList() {
     const title = tableId ? `${t('status.occupied')} ${tableId}` : t('nav.menu')
 
     // Check if we are searching or in a specific context to show elements
-    const showHeaderConfig = {
-        backIcon: '✕',
-        showActions: true
-    }
+    // const showHeaderConfig = {
+    //     backIcon: '✕',
+    //     showActions: true
+    // }
 
     const handleBack = () => {
         try {
