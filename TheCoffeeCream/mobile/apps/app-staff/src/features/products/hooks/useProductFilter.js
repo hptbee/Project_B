@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import useDebounce from '@/shared/hooks/useDebounce'
+import { useDebounce } from '@thecoffeecream/ui-shared'
 
 /**
  * Hook to manage product filtering, search, and categories

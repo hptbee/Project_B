@@ -8,5 +8,9 @@ namespace TheCoffeeCream.Application.Interfaces
     {
         Task<IEnumerable<Product>> GetAllAsync();
         Task<IEnumerable<Category>> GetCategoriesAsync();
+        Task<Product?> GetByIdAsync(Guid id);
+        Task CreateAsync(Product product);
+        Task UpdateAsync(Product product);
+        Task ToggleActiveAsync(Guid id);
     }
 }

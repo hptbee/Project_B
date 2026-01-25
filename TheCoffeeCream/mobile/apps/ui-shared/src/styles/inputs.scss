@@ -1,0 +1,75 @@
+/* Centralized Input & Form Styles */
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="search"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl); // Pill shape for single lines
+    color: var(--text-primary);
+    font-size: var(--text-md);
+    font-family: inherit;
+    transition: all 0.3s ease;
+    outline: none;
+
+    &::placeholder {
+        color: var(--text-muted);
+    }
+
+    &:focus {
+        border-color: var(--border-active);
+        background: var(--bg-glass-active);
+        box-shadow: 0 0 0 4px var(--bg-darker);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: var(--bg-darker);
+    }
+}
+
+textarea {
+    border-radius: var(--radius-lg); // Less rounded for multiline
+    resize: vertical;
+    min-height: 100px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-with-suffix {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+        padding-right: 40px;
+    }
+
+    span {
+        position: absolute;
+        right: 16px;
+        color: var(--text-secondary);
+        font-weight: 600;
+        pointer-events: none;
+    }
+}

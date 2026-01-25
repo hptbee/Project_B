@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TheCoffeeCream Staff</string>
-    <string name="title_activity_main">TheCoffeeCream Staff</string>
+    <string name="app_name">The Coffee Cream Staff</string>
+    <string name="title_activity_main">The Coffee Cream Staff</string>
     <string name="package_name">com.thecoffeecream.staff</string>
     <string name="custom_url_scheme">com.thecoffeecream.staff</string>
 </resources>

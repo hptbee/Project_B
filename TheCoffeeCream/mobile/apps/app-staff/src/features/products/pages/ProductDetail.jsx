@@ -2,11 +2,12 @@ import React, { useState, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useCartDispatch, useTableCart } from '@/shared/contexts/CartContext'
 import { useProducts } from '@/shared/contexts/ProductContext'
-import { Icon, useToast, IconChevron } from '@thecoffeecream/ui-shared'
-import { formatPrice } from '@/shared/utils/formatters'
+import { Icon, useToast, IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
+import { formatPrice } from '@thecoffeecream/ui-shared'
 import './ProductDetail.scss'
 
 export default function ProductDetail() {
+    const { t } = useTranslation()
     const { id } = useParams()
     const nav = useNavigate()
     const { products } = useProducts()
@@ -51,10 +52,10 @@ export default function ProductDetail() {
     if (!product) return (
         <div className="page product-not-found">
             <header className="page-header">
-                <button className="back" onClick={() => nav(-1)}><IconChevron size={20} /></button>
-                <h2>Lỗi</h2>
+                <button className="back icon-btn" onClick={() => nav(-1)}><IconChevron size={20} /></button>
+                <h2>{t('common.error')}</h2>
             </header>
-            <div className="page-content">Không tìm thấy sản phẩm...</div>
+            <div className="page-content">{t('common.no_products_found')}...</div>
         </div>
     )
 
@@ -79,17 +80,17 @@ export default function ProductDetail() {
                 type: 'UPDATE_ITEM_TABLE',
                 payload: { ...payload, tableId, oldKey: itemKey }
             })
-            showToast(`Đã cập nhật ${product.title}`)
+            showToast(t('common.update_success_msg', { name: product.title }))
             nav(`/table/${tableId}`)
         } else {
             // ADD MODE
             if (tableId) {
                 dispatch({ type: 'ADD_TO_TABLE', payload: { ...payload, tableId } })
-                showToast(`${product.title} đã thêm vào Bàn ${tableId}`)
+                showToast(t('common.add_to_table_success', { name: product.title, table: tableId }))
                 nav(`/table/${tableId}`)
             } else {
                 dispatch({ type: 'ADD', payload })
-                showToast(`${product.title} đã thêm vào giỏ`)
+                showToast(t('common.add_to_cart_success', { name: product.title }))
                 nav(-1)
             }
         }
@@ -98,10 +99,10 @@ export default function ProductDetail() {
     return (
         <div className="page detail">
             <header className="page-header">
-                <button className="back" onClick={() => nav(-1)} aria-label="Quay lại">
+                <button className="back icon-btn" onClick={() => nav(-1)} aria-label={t('cart.back')}>
                     <IconChevron size={20} />
                 </button>
-                <h2>{existingItem ? 'Cập nhật món' : product.title}</h2>
+                <h2>{existingItem ? t('pos.update_item') : product.title}</h2>
             </header>
 
             <div className="product-card">
@@ -114,7 +115,7 @@ export default function ProductDetail() {
 
             {toppingsState.length > 0 && (
                 <>
-                    <h4 className="detail-section-title">TOPPING</h4>
+                    <h4 className="detail-section-title">{t('common.topping')}</h4>
                     <div className="toppings">
                         {toppingsState.map(t => (
                             <div className="topping" key={t.id}>
@@ -124,16 +125,16 @@ export default function ProductDetail() {
                                 </div>
                                 {t.qty > 0 ? (
                                     <div className="topping-qty-bar">
-                                        <button className="btn-icon" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: Math.max(0, tt.qty - 1) } : tt))}>
+                                        <button className="icon-btn" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: Math.max(0, tt.qty - 1) } : tt))}>
                                             <Icon name="minus" size={14} color="var(--text-primary)" />
                                         </button>
                                         <div className="qty-val">{t.qty}</div>
-                                        <button className="btn-icon plus" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>
+                                        <button className="icon-btn plus" style={{ background: 'var(--accent-amber)', color: '#fff' }} onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: tt.qty + 1 } : tt))}>
                                             <Icon name="plus" size={14} color="#fff" />
                                         </button>
                                     </div>
                                 ) : (
-                                    <button className="add-topping-btn" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: 1 } : tt))}>
+                                    <button className="add-topping-btn icon-btn" onClick={() => setToppingsState(prev => prev.map(tt => tt.id === t.id ? { ...tt, qty: 1 } : tt))}>
                                         <Icon name="plus" size={18} color="var(--accent-amber)" />
                                     </button>
                                 )}
@@ -143,10 +144,10 @@ export default function ProductDetail() {
                 </>
             )}
 
-            <h4 className="detail-section-title">GHI CHÚ</h4>
+            <h4 className="detail-section-title">{t('common.note').toUpperCase()}</h4>
             <div className="notes">
                 <textarea
-                    placeholder="Ví dụ: ít đường, không đá..."
+                    placeholder={t('pos.placeholder_note')}
                     value={note}
                     onChange={e => setNote(e.target.value)}
                 />
@@ -162,8 +163,8 @@ export default function ProductDetail() {
                 </button>
             </div>
 
-            <button className="bottom-action" onClick={handleAction}>
-                {existingItem ? 'Cập nhật món' : 'Thêm vào đơn'} • {formatPrice(total, true)}
+            <button className="bottom-action btn-primary" onClick={handleAction}>
+                {existingItem ? t('pos.update_item') : t('pos.add_to_order')} • {formatPrice(total, true)}
             </button>
         </div>
     )

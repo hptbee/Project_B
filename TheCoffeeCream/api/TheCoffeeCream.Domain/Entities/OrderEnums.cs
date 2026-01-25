@@ -16,6 +16,7 @@ namespace TheCoffeeCream.Domain.Entities
     public enum OrderStatus
     {
         DRAFT,
+        PENDING,
         SUCCESS,
         REMOVED
     }

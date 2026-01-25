@@ -1,101 +1,41 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
-import './Login.scss'
+import { useAuth, LoginPage, useTranslation } from '@thecoffeecream/ui-shared'
+import logo from '@/assets/icons/logo.png'
 
 /**
- * Login screen for Admin
+ * Login screen for Admin - Powered by ui-shared
  */
 export default function Login() {
+    const { t } = useTranslation()
     const { login } = useAuth()
     const navigate = useNavigate()
-    const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setCredentials(prev => ({ ...prev, [name]: value }))
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const handleLogin = async (username, password) => {
         setError('')
         setLoading(true)
 
         try {
-            await login(credentials.username, credentials.password)
+            await login(username, password)
             navigate('/')
         } catch (err) {
-            setError(err.message || 'Sai tài khoản hoặc mật khẩu.')
+            setError(err.message || t('auth.invalid_creds'))
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <div className="login-page" data-theme="dark">
-            <div className="login-container">
-                <div className="login-card">
-                    <div className="login-header">
-                        <div className="brand-name">THE COFFEE CREAM</div>
-                        <p>Administrator Portal</p>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="login-form">
-                        <div className="form-group">
-                            <label htmlFor="username">Tên đăng nhập</label>
-                            <input
-                                id="username"
-                                type="text"
-                                name="username"
-                                value={credentials.username}
-                                onChange={handleChange}
-                                placeholder="Nhập username..."
-                                required
-                                autoComplete="username"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="password">Mật khẩu</label>
-                            <input
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={credentials.password}
-                                onChange={handleChange}
-                                placeholder="Nhập password..."
-                                required
-                                autoComplete="current-password"
-                            />
-                        </div>
-
-                        {error && <div className="error-alert">{error}</div>}
-
-                        <button
-                            type="submit"
-                            className={`login-btn ${loading ? 'loading' : ''}`}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <span className="spinner"></span>
-                            ) : (
-                                'ĐĂNG NHẬP'
-                            )}
-                        </button>
-                    </form>
-
-                    <footer className="login-footer">
-                        <p>Phiên bản Admin 1.0.0</p>
-                    </footer>
-                </div>
-            </div>
-            <div className="bg-shapes">
-                <div className="shape shape-1"></div>
-                <div className="shape shape-2"></div>
-                <div className="shape shape-3"></div>
-            </div>
-        </div>
+        <LoginPage
+            title="THE COFFEE CREAM"
+            subtitle={t('app.admin_subtitle')}
+            version="1.0.0 (Admin App)"
+            logo={logo}
+            onLogin={handleLogin}
+            loading={loading}
+            error={error}
+        />
     )
 }

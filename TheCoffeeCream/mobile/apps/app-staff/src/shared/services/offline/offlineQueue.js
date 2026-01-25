@@ -13,6 +13,27 @@ export const OfflineQueue = {
      */
     addOrder: async (orderData) => {
         const queue = OfflineQueue.getQueue();
+
+        // Check if there is already a pending order with the same ClientOrderId
+        const existingIndex = queue.findIndex(item =>
+            item.data.ClientOrderId &&
+            item.data.ClientOrderId === orderData.ClientOrderId
+        );
+
+        if (existingIndex >= 0) {
+            // Update existing item
+            queue[existingIndex].data = orderData;
+            queue[existingIndex].timestamp = Date.now();
+            // Keep the same ID and attempts? 
+            // Reset attempts because it's a new version of data? 
+            // Better to reset attempts to give it a fresh chance
+            queue[existingIndex].attempts = 0;
+
+            Logger.info(`[OFFLINE] Updated existing order in queue: ${orderData.ClientOrderId}`);
+            localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+            return queue[existingIndex].id;
+        }
+
         const newItem = {
             id: orderData.id || crypto.randomUUID(),
             data: orderData,

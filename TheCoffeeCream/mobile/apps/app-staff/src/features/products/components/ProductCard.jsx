@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Icon } from '@thecoffeecream/ui-shared'
-import { formatPrice } from '@/shared/utils/formatters'
+import { Icon, useTranslation } from '@thecoffeecream/ui-shared'
+import { formatPrice } from '@thecoffeecream/ui-shared'
 import '@/styles/components.scss'
 
 function highlightText(text, term) {
@@ -12,6 +12,7 @@ function highlightText(text, term) {
 }
 
 export default function ProductCard({ product, onAdd, highlight = '' }) {
+    const { t } = useTranslation()
     const navigate = useNavigate()
     return (
         <div className="product-row product-row-clickable" onClick={() => navigate(`/products/${product.id}${window.location.search}`)}>
@@ -24,7 +25,7 @@ export default function ProductCard({ product, onAdd, highlight = '' }) {
                 <button
                     onClick={(e) => { e.stopPropagation(); navigate(`/products/${product.id}${window.location.search}`) }}
                     className="add-btn"
-                    aria-label="Thêm sản phẩm"
+                    aria-label={t('action.add_item')}
                 >
                     <Icon name="plus" size={18} color="var(--accent-amber)" />
                 </button>

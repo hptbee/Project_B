@@ -1,95 +1,32 @@
-# The Coffee Cream - Staff App
+# ☕ The Coffee Cream - Staff App
 
-Mobile application for staff to manage orders, products, and daily operations.
+Modern point-of-sale and order management for staff.
 
-## Features
+## ✨ Features
+- **Offline-First**: Instant feedback when creating orders; auto-syncs when online.
+- **Table Management**: Real-time table status and order tracking.
+- **Flexible Checkout**: Supports Cash, Transfer, and split payments.
+- **Menu Sync**: One-tap synchronization with centralized product database.
 
-- 📱 **Order Management**: Create, view, and manage customer orders.
-- 🍰 **Product Catalog**: Browse menu with categories and search.
-- 🪑 **Table Service**: Dine-in order management with table assignments.
-- 💰 **Checkout**: Multiple payment methods (Cash, Transfer, Combined).
-- 📊 **Reports**: End-of-day sales reports.
-- 🔄 **Offline Support**: Queue orders when offline, auto-sync when online.
-- 🎨 **Premium UI**: Dark-mode glassmorphism interface powered by `@thecoffeecream/ui-shared`.
+## 🔄 Sync Engine
+- Uses `localStorage` queue for zero-latency order submission.
+- Background worker automatically resolves the queue once internet is restored.
 
-## Tech Stack
-
-- **Framework**: React 18 + Vite
-- **Mobile**: Capacitor 6 (Android)
-- **Routing**: React Router v6
-- **Styling**: SCSS with shared Design System variables
-- **State**: Context API + useReducer
-- **Shared Library**: `@thecoffeecream/ui-shared` (Core UI, Auth, API, Logger)
-
-## Getting Started
-
-### Prerequisites
-- Node.js 20+
-- npm
-
-### Installation
-
+## 🚀 Quick Start
 ```bash
-# Install dependencies (from monorepo root)
 npm install
-
-# Set up environment
-cp .env.example .env.local
-# Edit .env.local with your API URL
-```
-
-### Development
-
-```bash
-# Run dev server
 npm run dev
-
-# Build for production
-npm run build
 ```
 
-### Mobile Development
-
+## 🏗️ Android Build
 ```bash
-# Sync with Capacitor
-npx cap sync
+npm run build
+npx cap sync android
+cd android; ./gradlew assembleDebug
 
-# Build APK (Debug)
-cd android && ./gradlew assembleDebug
+cd mobile\apps\app-staff; npm run build; npx cap sync android; cd android; ./gradlew assembleDebug
 ```
+*Output: `TheCoffeeCream-Staff-1.0-YYYYMMDDHHMMSS.apk`*
 
-## Project Structure
-
-```
-src/
-├── features/          # Feature modules (auth, products, orders, cart, etc.)
-├── shared/
-│   ├── contexts/      # App-specific contexts (Cart, Product)
-│   ├── services/      # Offline queue, cache
-│   ├── utils/         # Helper functions
-│   └── constants/     # App constants
-├── styles/            # Local styles and variables
-├── App.jsx            # Root component with sync logic
-└── routes.jsx         # Route definitions
-```
-
-## Internal Architecture
-
-### Unified UI Components
-All core atoms (Buttons, Icons, Badges, Modals) and the global navigation (SideMenu) are imported from the shared library to ensure pixel-perfect consistency with the Admin portal.
-
-### Offline-First Logic
-Orders are safely stored in localStorage when the network is unstable and automatically synchronized when the device returns online.
-
-### Shared Logic Integration
-Authentication handling, centralized API fetching with interceptors, and file-based logging are entirely managed by `@thecoffeecream/ui-shared`.
-
-## Environment Variables
-
-```env
-VITE_API_BASE_URL=https://your-api-url.com
-```
-
-## License
-
-Proprietary - The Coffee Cream
+---
+Proprietary © 2026 The Coffee Cream

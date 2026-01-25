@@ -72,6 +72,7 @@ builder.Services.AddScoped<TheCoffeeCream.Application.Services.OrderService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Services.ProductService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IAuthService, TheCoffeeCream.Application.Services.AuthService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IReportService, TheCoffeeCream.Application.Services.ReportService>();
+builder.Services.AddScoped<TheCoffeeCream.Application.Services.UserService>();
 
 var app = builder.Build();
 

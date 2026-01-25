@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .cart-section-title {
     margin: 24px 20px 12px;
@@ -33,12 +33,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 24px;
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    animation: fadeInUp 0.4s ease backwards;
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-amber);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
 
     .item-info {
         flex: 1;
@@ -124,15 +131,27 @@
 }
 
 .summary-card {
-    padding: 24px 20px;
+    padding: 28px 24px;
     margin: 16px;
-    background: var(--primary-light);
-    border: 1px solid var(--border-active);
+    background: var(--bg-secondary);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 8px 32px var(--bg-overlay);
+    box-shadow: var(--glass-shadow);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--accent-amber-glow), transparent);
+        opacity: 0.3;
+        pointer-events: none;
+    }
 
     .label {
         font-size: 13px;

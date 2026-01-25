@@ -1,20 +1,31 @@
-@use '../../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .stat-card {
     background: var(--bg-card);
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    padding: 20px;
+    padding: 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
-    transition: var(--trans-fast);
+    gap: 20px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: var(--glass-shadow);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+        pointer-events: none;
+    }
 
     &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        border-color: var(--accent-amber);
     }
 
     .stat-icon {
@@ -43,7 +54,7 @@
     }
 
     .stat-value {
-        font-size: 24px;
+        font-size: var(--text-2xl);
         font-weight: 900;
         color: var(--text-primary);
         line-height: 1.2;

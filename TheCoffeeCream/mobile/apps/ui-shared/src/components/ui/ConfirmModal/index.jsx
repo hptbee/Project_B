@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from '../../../contexts/LanguageContext'
 import './ConfirmModal.scss'
 
 export function ConfirmModal({
@@ -7,11 +8,15 @@ export function ConfirmModal({
     message,
     onConfirm,
     onCancel,
-    confirmText = 'Xác nhận',
-    cancelText = 'Hủy',
+    confirmText,
+    cancelText,
     type = 'default' // 'default', 'danger'
 }) {
+    const { t } = useTranslation()
     if (!show) return null
+
+    const displayConfirm = confirmText || t('action.confirm')
+    const displayCancel = cancelText || t('action.cancel')
 
     return (
         <div className="modal-overlay" onClick={onCancel}>
@@ -25,14 +30,14 @@ export function ConfirmModal({
                 <div className="modal-footer">
                     {onCancel && (
                         <button className="btn-secondary" onClick={onCancel}>
-                            {cancelText}
+                            {displayCancel}
                         </button>
                     )}
                     <button
                         className={`btn-primary ${type === 'danger' ? 'danger' : ''}`}
                         onClick={onConfirm}
                     >
-                        {confirmText}
+                        {displayConfirm}
                     </button>
                 </div>
             </div>

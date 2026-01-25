@@ -1,0 +1,93 @@
+/* Centralized Button Styles from Admin App */
+button,
+.btn {
+    font-family: inherit;
+    font-size: var(--text-md);
+    font-weight: 700;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border: 1px solid var(--border-glass);
+
+    &:active {
+        transform: scale(0.96);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.btn-primary {
+    background: var(--accent-amber);
+    color: var(--text-on-accent);
+    border-color: var(--accent-amber);
+    box-shadow: 0 4px 12px var(--accent-amber-glow);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:active {
+        background: var(--accent-amber);
+        filter: brightness(1.1);
+    }
+}
+
+.btn-secondary {
+    background: var(--bg-glass);
+    backdrop-filter: var(--glass-blur);
+    border-color: var(--border-glass);
+    color: var(--text-primary);
+}
+
+.btn-danger {
+    background: rgba(255, 82, 82, 0.1);
+    color: var(--accent-red);
+    border-color: rgba(255, 82, 82, 0.2);
+
+    &:active {
+        background: var(--accent-red);
+        color: #fff;
+    }
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:active {
+        background: var(--bg-glass-active);
+        color: var(--accent-amber);
+        transform: scale(0.96);
+    }
+
+    &.danger:active {
+        background: rgba(255, 82, 82, 0.2);
+        color: var(--accent-red);
+    }
+
+    // Ensure icons inside are centered
+    .icon,
+    svg {
+        display: block;
+    }
+}

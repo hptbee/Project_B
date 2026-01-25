@@ -1,16 +1,28 @@
-# TheCoffeeCream Mobile
+# 📱 The Coffee Cream Mobile Monorepo
 
-Monorepo containing two Vite React apps and a shared UI package.
+The mobile workspace for The Coffee Cream system, featuring shared logic and specialized applications.
 
-- apps/app-admin — Admin mobile web app (Vite + React)
-- apps/app-staff — Staff mobile web app (Vite + React)
-- apps/ui-shared — Shared React components/hooks/types
+## 📦 Structure
+- **[apps/app-staff](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-staff)**: Staff-facing application for order management.
+- **[apps/app-admin](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-admin)**: Administrative dashboard and analytics.
+- **[apps/ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: The core library containing all shared UI modules, API clients, and business utilities.
 
-To get started:
+## 🛠️ Shared Logic (Best Practice)
+All core calculations, price formatting, and API services are centralized in `ui-shared`. This ensures:
+- **Consistency**: The Admin and Staff apps always show the same prices and data.
+- **Maintenance**: Business logic updates only need to be made in one place.
 
+## 🚀 Development
 ```bash
-cd mobile
-pnpm install   # or npm install
-pnpm --filter app-admin dev
-pnpm --filter app-staff dev
+npm install
+npm run dev --workspaces
 ```
+
+## 🏗️ Native Builds
+Native Android projects are located in `android/` folders of each app.
+1. `npm run build`
+2. `npx cap sync`
+3. `cd android; ./gradlew assembleDebug`
+
+---
+Proprietary © 2026 The Coffee Cream

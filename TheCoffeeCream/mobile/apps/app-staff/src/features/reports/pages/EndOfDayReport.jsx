@@ -1,15 +1,14 @@
 import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
 import { useNavigate } from 'react-router-dom'
 import React, { useState, useEffect, useRef } from 'react'
-import { LoadingSpinner } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, DatePicker, useTranslation } from '@thecoffeecream/ui-shared'
 import { api } from '@/shared/services/api'
 import { apiFetch } from '@thecoffeecream/ui-shared'
 import { IconChevron } from '@thecoffeecream/ui-shared'
-import DatePicker from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
 import './EndOfDayReport.scss'
 
 export default function EndOfDayReport() {
+    const { t } = useTranslation()
     const navigate = useNavigate()
     const [report, setReport] = useState(null)
     const [loading, setLoading] = useState(true)
@@ -121,19 +120,19 @@ export default function EndOfDayReport() {
         }
     }, [showDatePicker])
 
-    if (loading && !report) return <LoadingSpinner fullScreen message="Đang tải báo cáo..." />
+    if (loading && !report) return <LoadingSpinner fullScreen message={t('common.loading')} />
 
-    if (error) return <div className="page"><header className="page-header"><button className="back" onClick={() => navigate(-1)} aria-label="Quay lại"><IconChevron variant="bold" /></button><h2>Báo cáo cuối ngày</h2></header><div className="page-content">Lỗi: {error}</div></div>
+    if (error) return <div className="page"><header className="page-header"><button className="back" onClick={() => navigate(-1)} aria-label={t('action.cancel')}><IconChevron variant="bold" /></button><h2>{t('report.daily_report')}</h2></header><div className="page-content">{t('common.error')}: {error}</div></div>
 
     const hasData = report && report.orderCount > 0
 
     return (
         <div className="page">
             <header className="page-header">
-                <button className="back" onClick={() => navigate(-1)} aria-label="Quay lại">
+                <button className="back" onClick={() => navigate(-1)} aria-label={t('action.cancel')}>
                     <IconChevron variant="bold" />
                 </button>
-                <h2>Báo cáo cuối ngày</h2>
+                <h2>{t('report.daily_report')}</h2>
             </header>
 
             <div className="report-controls">
@@ -142,30 +141,25 @@ export default function EndOfDayReport() {
                         className={`tab-button ${selectedTab === 'summary' ? 'active' : ''}`}
                         onClick={() => setSelectedTab('summary')}
                     >
-                        Tổng hợp
+                        {t('report.summary')}
                     </button>
                     <button
                         className={`tab-button ${selectedTab === 'products' ? 'active' : ''}`}
                         onClick={() => setSelectedTab('products')}
                     >
-                        Hàng hóa
+                        {t('report.goods')}
                     </button>
                 </div>
-                <button
-                    ref={dateButtonRef}
-                    className="date-picker-button"
-                    onClick={() => setShowDatePicker(true)}
-                    aria-haspopup="dialog"
-                    aria-expanded={showDatePicker}
-                >
-                    {(() => {
-                        const date = new Date(selectedDate)
-                        const day = date.getDate()
-                        const month = date.getMonth() + 1
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={(date) => {
                         const year = date.getFullYear()
-                        return `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`
-                    })()}
-                </button>
+                        const month = String(date.getMonth() + 1).padStart(2, '0')
+                        const day = String(date.getDate()).padStart(2, '0')
+                        setSelectedDate(`${year}-${month}-${day}`)
+                    }}
+                    label="Chọn thời gian"
+                />
             </div>
 
             {!hasData ? (
@@ -181,26 +175,26 @@ export default function EndOfDayReport() {
                         <div className="report-container">
                             <div className="report-grid">
                                 <div className="report-card">
-                                    <div className="card-title">Sản phẩm (Ly)</div>
+                                    <div className="card-title">{t('report.product_count')}</div>
                                     <div className="card-value">{report.regularCupCount}</div>
                                 </div>
                                 <div className="report-card">
-                                    <div className="card-title">Topping</div>
+                                    <div className="card-title">{t('report.topping_count')}</div>
                                     <div className="card-value">{report.toppingCount}</div>
                                 </div>
                             </div>
 
                             <div className="report-card">
-                                <div className="card-title">Tổng doanh thu</div>
+                                <div className="card-title">{t('report.total_revenue')}</div>
                                 <div className="card-value primary">{report.totalRevenue.toLocaleString()} đ</div>
 
                                 <div className="payment-details">
                                     <div className="row">
-                                        <span className="label">Tiền mặt:</span>
+                                        <span className="label">{t('report.cash_label')}</span>
                                         <span className="val">{report.cashRevenue.toLocaleString()} đ</span>
                                     </div>
                                     <div className="row">
-                                        <span className="label">Chuyển khoản:</span>
+                                        <span className="label">{t('report.transfer_label')}</span>
                                         <span className="val">{report.transferRevenue.toLocaleString()} đ</span>
                                     </div>
                                 </div>
@@ -211,7 +205,7 @@ export default function EndOfDayReport() {
                                 onClick={() => navigate(`/orders?date=${selectedDate}&status=SUCCESS`)}
                             >
                                 <div>
-                                    <div className="card-title">Tổng số đơn hàng</div>
+                                    <div className="card-title">{t('report.total_orders')}</div>
                                     <div className="card-value">{report.orderCount}</div>
                                 </div>
                                 <div className="arrow"><IconChevron direction="right" variant="bold" /></div>
@@ -226,16 +220,16 @@ export default function EndOfDayReport() {
                             ) : (
                                 <div className="product-sales-list">
                                     <div className="product-sales-header">
-                                        <div className="header-title">HÀNG HÓA BÁN RA</div>
+                                        <div className="header-title">{t('report.sold_goods')}</div>
                                         <div className="header-summary">
-                                            <span>Tổng</span>
+                                            <span>{t('report.total')}</span>
                                             <span>{productSales.reduce((sum, p) => sum + (p?.quantitySold || 0), 0)}</span>
                                             <span>{productSales.reduce((sum, p) => sum + (p?.revenue || 0), 0).toLocaleString()}</span>
                                         </div>
                                     </div>
                                     {productSales.length === 0 ? (
                                         <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
-                                            Không có dữ liệu sản phẩm
+                                            {t('common.no_data')}
                                         </div>
                                     ) : (
                                         productSales.map((product, idx) => (
@@ -253,33 +247,6 @@ export default function EndOfDayReport() {
                 </>
             )}
 
-            {showDatePicker && (
-                <div className="datepicker-overlay" onClick={() => setShowDatePicker(false)}>
-                    <div ref={modalRef} className="datepicker-modal" onClick={e => e.stopPropagation()}>
-                        <div className="datepicker-header">
-                            <h3>Chọn thời gian</h3>
-                            <button ref={closeBtnRef} onClick={() => setShowDatePicker(false)} aria-label="Đóng">✕</button>
-                        </div>
-                        <DatePicker
-                            selected={new Date(selectedDate)}
-                            onChange={(date) => {
-                                const year = date.getFullYear()
-                                const month = String(date.getMonth() + 1).padStart(2, '0')
-                                const day = String(date.getDate()).padStart(2, '0')
-                                setSelectedDate(`${year}-${month}-${day}`)
-                                setShowDatePicker(false)
-                            }}
-                            inline
-                            maxDate={new Date()}
-                            dateFormat="dd/MM/yyyy"
-                            showMonthDropdown
-                            showYearDropdown
-                            dropdownMode="select"
-                            yearDropdownItemNumber={10}
-                        />
-                    </div>
-                </div>
-            )}
 
 
         </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AuthProvider, ThemeProvider, UIProvider, Toast } from '@thecoffeecream/ui-shared'
+import { AuthProvider, ThemeProvider, UIProvider, Toast, LanguageProvider } from '@thecoffeecream/ui-shared'
 import { CartProvider } from './CartContext'
 import { ProductProvider } from './ProductContext'
 
@@ -10,13 +10,15 @@ export function CoreProvider({ children }) {
     return (
         <ThemeProvider>
             <UIProvider ToastComponent={Toast}>
-                <AuthProvider>
-                    <CartProvider>
-                        <ProductProvider>
-                            {children}
-                        </ProductProvider>
-                    </CartProvider>
-                </AuthProvider>
+                <LanguageProvider>
+                    <AuthProvider>
+                        <CartProvider>
+                            <ProductProvider>
+                                {children}
+                            </ProductProvider>
+                        </CartProvider>
+                    </AuthProvider>
+                </LanguageProvider>
             </UIProvider>
         </ThemeProvider>
     )

@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .orders-list {
     padding: 16px;
@@ -39,11 +39,11 @@
         .order-id {
             font-weight: 800;
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: var(--text-md);
         }
 
         .order-time {
-            font-size: 13px;
+            font-size: var(--text-xs);
             font-weight: 700;
             color: var(--text-muted);
             background: var(--bg-secondary);
@@ -59,21 +59,21 @@
 
         .order-info {
             .order-type {
-                font-size: 14px;
+                font-size: var(--text-sm);
                 font-weight: 600;
                 color: var(--text-secondary);
                 margin-bottom: 4px;
             }
 
             .order-items-count {
-                font-size: 13px;
+                font-size: var(--text-xs);
                 font-weight: 500;
                 color: var(--text-muted);
             }
         }
 
         .order-total {
-            font-size: 20px;
+            font-size: var(--text-xl);
             font-weight: 900;
             color: var(--accent-amber);
         }
@@ -88,7 +88,7 @@
         align-items: center;
 
         .payment-method {
-            font-size: 12px;
+            font-size: var(--text-xs);
             font-weight: 800;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -96,7 +96,7 @@
         }
 
         .status-badge {
-            font-size: 11px;
+            font-size: var(--text-xs);
             padding: 4px 10px;
             border-radius: var(--radius-full);
             text-transform: uppercase;

@@ -6,5 +6,9 @@ namespace TheCoffeeCream.Application.Interfaces
     {
         Task<User?> GetByUsernameAsync(string username);
         Task<User?> GetByIdAsync(string id);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task CreateAsync(User user);
+        Task UpdateAsync(User user);
+        Task ToggleActiveAsync(string id);
     }
 }

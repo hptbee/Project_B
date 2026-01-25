@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .order-detail-container {
     padding: 16px;
@@ -11,70 +11,96 @@
     backdrop-filter: var(--glass-blur);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    padding: 24px 20px;
+    padding: 32px 24px;
     box-shadow: var(--glass-shadow);
     position: relative;
-    animation: scaleUp 0.4s ease;
+    animation: scaleUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+        pointer-events: none;
+    }
 
     .receipt-header {
         text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
         padding-bottom: 24px;
-        border-bottom: 1px dashed var(--border-glass);
+        border-bottom: 1.5px dashed var(--border-glass);
 
         .receipt-title {
-            font-size: 22px;
-            font-weight: 900;
+            font-size: 24px;
+            font-weight: 950;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .receipt-subtitle {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-amber);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
     }
 
     .info-list {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 24px;
+        gap: 16px;
+        margin-bottom: 32px;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-glass);
 
         .info-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 14px;
 
             .label {
-                color: var(--text-secondary);
-                font-weight: 700;
+                color: var(--text-muted);
+                font-weight: 800;
+                text-transform: uppercase;
+                font-size: 11px;
+                letter-spacing: 0.5px;
             }
 
             .value {
-                font-weight: 800;
+                font-weight: 900;
                 color: var(--text-primary);
+                font-family: var(--font-number);
             }
         }
     }
 
     .items-section {
-        margin-bottom: 24px;
+        margin-bottom: 32px;
 
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 900;
-            margin-bottom: 16px;
-            color: var(--text-muted);
+            margin-bottom: 20px;
+            color: var(--accent-amber);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
 
         .order-item-row {
-            padding: 14px 0;
+            padding: 16px 0;
             border-bottom: 1px solid var(--border-glass);
 
             &:last-child {
@@ -84,64 +110,77 @@
             .item-main {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 6px;
+                align-items: flex-start;
+                margin-bottom: 8px;
 
                 .item-name {
                     font-weight: 800;
                     color: var(--text-primary);
-                    font-size: 15px;
+                    font-size: 16px;
+                    flex: 1;
+                    padding-right: 12px;
                 }
 
                 .item-total {
                     font-weight: 900;
-                    color: var(--accent-amber);
+                    color: var(--text-primary);
+                    font-family: var(--font-number);
+                    font-size: 16px;
                 }
             }
 
             .item-meta {
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: 600;
                 color: var(--text-muted);
 
                 .toppings {
-                    font-style: normal;
-                    display: block;
-                    margin-top: 2px;
+                    background: var(--bg-secondary);
+                    padding: 4px 10px;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin-top: 6px;
+                    font-size: 12px;
                 }
             }
         }
     }
 
     .payment-summary {
-        padding-top: 20px;
-        border-top: 2px solid var(--text-primary);
+        padding: 24px;
+        background: var(--bg-secondary);
+        border-radius: 20px;
+        border: 1px solid var(--border-glass);
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 14px;
 
         .summary-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 15px;
 
             &.grand-total {
-                margin-top: 12px;
-                padding: 16px;
-                background: var(--primary-light);
-                border: 1px solid var(--border-active);
-                border-radius: var(--radius-md);
-                font-size: 20px;
-                font-weight: 900;
+                margin-top: 8px;
+                padding-top: 16px;
+                border-top: 2px solid var(--border-glass);
+                font-size: 24px;
+                font-weight: 950;
                 color: var(--accent-amber);
+                font-family: var(--font-number);
             }
 
             .label {
                 color: var(--text-secondary);
-                font-weight: 700;
+                font-weight: 800;
+                text-transform: uppercase;
+                font-size: 12px;
             }
 
             .val {
-                font-weight: 800;
+                font-weight: 900;
+                color: var(--text-primary);
             }
         }
     }

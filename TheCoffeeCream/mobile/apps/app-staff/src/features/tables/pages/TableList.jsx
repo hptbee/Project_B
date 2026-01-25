@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '@/shared/contexts/CartContext'
-import { useMenu, Badge, IconChevron, Icon } from '@thecoffeecream/ui-shared'
-import { calculateCartTotal } from '@/shared/utils/calculations'
-import { formatPrice, formatTime } from '@/shared/utils/formatters'
+import { useMenu, Badge, IconChevron, Icon, Skeleton, useTranslation } from '@thecoffeecream/ui-shared'
+import { calculateCartTotal } from '@thecoffeecream/ui-shared'
+import { formatPrice, formatTime } from '@thecoffeecream/ui-shared'
 import './TableList.scss'
 
 export default function TableList() {
+    const { t } = useTranslation()
     const cart = useCart()
     const menu = useMenu()
     const [now, setNow] = useState(Date.now())
@@ -18,7 +19,7 @@ export default function TableList() {
     }, [])
 
     // Takeaway "table"
-    const takeaway = { id: 'takeaway', name: 'Mang về', type: 'takeaway' }
+    const takeaway = { id: 'takeaway', name: t('pos.takeaway'), type: 'takeaway' }
 
     // Generate table data
     const rawTables = Array.from({ length: 12 }).map((_, i) => {
@@ -53,36 +54,61 @@ export default function TableList() {
         return true
     })
 
+    // Loading Skeleton
+    if (!cart) {
+        return (
+            <div className="page">
+                <header className="page-header">
+                    <Skeleton width="40px" height="40px" variant="rect" />
+                    <Skeleton width="150px" height="24px" />
+                </header>
+                <div className="home-tabs">
+                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
+                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
+                    <Skeleton width="80px" height="36px" variant="circle" style={{ borderRadius: '20px' }} />
+                </div>
+                <div className="grid">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                        <div className="glass-card" key={i} style={{ height: '120px' }}>
+                            <Skeleton width="60%" height="20px" style={{ marginBottom: '12px' }} />
+                            <Skeleton width="40%" height="16px" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="page">
             <header className="page-header">
-                <button className="menu" onClick={() => menu.toggle()} aria-label="Menu">
+                <button className="menu icon-btn" onClick={() => menu.toggle()} aria-label="Menu">
                     <Icon name="menu" size={24} color="var(--text-primary)" />
                 </button>
-                <h2>An Thái Cà Phê</h2>
+                <h2>{t('nav.floorplan')}</h2>
             </header>
 
             <div className="home-tabs">
-                <button className={`home-tab ${tab === 'all' ? 'active' : ''}`} onClick={() => setTab('all')}>Tất cả</button>
-                <button className={`home-tab ${tab === 'active' ? 'active' : ''}`} onClick={() => setTab('active')}>Sử dụng</button>
-                <button className={`home-tab ${tab === 'empty' ? 'active' : ''}`} onClick={() => setTab('empty')}>Còn trống</button>
+                <button className={`home-tab ${tab === 'all' ? 'active' : ''}`} onClick={() => setTab('all')}>{t('common.all')}</button>
+                <button className={`home-tab ${tab === 'active' ? 'active' : ''}`} onClick={() => setTab('active')}>{t('status.occupied')}</button>
+                <button className={`home-tab ${tab === 'empty' ? 'active' : ''}`} onClick={() => setTab('empty')}>{t('status.empty')}</button>
             </div>
 
             <div className="grid">
-                {filtered.map(t => (
-                    <Link to={t.active ? `/table/${t.id}` : `/products?table=${t.id}`} className={`card ${t.active ? 'active' : ''}`} key={t.id}>
+                {filtered.map(table => (
+                    <Link to={table.active ? `/table/${table.id}` : `/products?table=${table.id}`} className={`card ${table.active ? 'active' : ''}`} key={table.id}>
                         <div className="card-title">
-                            {t.type === 'takeaway' && <span className="takeaway-icon">🛍️</span>}
-                            {t.name}
-                            {t.active && <Badge variant="info" size="sm">{t.itemsCount} món</Badge>}
+                            {table.type === 'takeaway' && <span className="takeaway-icon">🛍️</span>}
+                            {table.type === 'takeaway' ? table.name : t('common.table_name', { name: table.id })}
+                            {table.active && <Badge variant="info" size="sm">{t('common.item_count', { count: table.itemsCount })}</Badge>}
                         </div>
-                        {t.active && (
+                        {table.active && (
                             <div className="card-info">
                                 <div className="card-time">
-                                    {formatTime(t.createdAt)}
+                                    {formatTime(table.createdAt)}
                                 </div>
                                 <div className="card-amount">
-                                    {formatPrice(t.amount, true)}
+                                    {formatPrice(table.amount, true)}
                                 </div>
                             </div>
                         )}

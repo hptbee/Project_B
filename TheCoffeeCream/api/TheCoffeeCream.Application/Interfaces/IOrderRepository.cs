@@ -11,5 +11,7 @@ namespace TheCoffeeCream.Application.Interfaces
         Task AddAsync(Order order);
         Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate);
         Task<Order?> GetByIdAsync(Guid id);
+        Task UpdateAsync(Order order);
+        Task ToggleActiveAsync(Guid id);
     }
 }

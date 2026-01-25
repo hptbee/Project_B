@@ -1,14 +1,14 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import ProductCard from '../components/ProductCard'
-import { useProducts } from '@/shared/contexts/ProductContext'
-import { useCartDispatch, useTableCartDispatch } from '@/shared/contexts/CartContext'
-import { SearchBar, LoadingSpinner, useToast, Icon, IconChevron } from '@thecoffeecream/ui-shared'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { SearchBar, LoadingSpinner, useToast, Icon, IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
 import { useProductFilter } from '../hooks/useProductFilter'
+import ProductCard from '../components/ProductCard'
 import './ProductList.scss'
+import { useProducts } from '@/shared/contexts/ProductContext'
+import { useCartDispatch } from '@/shared/contexts/CartContext'
 
 export default function ProductList() {
+    const { t } = useTranslation()
     const [searchParams] = useSearchParams()
     const navigate = useNavigate()
     const tableId = searchParams.get('table')
@@ -24,12 +24,9 @@ export default function ProductList() {
         term
     } = useProductFilter(products, sortedCategories)
 
-    // Use table-specific dispatch if tableId is present
-    const globalDispatch = useCartDispatch()
-    const tableDispatch = useTableCartDispatch(tableId)
-    const dispatch = tableId ? tableDispatch : globalDispatch
+    const dispatch = useCartDispatch()
 
-    if (loading && products.length === 0) return <LoadingSpinner fullScreen message="Đang tải thực đơn..." />
+    if (loading && products.length === 0) return <LoadingSpinner fullScreen message={t('nav.menu') + '...'} />
 
     const { showToast } = useToast()
 
@@ -39,11 +36,11 @@ export default function ProductList() {
         } else {
             dispatch({ type: 'ADD', payload: { product: p } })
         }
-        showToast(`${p.title} đã được thêm`)
+        showToast(t('common.added_item', { name: p.title }))
     }
 
     const focus = !!searchParams.get('focus')
-    const title = tableId ? `Bàn ${tableId}` : 'Sản phẩm'
+    const title = tableId ? `${t('status.occupied')} ${tableId}` : t('nav.menu')
 
     // Check if we are searching or in a specific context to show elements
     const showHeaderConfig = {
@@ -69,7 +66,7 @@ export default function ProductList() {
     return (
         <div className="page products-page">
             <header className="page-header">
-                <button className="back product-list-back" onClick={handleBack} aria-label="Quay lại">
+                <button className="back product-list-back" onClick={handleBack} aria-label={t('cart.back')}>
                     <IconChevron size={22} />
                 </button>
                 <h2 className="product-list-title">{title}</h2>
@@ -80,7 +77,7 @@ export default function ProductList() {
                     className={`tab ${selectedCat === 'all' ? 'active' : ''}`}
                     onClick={() => setSelectedCat('all')}
                 >
-                    Tất cả
+                    {t('common.all')}
                 </button>
                 {categories.filter(c => c !== 'all').map(c => (
                     <button
@@ -98,8 +95,8 @@ export default function ProductList() {
             <div className="list">
                 {filtered.length === 0 ? (
                     <div className="empty-list-container">
-                        {term ? 'Không tìm thấy sản phẩm' : 'Chưa có sản phẩm nào'}
-                        <br /><small>Thử từ khóa hoặc danh mục khác</small>
+                        {term ? t('common.no_products_found') : t('common.no_products_category')}
+                        <br /><small>{t('common.try_another_search')}</small>
                     </div>
                 ) : (
                     filtered.map(p => (

@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .order-metadata {
     padding: 8px 16px;
@@ -85,7 +85,7 @@
 
         .item-title {
             font-weight: 800;
-            font-size: 16px;
+            font-size: var(--text-lg);
             color: var(--text-primary);
             margin-bottom: 4px;
         }
@@ -153,16 +153,16 @@
     }
 }
 
-.table-qty-bar {
+.topping-qty-bar {
     display: flex;
     align-items: center;
     gap: 12px;
     background: var(--bg-secondary);
-    border: 1px solid var(--border-glass);
-    border-radius: var(--radius-full);
     padding: 4px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-glass);
 
-    .qty-btn {
+    .icon-btn {
         width: 28px;
         height: 28px;
         border-radius: 50%;
@@ -172,7 +172,8 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: var(--trans-fast);
+        transition: all 0.2s;
+        color: var(--text-primary);
 
         &:active {
             background: var(--bg-glass-active);
@@ -180,11 +181,14 @@
 
         &.plus {
             background: var(--accent-amber);
-            box-shadow: 0 2px 8px var(--accent-amber-glow);
+            color: #fff;
+            box-shadow: 0 4px 12px var(--accent-amber-glow);
         }
     }
 
     .qty-val {
+        font-weight: 950;
+        font-size: 14px;
         min-width: 18px;
         text-align: center;
         font-weight: 900;
@@ -202,6 +206,7 @@
     left: 0;
     right: 0;
     bottom: 0;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
     background: var(--bg-glass);
     backdrop-filter: var(--glass-blur);
     border-top: 1px solid var(--border-glass);
@@ -274,6 +279,55 @@
     }
 }
 
+// Empty State
+.empty-table-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    animation: fadeIn 0.5s ease;
+
+    .empty-emoji {
+        font-size: 80px;
+        margin-bottom: 24px;
+        opacity: 0.9;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .empty-text {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .empty-cta {
+        font-size: 15px;
+        max-width: 280px;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
 // Modal Styles - Premium Redesign
 .modal-overlay {
     position: fixed;
@@ -335,22 +389,7 @@
         textarea {
             width: 100%;
             min-height: 140px;
-            padding: 16px;
-            background: var(--bg-darker);
-            border: 1.5px solid var(--border-glass);
-            border-radius: var(--radius-lg);
-            color: var(--text-primary);
-            outline: none;
-            font-size: 16px;
-            font-family: inherit;
             resize: none;
-            transition: var(--trans-fast);
-
-            &:focus {
-                border-color: var(--accent-amber);
-                background: var(--bg-glass-active);
-                box-shadow: 0 0 0 4px var(--accent-amber-glow);
-            }
         }
     }
 

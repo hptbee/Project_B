@@ -119,6 +119,7 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
         {
             var categoryRows = await _client.ReadRangeAsync(_options.OrdersSheetId, "Category!A2:C");
             var categories = new List<Category>();
+            if (categoryRows == null) return categories;
 
             foreach (var row in categoryRows)
             {
@@ -156,6 +157,68 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
             }
 
             return categories;
+        }
+
+        public async Task<Product?> GetByIdAsync(Guid id)
+        {
+            var all = await GetAllAsync();
+            return all.FirstOrDefault(p => p.Id == id);
+        }
+
+        public async Task CreateAsync(Product product)
+        {
+            var row = new object[]
+            {
+                product.Id.ToString(),
+                product.Category,
+                product.Code,
+                product.Name,
+                product.Cost.ToString(CultureInfo.InvariantCulture),
+                product.Price.ToString(CultureInfo.InvariantCulture),
+                product.ImageUrl,
+                product.IsActive ? "1" : "0",
+                product.IsTopping ? "1" : "0",
+                product.ToppingMapping
+            };
+            await _client.AppendRowAsync(_options.OrdersSheetId, "Product!A:J", row);
+        }
+
+        public async Task UpdateAsync(Product product)
+        {
+            var rows = await _client.ReadRangeAsync(_options.OrdersSheetId, "Product!A2:J");
+            if (rows == null) return;
+
+            for (int i = 0; i < rows.Count; i++)
+            {
+                if (rows[i].Length > 0 && Guid.TryParse(rows[i][0]?.ToString(), out var rowId) && rowId == product.Id)
+                {
+                    var row = new object[]
+                    {
+                        product.Id.ToString(),
+                        product.Category,
+                        product.Code,
+                        product.Name,
+                        product.Cost.ToString(CultureInfo.InvariantCulture),
+                        product.Price.ToString(CultureInfo.InvariantCulture),
+                        product.ImageUrl,
+                        product.IsActive ? "1" : "0",
+                        product.IsTopping ? "1" : "0",
+                        product.ToppingMapping
+                    };
+                    await _client.UpdateRowAsync(_options.OrdersSheetId, $"Product!A{i + 2}:J{i + 2}", row);
+                    break;
+                }
+            }
+        }
+
+        public async Task ToggleActiveAsync(Guid id)
+        {
+            var product = await GetByIdAsync(id);
+            if (product != null)
+            {
+                product.IsActive = !product.IsActive;
+                await UpdateAsync(product);
+            }
         }
     }
 }

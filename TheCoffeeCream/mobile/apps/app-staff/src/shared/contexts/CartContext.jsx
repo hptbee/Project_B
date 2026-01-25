@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react'
-import { generateCartItemKey, generateOrderId } from '@/shared/utils/cartUtils'
+import { generateCartItemKey, generateOrderId, useLocalStorage } from '@thecoffeecream/ui-shared'
 
 const CartStateContext = createContext()
 const CartDispatchContext = createContext()
@@ -33,7 +33,7 @@ function cartReducer(state, action) {
                 orderId: generateOrderId(),
                 clientOrderId: crypto.randomUUID(),
                 status: 'DRAFT',
-                customer: 'Khách lẻ',
+                customer: null,
                 createdAt: Date.now()
             }
             const existing = table.items.find(i => i.key === key)
@@ -117,7 +117,7 @@ function cartReducer(state, action) {
                     orderId: generateOrderId(),
                     clientOrderId: crypto.randomUUID(),
                     status: 'DRAFT',
-                    customer: 'Khách lẻ',
+                    customer: null,
                     createdAt: Date.now(),
                     note
                 }
@@ -175,7 +175,6 @@ function cartReducer(state, action) {
     }
 }
 
-import useLocalStorage from '@/shared/hooks/useLocalStorage'
 
 export function CartProvider({ children }) {
     const [savedState, setSavedState] = useLocalStorage('cart_state', { items: [], tables: {} })
@@ -215,7 +214,7 @@ export function useTableCart(tableId) {
         orderId: null,
         clientOrderId: null,
         status: 'DRAFT',
-        customer: 'Khách lẻ'
+        customer: null
     }
 }
 

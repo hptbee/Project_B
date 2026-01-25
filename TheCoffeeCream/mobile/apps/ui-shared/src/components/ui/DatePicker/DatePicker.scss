@@ -1,0 +1,201 @@
+@use '../../../styles/variables' as *;
+
+.datepicker-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    z-index: 100000;
+    animation: fadeIn 0.3s ease;
+    padding: 24px;
+}
+
+.datepicker-modal {
+    background: var(--bg-card);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    z-index: 10020;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    /* Stronger shadow */
+    animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: fit-content;
+    max-width: 95vw;
+    margin: auto;
+    /* Ensure centering */
+
+    .datepicker-header {
+        background: var(--accent-amber);
+        color: #000;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        h3 {
+            font-weight: 900;
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #000;
+            font-weight: 900;
+            cursor: pointer;
+            transition: var(--trans-fast);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.4);
+            }
+        }
+    }
+
+    .react-datepicker {
+        background: transparent;
+        color: var(--text-primary);
+        border: none;
+        padding: 10px;
+        width: 100%;
+        font-family: inherit;
+
+        &__header {
+            background: transparent;
+            border-bottom: 1px solid var(--border-glass);
+            padding: 8px 0 12px;
+        }
+
+        &__current-month {
+            color: var(--text-primary);
+            font-weight: 900;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        &__day-name {
+            color: var(--text-muted);
+            font-weight: 800;
+            width: 36px;
+        }
+
+        &__day {
+            color: var(--text-primary);
+            font-weight: 700;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 8px;
+            margin: 2px;
+
+            &:hover {
+                background: var(--bg-glass-active);
+            }
+
+            &--selected,
+            &--keyboard-selected {
+                background: var(--accent-amber) !important;
+                color: #000 !important;
+                border-radius: 50% !important;
+            }
+
+            &--today {
+                color: var(--accent-amber);
+                font-weight: 900;
+            }
+
+            &--disabled {
+                color: var(--text-muted) !important;
+                opacity: 0.3;
+                cursor: not-allowed;
+                pointer-events: none;
+                background: transparent !important;
+            }
+        }
+
+        select {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 4px 8px;
+            outline: none;
+            font-weight: 700;
+        }
+    }
+}
+
+.datepicker-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--trans-fast);
+
+    &.active {
+        border-color: var(--accent-amber);
+        background: var(--bg-primary);
+        box-shadow: 0 0 0 3px var(--accent-amber-glow);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 640px) {
+    .datepicker-modal {
+        max-width: 95vw;
+        border-radius: 20px;
+        position: relative;
+        /* Remove fixed bottom to center */
+        animation: scaleUp 0.3s ease;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}

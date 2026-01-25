@@ -1,31 +1,37 @@
-@use '../../../styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 
 .product-list-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: $text-primary;
+    font-size: 22px;
+    font-weight: 950;
+    color: var(--text-primary);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    margin: 0;
 }
 
 .list {
-    padding: 0 16px 20px;
+    padding: 0 16px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .empty-list-container {
-    padding: 60px 40px;
+    padding: 80px 40px;
     text-align: center;
-    color: $text-secondary;
-    background: $bg-card;
-    border-radius: $radius-xl;
-    margin: 16px;
-    border: $glass-border;
-    backdrop-filter: $glass-blur;
-    animation: fadeInUp 0.4s ease;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    margin: 24px 16px;
+    border: 1px solid var(--border-glass);
+    backdrop-filter: var(--glass-blur);
+    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--glass-shadow);
 
     small {
         display: block;
-        margin-top: 8px;
+        margin-top: 12px;
         opacity: 0.6;
+        font-weight: 600;
     }
 }

@@ -1,10 +1,12 @@
-@use './styles/variables' as *;
+@use '@ui-shared/styles/variables' as *;
 @use './styles/components';
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
+    letter-spacing: var(--letter-spacing-tight);
 }
 
 :root {
@@ -17,11 +19,19 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
+
+/* Global Button Synchronization - Imported from Shared */
+@import '../../ui-shared/src/styles/buttons.scss';
+@import '../../ui-shared/src/styles/inputs.scss';
+@import '../../ui-shared/src/styles/cards.scss';
 
 .page {
     min-height: 100vh;
-    padding-bottom: 92px;
+    padding-bottom: calc(92px + env(safe-area-inset-bottom));
     animation: pageFadeIn var(--trans-smooth);
     background: var(--bg-primary);
     position: relative;
@@ -56,11 +66,11 @@ body {
     border-bottom: 1px solid var(--border-glass);
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 100;
     min-height: 80px;
 
     h2 {
-        font-size: 17px;
+        font-size: var(--text-lg);
         font-weight: 800;
         letter-spacing: 0.5px;
         margin: 0;
@@ -91,24 +101,9 @@ body {
 
     .back,
     .menu {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-glass);
-        color: var(--text-primary);
-        width: 40px;
-        height: 40px;
-        border-radius: var(--radius-md);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: var(--trans-fast);
-        cursor: pointer;
+        // Inherit icon-btn styles
         position: relative;
         z-index: 5;
-
-        &:active {
-            transform: scale(0.9);
-            background: var(--bg-glass-active);
-        }
     }
 }
 
@@ -278,7 +273,7 @@ body {
     position: fixed;
     left: 16px;
     right: 16px;
-    bottom: 110px;
+    bottom: calc(110px + env(safe-area-inset-bottom));
     z-index: 10000;
     pointer-events: none;
     opacity: 0;

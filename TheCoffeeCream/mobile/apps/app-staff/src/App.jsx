@@ -9,12 +9,13 @@ import SideMenu from '@/shared/components/layout/SideMenu'
 import AppRoutes from './routes'
 
 import { OfflineQueue } from '@/shared/services/offline/offlineQueue'
-import { Logger } from '@thecoffeecream/ui-shared'
+import { Logger, useTranslation } from '@thecoffeecream/ui-shared'
 
 /**
  * Main application content with route and global effect logic
  */
 function AppContent() {
+    const { t } = useTranslation() // Hook now works because CoreProvider is parent
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -64,10 +65,10 @@ function AppContent() {
 
             if (isRootPath) {
                 const { value } = await Dialog.confirm({
-                    title: 'Thoát ứng dụng',
-                    message: 'Bạn có chắc chắn muốn thoát?',
-                    okButtonTitle: 'Thoát',
-                    cancelButtonTitle: 'Hủy'
+                    title: t('app.exit_title'),
+                    message: t('app.exit_confirm'),
+                    okButtonTitle: t('app.exit_ok'),
+                    cancelButtonTitle: t('app.exit_cancel')
                 })
 
                 if (value) {
@@ -81,20 +82,22 @@ function AppContent() {
         return () => {
             backListener.then(handler => handler.remove())
         }
-    }, [navigate, location])
+    }, [navigate, location, t])
 
     return (
-        <CoreProvider>
+        <>
             <SideMenu />
             <AppRoutes />
-        </CoreProvider>
+        </>
     )
 }
 
 export default function App() {
     return (
-        <BrowserRouter>
-            <AppContent />
-        </BrowserRouter>
+        <CoreProvider>
+            <BrowserRouter>
+                <AppContent />
+            </BrowserRouter>
+        </CoreProvider>
     )
 }

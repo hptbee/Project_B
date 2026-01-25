@@ -65,6 +65,33 @@ namespace TheCoffeeCream.Api.Controllers
             return Ok(MapOrderToResponse(order));
         }
 
+        [HttpPut("{id}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] CreateOrderRequest request)
+        {
+            if (request == null) return BadRequest("Request body is required");
+            try
+            {
+                await _orderService.UpdateOrderAsync(id, request);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            if (order == null) return NotFound();
+
+            await _orderService.SoftDeleteOrderAsync(id);
+            return NoContent();
+        }
+
         private OrderResponse MapOrderToResponse(Order order)
         {
             return new OrderResponse

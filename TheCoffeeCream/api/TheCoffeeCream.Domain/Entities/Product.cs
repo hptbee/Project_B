@@ -5,17 +5,17 @@ namespace TheCoffeeCream.Domain.Entities
 {
     public class Product
     {
-        public Guid Id { get; private set; }
-        public string Category { get; private set; } = string.Empty;
-        public string Code { get; private set; } = string.Empty;
-        public string Name { get; private set; } = string.Empty;
-        public decimal Cost { get; private set; }
-        public decimal Price { get; private set; }
-        public string ImageUrl { get; private set; } = string.Empty;
-        public bool IsActive { get; private set; }
-        public bool IsTopping { get; private set; }
+        public Guid Id { get; set; }
+        public string Category { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public decimal Cost { get; set; }
+        public decimal Price { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+        public bool IsTopping { get; set; }
         // New mapping string: stores topping product ids separated by ';'
-        public string ToppingMapping { get; private set; } = string.Empty;
+        public string ToppingMapping { get; set; } = string.Empty;
 
         // Embedded toppings (now Products themselves)
         public IReadOnlyList<Product> Toppings => _toppings.AsReadOnly();

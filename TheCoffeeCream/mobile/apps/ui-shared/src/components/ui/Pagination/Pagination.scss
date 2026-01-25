@@ -1,0 +1,110 @@
+.data-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-glass);
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    gap: 20px;
+
+    .pagination-info {
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        font-weight: 600;
+
+        span {
+            color: var(--text-primary);
+            font-weight: 800;
+            margin: 0 4px;
+        }
+    }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-left: auto;
+    }
+
+    .page-size-selector {
+        select {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+
+            &:hover {
+                border-color: var(--accent-amber);
+            }
+        }
+    }
+
+    .page-nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bg-glass);
+        padding: 4px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-glass);
+
+        .nav-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: var(--radius-md);
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover:not(:disabled) {
+                background: var(--bg-glass-active);
+                color: var(--accent-amber);
+            }
+
+            &:disabled {
+                opacity: 0.3;
+            }
+        }
+
+        .page-indicator {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0 4px;
+
+            strong {
+                color: var(--text-primary);
+                font-weight: 900;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .data-pagination {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px;
+        gap: 16px;
+
+        .pagination-controls {
+            margin-left: 0;
+            justify-content: space-between;
+        }
+
+        .pagination-info {
+            text-align: center;
+        }
+    }
+}

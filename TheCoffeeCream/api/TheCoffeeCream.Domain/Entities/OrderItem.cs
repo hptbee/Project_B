@@ -6,16 +6,17 @@ namespace TheCoffeeCream.Domain.Entities
 {
     public class OrderItem
     {
-        public Guid Id { get; private set; }
-        public Guid ProductId { get; private set; }
-        public string Name { get; private set; } = string.Empty;
-        public decimal UnitPrice { get; private set; }
-        public int Quantity { get; private set; }
+        public Guid Id { get; set; }
+        public Guid ProductId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public decimal UnitPrice { get; set; }
+        public int Quantity { get; set; }
 
-        public DiscountType? DiscountType { get; private set; }
-        public decimal DiscountValue { get; private set; }
+        public DiscountType? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
 
-        public string Note { get; private set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
 
         public IReadOnlyList<OrderItemTopping> SelectedToppings => _selectedToppings.AsReadOnly();
 

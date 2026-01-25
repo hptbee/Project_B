@@ -94,5 +94,63 @@ namespace TheCoffeeCream.Application.Services
         {
             return await _orderRepository.GetByIdAsync(id);
         }
+
+        public async Task SoftDeleteOrderAsync(Guid id)
+        {
+            await _orderRepository.ToggleActiveAsync(id);
+        }
+
+        public async Task UpdateOrderAsync(Guid id, CreateOrderRequest request)
+        {
+            var existing = await _orderRepository.GetByIdAsync(id);
+            if (existing == null) throw new ArgumentException("Order not found");
+
+            // Reuse logic from CreateOrderAsync but keep the original ID if necessary
+            // In our repository, AddAsync handles update if ClientOrderId matches.
+            // But here we might want to update by ID.
+            
+            if (!Enum.TryParse<OrderType>(request.OrderType, true, out var orderType))
+                throw new ArgumentException("Invalid orderType", nameof(request.OrderType));
+
+            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+
+            var items = request.Items.Select(i =>
+            {
+                DiscountType? itemDiscountType = null;
+                if (!string.IsNullOrEmpty(i.DiscountType) && Enum.TryParse<DiscountType>(i.DiscountType, true, out var dt))
+                    itemDiscountType = dt;
+
+                return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, null, itemDiscountType, i.DiscountValue, i.Note);
+            });
+
+            DiscountType? orderDiscountType = null;
+            if (!string.IsNullOrEmpty(request.DiscountType) && Enum.TryParse<DiscountType>(request.DiscountType, true, out var odt))
+                orderDiscountType = odt;
+
+            if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, true, out var paymentMethod))
+                paymentMethod = PaymentMethod.CASH;
+
+            if (!Enum.TryParse<OrderStatus>(request.Status, true, out var status))
+                status = OrderStatus.SUCCESS;
+
+            var order = new Order(
+                request.ClientOrderId,
+                orderType,
+                items,
+                request.TableNumber,
+                paymentMethod,
+                request.CashAmount,
+                request.TransferAmount,
+                orderDiscountType,
+                request.DiscountValue,
+                status,
+                request.Note,
+                id);
+            
+            order.CreatedAt = existing.CreatedAt; // Preserve original creation time
+            order.IsActive = existing.IsActive;
+
+            await _orderRepository.UpdateAsync(order);
+        }
     }
 }

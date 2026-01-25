@@ -1,0 +1,45 @@
+/* Centralized Card & Glass Styles */
+
+.glass-card {
+    background: var(--bg-glass);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: var(--border-active);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+        background: var(--bg-glass-active);
+    }
+}
+
+.glass-panel {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-glass);
+    padding: 12px;
+}
+
+.card-title {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-subtitle {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}

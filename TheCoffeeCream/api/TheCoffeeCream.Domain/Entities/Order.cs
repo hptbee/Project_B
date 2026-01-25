@@ -6,19 +6,19 @@ namespace TheCoffeeCream.Domain.Entities
 {
     public class Order
     {
-        public Guid Id { get; private set; }
-        public Guid ClientOrderId { get; private set; }
-        public DateTimeOffset CreatedAt { get; private set; }
-        public OrderType OrderType { get; private set; }
-        public int? TableNumber { get; private set; }
-        public PaymentMethod PaymentMethod { get; private set; }
-        public decimal CashAmount { get; private set; }
-        public decimal TransferAmount { get; private set; }
-        public DiscountType? DiscountType { get; private set; }
-        public decimal DiscountValue { get; private set; }
-
-        public OrderStatus Status { get; private set; }
-        public string Note { get; private set; } = string.Empty;
+        public Guid Id { get; set; }
+        public Guid ClientOrderId { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public OrderType OrderType { get; set; }
+        public int? TableNumber { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
+        public decimal CashAmount { get; set; }
+        public decimal TransferAmount { get; set; }
+        public DiscountType? DiscountType { get; set; }
+        public decimal DiscountValue { get; set; }
+        public OrderStatus Status { get; set; }
+        public string Note { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
 
         public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
 

@@ -1,7 +1,10 @@
 import React, { useRef, useEffect } from 'react'
+import { useTranslation } from '../../../contexts/LanguageContext'
 import { Icon } from '../Icon'
 
-export function SearchBar({ value, onChange, placeholder = 'Tìm sản phẩm...', autoFocus = false }) {
+export function SearchBar({ value, onChange, placeholder, autoFocus = false }) {
+    const { t } = useTranslation()
+    const displayPlaceholder = placeholder || t('common.search')
     const ref = useRef(null)
 
     useEffect(() => {
@@ -17,7 +20,7 @@ export function SearchBar({ value, onChange, placeholder = 'Tìm sản phẩm...
                 ref={ref}
                 type="text"
                 className="search-input"
-                placeholder={placeholder}
+                placeholder={displayPlaceholder}
                 value={value}
                 onChange={onChange}
             />

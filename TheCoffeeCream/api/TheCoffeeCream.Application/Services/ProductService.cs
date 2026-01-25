@@ -66,5 +66,104 @@ namespace TheCoffeeCream.Application.Services
 
             return dto;
         }
+
+        public async Task<IEnumerable<CategoryResponse>> GetCategoriesAsync()
+        {
+            var categories = await _productRepository.GetCategoriesAsync();
+            return categories.Select(c => new CategoryResponse
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Rank = c.Rank
+            });
+        }
+
+        public async Task<ProductDto?> GetByIdAsync(Guid id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null) return null;
+            return MapToDto(product);
+        }
+
+        public async Task<ProductDto> CreateAsync(ProductUpsertRequest request)
+        {
+            var toppingMapping = request.ToppingIds != null && request.ToppingIds.Any()
+                ? string.Join(";", request.ToppingIds)
+                : string.Empty;
+
+            var product = new Product(
+                Guid.NewGuid(),
+                request.Name,
+                request.Price,
+                request.IsTopping,
+                request.Category,
+                request.Code,
+                request.Cost,
+                request.ImageUrl,
+                request.IsActive,
+                null,
+                toppingMapping
+            );
+
+            await _productRepository.CreateAsync(product);
+            return MapToDto(product);
+        }
+
+        public async Task<ProductDto?> UpdateAsync(Guid id, ProductUpsertRequest request)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null) return null;
+
+            var toppingMapping = request.ToppingIds != null && request.ToppingIds.Any()
+                ? string.Join(";", request.ToppingIds)
+                : string.Empty;
+
+            product.Name = request.Name;
+            product.Category = request.Category;
+            product.Code = request.Code;
+            product.Cost = request.Cost;
+            product.Price = request.Price;
+            product.ImageUrl = request.ImageUrl;
+            product.IsActive = request.IsActive;
+            product.IsTopping = request.IsTopping;
+            product.ToppingMapping = toppingMapping;
+
+            await _productRepository.UpdateAsync(product);
+            return MapToDto(product);
+        }
+
+        public async Task<bool> ToggleActiveAsync(Guid id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null) return false;
+
+            await _productRepository.ToggleActiveAsync(id);
+            return true;
+        }
+
+        private ProductDto MapToDto(Product p)
+        {
+            return new ProductDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Category = p.Category,
+                Code = p.Code,
+                Cost = p.Cost,
+                Price = p.Price,
+                ImageUrl = p.ImageUrl,
+                IsActive = p.IsActive,
+                IsTopping = p.IsTopping,
+                Toppings = p.Toppings.Select(t => new ProductDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    Category = t.Category,
+                    Price = t.Price,
+                    IsActive = t.IsActive,
+                    IsTopping = true
+                }).ToList()
+            };
+        }
     }
 }

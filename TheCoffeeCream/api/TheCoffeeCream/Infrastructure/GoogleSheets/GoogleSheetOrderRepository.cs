@@ -28,15 +28,15 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
         {
             // 1. Check if order exists (by ClientOrderId)
             var existingRows = await _client.ReadSheetAsync(_options.OrdersSheetId, "Order");
-            int rowIndex = -1;
+            var matchingRowIndices = new List<int>();
+            
             // Skip header
             for (int i = 1; i < existingRows.Count; i++)
             {
                 var er = existingRows[i];
                 if (er != null && er.Count > 1 && string.Equals(er[1]?.ToString()?.Trim(), order.ClientOrderId.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
-                    rowIndex = i + 1; // Google Sheets is 1-indexed
-                    break;
+                    matchingRowIndices.Add(i + 1); // 1-indexed for Google Sheets row numbers
                 }
             }
 
@@ -57,15 +57,62 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 order.SubTotal.ToString(CultureInfo.InvariantCulture),
                 order.Total.ToString(CultureInfo.InvariantCulture),
                 order.Status.ToString(),
-                order.Note ?? string.Empty
+                order.Note ?? string.Empty,
+                order.IsActive ? "1" : "0"
             };
 
-            if (rowIndex != -1)
+            if (matchingRowIndices.Any())
             {
+                // Update the LAST match (most likely the most recent/valid one if appended sequentially)
+                // OR Update the FIRST match and delete others? 
+                // Updating the first match keeps the row position stable.
+                int targetRowIndex = matchingRowIndices[0];
+                
+                // If we have duplicates, we might want to consolidate. Use the ID from the existing row if we want strict stability,
+                // but OrderService might have passed a new ID if it didn't find it.
+                // We will overwrite with order.Id regardless.
+
+                // Retrieve old ID from that row to clear its items
+                var oldIdStr = GetRowValue(existingRows[targetRowIndex - 1], 0); // index in list is 0-based
+                if (Guid.TryParse(oldIdStr, out var oldId))
+                {
+                    await ClearOrderItemsAsync(oldId);
+                }
+                
+                // If there are duplicates, delete them.
+                if (matchingRowIndices.Count > 1) 
+                {
+                    // Identify other rows
+                    var rowsToDelete = matchingRowIndices.Skip(1).OrderByDescending(r => r).ToList(); 
+                    
+                    // Also clear items for these duplicate orders
+                    foreach(var delIndex in rowsToDelete)
+                    {
+                        var dupIdStr = GetRowValue(existingRows[delIndex - 1], 0);
+                        if (Guid.TryParse(dupIdStr, out var dupId))
+                        {
+                            await ClearOrderItemsAsync(dupId);
+                        }
+                    }
+
+                    // Delete the duplicate rows
+                    await _client.DeleteRowsAsync(_options.OrdersSheetId, "Order", rowsToDelete);
+                    
+                    // Adjust targetRowIndex? If we delete rows BELOW target, target is safe.
+                    // If we delete rows ABOVE target, target shifts.
+                    // We sorted descending, so we delete from bottom up. 
+                    // But wait, if target is index 0 (first match), and others are > 0. 
+                    // We skip(1), so we keep the first one. All deletes are below it. Safe.
+                }
+
                 // Update existing order row
-                await _client.UpdateRowAsync(_options.OrdersSheetId, $"Order!A{rowIndex}:O{rowIndex}", orderRow);
-                // Clear existing items for this order to avoid duplicates (simpler than updating individually)
-                await ClearOrderItemsAsync(order.Id);
+                await _client.UpdateRowAsync(_options.OrdersSheetId, $"Order!A{targetRowIndex}:P{targetRowIndex}", orderRow);
+                
+                if (order.Id != oldId)
+                {
+                     // If we changed ID, ensure items are cleared for new ID too (just in case)
+                     await ClearOrderItemsAsync(order.Id);
+                }
             }
             else
             {
@@ -77,10 +124,12 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
             // Columns: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Toppings, Note
             var itemRows = order.Items.Select(item =>
             {
-                var toppingsStr = string.Join(", ", item.SelectedToppings.Select(t => t.Name));
+                // Follow the image: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Note, IsActive
+                // NOTE: Toppings are not in the new 11-column structure image, but we can append them to Name if needed.
+                // For now, following image structure exactly.
                 return new object[]
                 {
-                    order.Id.ToString(),
+                    order.Id.ToString(), // FK to Order
                     item.ProductId.ToString(),
                     item.Name,
                     item.UnitPrice.ToString(CultureInfo.InvariantCulture),
@@ -89,8 +138,8 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                     item.DiscountValue.ToString(CultureInfo.InvariantCulture),
                     item.DiscountAmount.ToString(CultureInfo.InvariantCulture),
                     item.Total.ToString(CultureInfo.InvariantCulture),
-                    toppingsStr,
-                    item.Note ?? string.Empty
+                    item.Note ?? string.Empty,
+                    item.IsActive ? "1" : "0"
                 };
             }).ToList();
 
@@ -114,6 +163,10 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
 
             if (rowsToDelete.Any())
             {
+                // Optimizing delete: Delete in batches or use a smart delete if _client supports it. 
+                // Assuming DeleteRowsAsync handles list of indices.
+                // Sort descending to avoid index shifting problems during delete loop in client
+                rowsToDelete.Sort((a, b) => b.CompareTo(a));
                 await _client.DeleteRowsAsync(_options.OrdersSheetId, "OrderItem", rowsToDelete);
             }
         }
@@ -162,8 +215,8 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 if (!DateTimeOffset.TryParse(createdAtStr, out var createdAt)) continue;
 
                 // Filter by date range if provided
-                if (startDate.HasValue && createdAt < startDate.Value) continue;
-                if (endDate.HasValue && createdAt > endDate.Value) continue;
+                if (startDate.HasValue && createdAt.UtcDateTime < startDate.Value.UtcDateTime) continue;
+                if (endDate.HasValue && createdAt.UtcDateTime > endDate.Value.UtcDateTime) continue;
 
                 var clientOrderIdStr = GetRowValue(row, 1);
                 if (!Guid.TryParse(clientOrderIdStr, out var clientOrderId)) continue;
@@ -193,8 +246,9 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 var status = Enum.TryParse<OrderStatus>(statusStr, true, out var os) ? os : OrderStatus.SUCCESS;
 
                 var note = GetRowValue(row, 14);
+                var isActive = GetRowValue(row, 15, "1") == "1";
 
-                // Get items for this order (imperative to make null-checks explicit)
+                // Get items for this order
                 var orderItems = new List<OrderItem>();
                 foreach (var ir in itemRows.Skip(1))
                 {
@@ -215,46 +269,44 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                     var itemDiscountValueStr = GetRowValue(ir, 6, "0");
                     var itemDiscountValue = decimal.Parse(itemDiscountValueStr, CultureInfo.InvariantCulture);
 
-                    var itemNote = GetRowValue(ir, 10);
+                    // Note is now column 9 (index 9) and IsActive is column 10 (index 10)
+                    var itemNote = GetRowValue(ir, 9);
+                    var itemIsActive = GetRowValue(ir, 10, "1") == "1";
 
-                    // Parse toppings if any
-                    List<OrderItemTopping>? toppings = null;
-                    var toppingsStr = GetRowValue(ir, 9);
-                    if (!string.IsNullOrEmpty(toppingsStr))
-                    {
-                        toppings = toppingsStr.Split(',')
-                            .Select(s => s.Trim())
-                            .Where(s => !string.IsNullOrEmpty(s))
-                            .Select(name => new OrderItemTopping(Guid.NewGuid(), name, 0))
-                            .ToList();
-                    }
-
-                    orderItems.Add(new OrderItem(productId, itemName, unitPrice, quantity, toppings, itemDiscountType, itemDiscountValue, itemNote));
+                    var item = new OrderItem(productId, itemName, unitPrice, quantity, null, itemDiscountType, itemDiscountValue, itemNote);
+                    item.IsActive = itemIsActive;
+                    orderItems.Add(item);
                 }
 
-                // Use reflection to create Order with private setters
-                var order = (Order)Activator.CreateInstance(typeof(Order), true)!;
-                typeof(Order).GetProperty("Id")!.SetValue(order, orderId);
-                typeof(Order).GetProperty("ClientOrderId")!.SetValue(order, clientOrderId);
-                typeof(Order).GetProperty("CreatedAt")!.SetValue(order, createdAt);
-                typeof(Order).GetProperty("OrderType")!.SetValue(order, orderType);
-                typeof(Order).GetProperty("TableNumber")!.SetValue(order, tableNumber);
-                typeof(Order).GetProperty("PaymentMethod")!.SetValue(order, paymentMethod);
-                typeof(Order).GetProperty("CashAmount")!.SetValue(order, cashAmount);
-                typeof(Order).GetProperty("TransferAmount")!.SetValue(order, transferAmount);
-                typeof(Order).GetProperty("DiscountType")!.SetValue(order, discountType);
-                typeof(Order).GetProperty("DiscountValue")!.SetValue(order, discountValue);
-                typeof(Order).GetProperty("Status")!.SetValue(order, status);
-                typeof(Order).GetProperty("Note")!.SetValue(order, note);
-
-                // Set items using reflection
-                var itemsField = typeof(Order).GetField("_items", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
-                itemsField.SetValue(order, orderItems);
+                // Use reflection to create Order with private setters (keeping this for now, though properties are public now)
+                var order = new Order(clientOrderId, orderType, orderItems, tableNumber, paymentMethod, cashAmount, transferAmount, discountType, discountValue, status, note, orderId);
+                order.CreatedAt = createdAt;
+                order.IsActive = isActive;
 
                 orders.Add(order);
             }
+            
+            // Deduplicate: Keep only the latest entry for each ClientOrderId
+            // Group by ClientOrderId and take the Last one (assuming chronological order in sheet, or logic above works)
+            return orders
+                .GroupBy(o => o.ClientOrderId)
+                .Select(g => g.Last()) // Prefer Last as it's likely the latest appended
+                .ToList();
+        }
 
-            return orders;
+        public async Task UpdateAsync(Order order)
+        {
+            await AddAsync(order); // AddAsync already handles update if rowIndex != -1
+        }
+
+        public async Task ToggleActiveAsync(Guid id)
+        {
+            var order = await GetByIdAsync(id);
+            if (order != null)
+            {
+                order.IsActive = !order.IsActive;
+                await UpdateAsync(order);
+            }
         }
     }
 }
