@@ -195,7 +195,8 @@ export const vi = {
         view_edit: 'Xem/Sửa',
         load_orders_error: 'Không thể tải danh sách đơn hàng',
         export_loading: 'Đang tạo báo cáo...',
-        export_error: 'Lỗi khi xuất báo cáo'
+        export_error: 'Lỗi khi xuất báo cáo',
+        total_items: 'Tổng số mặt hàng'
     },
     form: {
         order_status: 'Trạng thái đơn hàng',

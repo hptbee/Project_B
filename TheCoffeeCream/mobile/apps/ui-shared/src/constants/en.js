@@ -192,7 +192,8 @@ export const en = {
         view_edit: 'View/Edit',
         load_orders_error: 'Failed to load orders',
         export_loading: 'Generating report...',
-        export_error: 'Failed to export report'
+        export_error: 'Failed to export report',
+        total_items: 'Total Items'
     },
     form: {
         order_status: 'Order Status',

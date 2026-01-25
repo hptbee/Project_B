@@ -1,14 +1,12 @@
 import React, { useMemo } from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import { Icon, useAuth, ConfirmModal, useTranslation } from '@thecoffeecream/ui-shared'
-import { useState } from 'react'
+import { Icon, useAuth, useTranslation } from '@thecoffeecream/ui-shared'
 import './TopBar.scss'
 
 export default function TopBar({ onMenuClick }) {
     const location = useLocation()
-    const { user, logout } = useAuth()
+    const { user } = useAuth()
     const { t } = useTranslation()
-    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
     const breadcrumbs = useMemo(() => {
         const pathnames = location.pathname.split('/').filter((x) => x)
@@ -30,26 +28,6 @@ export default function TopBar({ onMenuClick }) {
             }
         })
     }, [location])
-
-    const pageTitle = useMemo(() => {
-        if (location.pathname === '/') return t('nav.overview')
-        const lastPart = location.pathname.split('/').filter(x => x).pop()
-        const titles = {
-            'orders': t('nav.invoices'),
-            'products': t('nav.menu'),
-            'users': t('nav.hr')
-        }
-        return titles[lastPart] || 'The Coffee Cream'
-    }, [location, t])
-
-    const handleLogout = () => {
-        setShowLogoutConfirm(true)
-    }
-
-    const confirmLogout = () => {
-        logout()
-        setShowLogoutConfirm(false)
-    }
 
     return (
         <header className="top-bar">
@@ -77,7 +55,7 @@ export default function TopBar({ onMenuClick }) {
                 </div>
             </div>
             <div className="top-bar-right">
-                <div className="user-profile" onClick={handleLogout}>
+                <div className="user-profile">
                     <div className="user-info">
                         <span className="username">{user?.username || 'Admin'}</span>
                         <span className="role">{user?.role === 'Admin' ? t('auth.role_admin') : user?.role || t('auth.role_admin')}</span>
@@ -86,17 +64,6 @@ export default function TopBar({ onMenuClick }) {
                         {user?.username ? user.username.charAt(0).toUpperCase() : 'A'}
                     </div>
                 </div>
-
-                <ConfirmModal
-                    show={showLogoutConfirm}
-                    title={t('auth.logout')}
-                    message={t('auth.logout_confirm')}
-                    onConfirm={confirmLogout}
-                    onCancel={() => setShowLogoutConfirm(false)}
-                    confirmText={t('auth.logout')}
-                    cancelText={t('action.cancel')}
-                    type="danger"
-                />
             </div>
         </header>
     )

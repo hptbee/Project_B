@@ -177,8 +177,8 @@ export default function Insights() {
                         <table className="report-table">
                             <thead>
                                 <tr>
-                                    <th>{t('form.product_name')} (Code)</th>
-                                    <th>{t('pos.add_to_order')}</th>
+                                    <th>Code</th>
+                                    <th>{t('form.product_name')}</th>
                                     <th className="text-right">{t('report.quantity')}</th>
                                     <th className="text-right">{t('report.revenue')}</th>
                                     <th className="text-right">{t('report.revenue')} (Net)</th>
