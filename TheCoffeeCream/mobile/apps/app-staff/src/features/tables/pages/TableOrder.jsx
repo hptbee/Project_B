@@ -63,8 +63,7 @@ export default function TableOrder() {
         navigate(`/checkout/${tableId}`)
     }
 
-    const handleSaveDraft = async () => {
-        setProcessing(true)
+    const handleSaveDraft = () => {
         const orderItems = tableCart.items.map(item => ({
             ProductId: item.product.id,
             Name: item.product.title,
@@ -86,14 +85,14 @@ export default function TableOrder() {
             Note: tableCart.note || ''
         }
 
-        try {
-            await api.createOrder(payload)
-            dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
-            navigate('/')
-        } catch (e) {
-            // console.error('Bg Save Draft failed', e)
-            setProcessing(false)
-        }
+        // 1. Call API with useOffline: true (background sync)
+        api.createOrder(payload, { useOffline: true }).catch(err => {
+            console.error('Background draft save failed', err)
+        })
+
+        // 2. Clear domestic state and navigate immediately
+        dispatch({ type: 'UPDATE_TABLE_STATUS', payload: { status: 'DRAFT' } })
+        navigate('/')
     }
 
     const saveNote = () => {

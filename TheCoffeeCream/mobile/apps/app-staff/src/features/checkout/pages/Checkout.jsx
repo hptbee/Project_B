@@ -46,8 +46,8 @@ export default function Checkout() {
         }
     }, [paymentMethod, total])
 
-    const handleFinalize = async () => {
-        setLoading(true)
+    const handleFinalize = () => {
+        // No loading state needed, we fire and forget
         const orderItems = tableCart.items.map(item => ({
             ProductId: item.product.id,
             Name: item.product.title,
@@ -70,22 +70,14 @@ export default function Checkout() {
             DiscountAmount: discountAmount || 0
         }
 
-        try {
-            setModal({
-                show: true,
-                title: t('common.payment_success'),
-                message: t('common.payment_success_msg'),
-                onConfirm: () => {
-                    dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
-                    nav('/')
-                }
-            })
-            await api.createOrder(payload)
-        } catch (e) {
-            console.error('Checkout API call failed', e)
-        } finally {
-            setLoading(false)
-        }
+        // 1. Call API with useOffline: true (background sync)
+        api.createOrder(payload, { useOffline: true }).catch(err => {
+            console.error('Background checkout failed', err)
+        })
+
+        // 2. Clear domestic state and navigate immediately
+        dispatch({ type: 'CLEAR_TABLE', payload: { tableId } })
+        nav('/', { replace: true })
     }
 
     return (
