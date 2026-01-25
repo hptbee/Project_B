@@ -177,15 +177,25 @@ export default function ProductList() {
                                     {product.isTopping && <div className="topping-tag">{t('nav.topping')}</div>}
                                 </div>
                                 <div className="card-content">
-                                    <div className="card-top">
+                                    <div className="card-info-header">
                                         <Badge variant="info" size="xs">{product.category}</Badge>
                                         <span className="product-code">{product.code}</span>
                                     </div>
-                                    <h3 className="product-name">{product.name}</h3>
-                                    <div className="card-bottom">
-                                        <div className="price-section">
-                                            <div className="price">{formatPrice(product.price, true)}</div>
-                                            <div className="cost">{t('common.cost')} {formatPrice(product.cost, true)}</div>
+                                    <div className="card-info-main">
+                                        <h3 className="product-name">{product.name}</h3>
+                                        <div className="price-tag-big">
+                                            <span className="label-price">{t('form.price')}</span>
+                                            <span className="value">{formatPrice(product.price, true)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="card-info-footer">
+                                        <div className="cost-badge">
+                                            <span className="label">{t('common.cost')}</span>
+                                            <span className="value">{formatPrice(product.cost, true)}</span>
+                                        </div>
+                                        <div className="edit-indicator">
+                                            <Icon name="edit" size={14} />
+                                            <span>{t('action.edit')}</span>
                                         </div>
                                     </div>
                                 </div>
