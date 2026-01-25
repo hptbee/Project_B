@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useMenu, useToast, SideMenu as SharedSideMenu, useTranslation } from '@thecoffeecream/ui-shared'
 import { useProducts } from '@/shared/contexts/ProductContext'
+import { cacheService, CACHE_KEYS } from '@/shared/services/cache/cacheService'
+import { ordersApi } from '@/shared/services/api/orders'
+import { reportsApi } from '@/shared/services/api/reports'
 import logo from '@/assets/icons/logo.png'
 
 export default function SideMenu() {
@@ -19,10 +22,25 @@ export default function SideMenu() {
         if (syncing) return
         setSyncing(true)
         try {
+            // 1. Sync Menu (Products & Categories) via Context
             await syncProducts()
-            showToast(t('modal.sync_success'))
+
+            // 2. Sync Today's Orders & Report for offline usage
+            const today = new Date().toISOString().split('T')[0]
+
+            const [orders, report] = await Promise.all([
+                ordersApi.getOrders(today, today),
+                reportsApi.getDailyReport(today)
+            ])
+
+            // Cache data
+            cacheService.set(CACHE_KEYS.ORDERS, orders)
+            cacheService.set(CACHE_KEYS.REPORT, report)
+
+            showToast('Đã đồng bộ dữ liệu (Menu, Đơn hàng, Báo cáo)!')
         } catch (error) {
-            showToast(t('modal.sync_error') + ': ' + error.message)
+            console.error('Sync error:', error)
+            showToast(t('modal.sync_error') + ': ' + (error.message || 'Unknown error'))
         } finally {
             setSyncing(false)
         }

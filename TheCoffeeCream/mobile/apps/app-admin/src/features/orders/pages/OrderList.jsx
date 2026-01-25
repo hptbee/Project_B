@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { apiFetch, LoadingSpinner, useToast, Icon, ConfirmModal, Badge, Pagination, DateRangePicker, useTranslation } from '@thecoffeecream/ui-shared'
+import { Icon, useToast, LoadingSpinner, Badge, DateRangePicker, ConfirmModal, useTranslation, SearchBar, Pagination } from '@thecoffeecream/ui-shared'
 import { orderApi } from '@/shared/services/api/orders'
 import { reportApi } from '@/shared/services/api/report'
 import OrderEditModal from '../components/OrderEditModal'
@@ -158,13 +158,11 @@ export default function OrderList() {
             <div className="page-content">
                 <div className="filter-bar-v2">
                     <div className="search-and-status">
-                        <div className="search-box-v2">
-                            <Icon name="search" size={16} />
-                            <input
-                                type="text"
-                                placeholder={t('common.search')}
+                        <div className="search-box-wrapper">
+                            <SearchBar
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={t('common.search')}
                             />
                         </div>
                         <div className="status-tabs">
@@ -190,7 +188,6 @@ export default function OrderList() {
                                 setDateRange({ start, end })
                             }}
                         />
-                        <button className="apply-btn" onClick={fetchOrders}>{t('action.confirm')}</button>
                     </div>
                 </div>
 
@@ -295,16 +292,16 @@ export default function OrderList() {
                                     <div className="card-body">
                                         <div className="info-row">
                                             <div className="info-item">
-                                                <Icon name="clock" size={12} />
-                                                <span>{new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
-                                            </div>
-                                            <div className="info-item">
                                                 <Icon name="home" size={12} />
                                                 <span>{order.tableNumber ? `${t('common.table')} ${order.tableNumber}` : t('pos.takeaway')}</span>
                                             </div>
                                             <div className="info-item">
                                                 <Icon name="coffee" size={12} />
                                                 <span>{order.items.reduce((sum, item) => sum + item.quantity, 0)} {t('pos.qty').toLowerCase()}</span>
+                                            </div>
+                                            <div className="info-item full-width">
+                                                <Icon name="clock" size={12} />
+                                                <span>{new Date(order.createdAt).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                                             </div>
                                         </div>
                                         <div className="payment-row">

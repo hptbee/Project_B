@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { orderApi } from '@/shared/services/api/orders'
 import { Icon, useToast, LoadingSpinner, useTranslation } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
@@ -66,7 +67,7 @@ export default function OrderEditModal({ order, onClose, onSave }) {
         }
     }
 
-    return (
+    return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-container order-edit-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
@@ -141,6 +142,7 @@ export default function OrderEditModal({ order, onClose, onSave }) {
 
                 {loading && <LoadingSpinner fullScreen={true} />}
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

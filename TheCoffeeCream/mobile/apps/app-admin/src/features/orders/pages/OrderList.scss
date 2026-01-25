@@ -80,27 +80,35 @@
             gap: 16px;
             align-items: center;
 
-            .search-box-v2 {
+            .search-bar {
+                // Synchronize style with ProductList search bar
                 flex: 1;
                 background: var(--bg-secondary);
                 border: 1px solid var(--border-glass);
-                border-radius: var(--radius-md);
+                border-radius: var(--radius-lg); // radius-lg to match ProductList
                 padding: 0 16px;
                 height: 48px;
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: 12px;
+                transition: var(--trans-fast);
 
-                svg {
-                    color: var(--text-muted);
+                &:focus-within {
+                    border-color: var(--accent-amber);
+                    box-shadow: 0 0 15px var(--accent-amber-glow);
                 }
 
-                input {
+                // Component puts Search icon, we might need to style it if not styled by component default?
+                // Shared SearchBar has hardcoded color="var(--text-muted)" but we can override via css if needed.
+
+                .search-input {
                     background: transparent;
                     border: none;
                     color: var(--text-primary);
                     width: 100%;
                     outline: none;
+                    font-size: 15px;
+                    font-weight: 600;
                 }
             }
 
@@ -404,6 +412,96 @@
                 .date-input-group {
                     justify-content: space-between;
                 }
+
+                // FIX: Make date picker full width
+                .custom-daterange-picker {
+                    width: 100%;
+
+                    .daterange-trigger {
+                        width: 100%;
+                        justify-content: center; // Center align content
+                        gap: 16px; // Ensure explicit gap
+                        padding: 12px; // Slightly more padding
+                    }
+                }
+            }
+        }
+
+        // Refine spacing
+        gap: 12px;
+
+        .orders-mobile-grid .order-mobile-card {
+            grid-template-columns: 1fr auto; // Start with 2 columns: Content | Arrow
+            display: flex; // Change to flex for easier custom layout
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+
+            // Header: ID and Status
+            .card-header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+
+                .order-id {
+                    font-size: 15px;
+                }
+
+                .app-badge {
+                    font-size: 11px !important;
+                    padding: 4px 8px !important;
+                }
+            }
+
+            // Body: Info and Payment/Total
+            .card-body {
+                gap: 12px;
+
+                .info-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 8px 16px;
+
+                    .info-item {
+                        font-size: 13px;
+                        color: var(--text-secondary);
+
+                        svg {
+                            width: 14px;
+                            height: 14px;
+                            opacity: 0.7;
+                        }
+                    }
+                }
+
+                .payment-row {
+                    border-top: 1px solid var(--border-glass);
+                    padding-top: 12px;
+                    margin-top: 4px;
+
+                    .app-badge {
+                        // Make payment badge subtle
+                        background: var(--bg-secondary);
+                        color: var(--text-secondary);
+                        font-weight: 500;
+                        font-size: 11px !important;
+                        letter-spacing: 0.5px;
+                        border: 1px solid var(--border-glass);
+                    }
+
+                    .total {
+                        font-size: 18px;
+                        color: var(--accent-amber);
+                    }
+                }
+            }
+
+            // Hide the right chevron arrow to save space, the card itself is clickable
+            .card-arrow {
+                display: none;
             }
         }
     }

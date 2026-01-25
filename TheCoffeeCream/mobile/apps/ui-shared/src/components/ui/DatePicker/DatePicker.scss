@@ -40,7 +40,7 @@
         h3 {
             font-weight: 900;
             margin: 0;
-            font-size: 18px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -77,6 +77,19 @@
             background: transparent;
             border-bottom: 1px solid var(--border-glass);
             padding: 8px 0 12px;
+            position: relative; // Ensure relative for absolute arrows
+        }
+
+        &__navigation {
+            top: 12px; // Align with month text
+
+            &--previous {
+                left: 10px;
+            }
+
+            &--next {
+                right: 10px;
+            }
         }
 
         &__current-month {
@@ -100,16 +113,74 @@
             line-height: 36px;
             border-radius: 8px;
             margin: 2px;
+            position: relative;
+            z-index: 1;
 
             &:hover {
                 background: var(--bg-glass-active);
+                border-radius: 50%;
             }
 
+            // Weak state first
+            &--in-range {
+                background: rgba(255, 193, 7, 0.2) !important; // Light amber
+                color: var(--text-primary) !important;
+                border-radius: 0 !important;
+
+                &:hover {
+                    background: rgba(255, 193, 7, 0.3) !important;
+                    border-radius: 0 !important;
+                }
+            }
+
+            // Strong states override weak
             &--selected,
-            &--keyboard-selected {
+            &--keyboard-selected,
+            &--range-start,
+            &--range-end {
                 background: var(--accent-amber) !important;
                 color: #000 !important;
                 border-radius: 50% !important;
+
+                &:hover {
+                    background: var(--accent-amber) !important;
+                    color: #000 !important;
+                    border-radius: 50% !important;
+                }
+            }
+
+            // Connectors
+            &--range-start {
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    left: 50%;
+                    background: rgba(255, 193, 7, 0.2);
+                    z-index: -1;
+                }
+            }
+
+            &--range-end {
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 50%;
+                    background: rgba(255, 193, 7, 0.2);
+                    z-index: -1;
+                }
+            }
+
+            // Hide connectors if single day range
+            &--range-start#{&}--range-end {
+                &::before {
+                    display: none;
+                }
             }
 
             &--today {

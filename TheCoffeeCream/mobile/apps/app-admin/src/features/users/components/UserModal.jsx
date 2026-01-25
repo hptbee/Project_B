@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { userApi } from '@/shared/services/api/user'
 import { Icon, useToast, LoadingSpinner, useTranslation } from '@thecoffeecream/ui-shared'
 import './UserModal.scss'
@@ -14,6 +15,7 @@ export default function UserModal({ user, onClose, onSave }) {
         isActive: true
     })
     const [loading, setLoading] = useState(false)
+    const [showRoleDropdown, setShowRoleDropdown] = useState(false)
     const { showToast } = useToast()
 
     useEffect(() => {
@@ -59,7 +61,12 @@ export default function UserModal({ user, onClose, onSave }) {
         }
     }
 
-    return (
+    const handleRoleSelect = (value) => {
+        setFormData({ ...formData, role: value })
+        setShowRoleDropdown(false)
+    }
+
+    return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-container user-modal" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
@@ -111,16 +118,34 @@ export default function UserModal({ user, onClose, onSave }) {
                         </div>
 
                         <div className="form-row">
+
                             <div className="form-group flex-1">
                                 <label>{t('form.role')}</label>
-                                <div className="input-wrapper no-icon">
-                                    <select
-                                        value={formData.role}
-                                        onChange={e => setFormData({ ...formData, role: e.target.value })}
-                                    >
-                                        <option value="Staff">{t('auth.role_staff')} (Staff)</option>
-                                        <option value="Admin">{t('auth.role_admin')} (Admin)</option>
-                                    </select>
+                                <div
+                                    className={`input-wrapper no-icon custom-select-container ${showRoleDropdown ? 'active' : ''}`}
+                                    onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+                                >
+                                    <span className="selected-value">
+                                        {formData.role === 'Admin' ? `${t('auth.role_admin')} (Admin)` : `${t('auth.role_staff')} (Staff)`}
+                                    </span>
+                                    <Icon name="chevronDown" size={16} className={`chevron ${showRoleDropdown ? 'rotate' : ''}`} />
+
+                                    {showRoleDropdown && (
+                                        <div className="options-dropdown">
+                                            <div
+                                                className={`option-item ${formData.role === 'Staff' ? 'selected' : ''}`}
+                                                onClick={(e) => { e.stopPropagation(); handleRoleSelect('Staff'); }}
+                                            >
+                                                {t('auth.role_staff')} (Staff)
+                                            </div>
+                                            <div
+                                                className={`option-item ${formData.role === 'Admin' ? 'selected' : ''}`}
+                                                onClick={(e) => { e.stopPropagation(); handleRoleSelect('Admin'); }}
+                                            >
+                                                {t('auth.role_admin')} (Admin)
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -151,6 +176,7 @@ export default function UserModal({ user, onClose, onSave }) {
 
                 {loading && <LoadingSpinner fullScreen={true} />}
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
