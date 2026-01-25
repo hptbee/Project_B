@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Icon, useToast, LoadingSpinner, useTranslation, usersApi as userApi } from '@thecoffeecream/ui-shared'
+import { Icon, useToast, LoadingSpinner, useTranslation, usersApi as userApi, Select } from '@thecoffeecream/ui-shared'
 import './UserModal.scss'
 
 export default function UserModal({ user, onClose, onSave }) {
@@ -14,7 +14,6 @@ export default function UserModal({ user, onClose, onSave }) {
         isActive: true
     })
     const [loading, setLoading] = useState(false)
-    const [showRoleDropdown, setShowRoleDropdown] = useState(false)
     const { showToast } = useToast()
 
     useEffect(() => {
@@ -60,10 +59,7 @@ export default function UserModal({ user, onClose, onSave }) {
         }
     }
 
-    const handleRoleSelect = (value) => {
-        setFormData({ ...formData, role: value })
-        setShowRoleDropdown(false)
-    }
+
 
     return createPortal(
         <div className="modal-overlay" onClick={onClose}>
@@ -118,35 +114,17 @@ export default function UserModal({ user, onClose, onSave }) {
 
                         <div className="form-row">
 
-                            <div className="form-group flex-1">
-                                <label>{t('form.role')}</label>
-                                <div
-                                    className={`input-wrapper no-icon custom-select-container ${showRoleDropdown ? 'active' : ''}`}
-                                    onClick={() => setShowRoleDropdown(!showRoleDropdown)}
-                                >
-                                    <span className="selected-value">
-                                        {formData.role === 'Admin' ? `${t('auth.role_admin')} (Admin)` : `${t('auth.role_staff')} (Staff)`}
-                                    </span>
-                                    <Icon name="chevronDown" size={16} className={`chevron ${showRoleDropdown ? 'rotate' : ''}`} />
-
-                                    {showRoleDropdown && (
-                                        <div className="options-dropdown">
-                                            <div
-                                                className={`option-item ${formData.role === 'Staff' ? 'selected' : ''}`}
-                                                onClick={(e) => { e.stopPropagation(); handleRoleSelect('Staff'); }}
-                                            >
-                                                {t('auth.role_staff')} (Staff)
-                                            </div>
-                                            <div
-                                                className={`option-item ${formData.role === 'Admin' ? 'selected' : ''}`}
-                                                onClick={(e) => { e.stopPropagation(); handleRoleSelect('Admin'); }}
-                                            >
-                                                {t('auth.role_admin')} (Admin)
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <Select
+                                className="flex-1"
+                                label={t('form.role')}
+                                value={formData.role}
+                                onChange={e => setFormData({ ...formData, role: e.target.value })}
+                                options={[
+                                    { value: 'Staff', label: `${t('auth.role_staff')} (Staff)` },
+                                    { value: 'Admin', label: `${t('auth.role_admin')} (Admin)` }
+                                ]}
+                                placeholder={false}
+                            />
 
                             <div className="form-group flex-1">
                                 <label>{t('common.status')}</label>
