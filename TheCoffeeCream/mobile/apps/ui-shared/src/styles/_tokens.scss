@@ -83,6 +83,9 @@
     --primary-color: var(--accent-amber);
     --primary-light: rgba(212, 163, 115, 0.1);
 
+    --bg-logo: var(--bg-secondary);
+    --logo-filter: none;
+
     // Spacing Scale
     --spacing-xs: 4px;
     --spacing-sm: 8px;
@@ -125,6 +128,9 @@
     // Dynamic Mapped
     --primary-color: var(--accent-amber);
     --primary-light: rgba(212, 163, 115, 0.1);
+
+    --bg-logo: rgba(255, 255, 255, 0.1);
+    --logo-filter: brightness(0) invert(1);
 }
 
 // ==========================================

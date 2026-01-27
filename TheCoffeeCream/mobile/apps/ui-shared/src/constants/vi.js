@@ -3,7 +3,7 @@ export const vi = {
         overview: 'Tổng quan kinh doanh',
         invoices: 'Lịch sử hóa đơn',
         menu: 'Danh mục thực đơn',
-        hr: 'Quản trị nhân sự',
+        hr: 'Quản lý nhân sự',
         floorplan: 'Sơ đồ bàn',
         shift_report: 'Báo cáo ca',
         reports: 'Báo cáo doanh thu',
@@ -52,7 +52,7 @@ export const vi = {
         placeholder_note: 'Ví dụ: ít đường, không đá...',
         add_to_order: 'Thêm vào đơn',
         update_item: 'Cập nhật món',
-        qty: 'Số lượng'
+        qty: 'SL'
     },
     cart: {
         empty_title: 'Chưa có món nào',
@@ -162,7 +162,16 @@ export const vi = {
         add_to_cart_success: '{name} đã thêm vào giỏ',
         subtitle: 'Phần mềm Order',
         topping: 'Topping',
-        toping: 'Topping'
+        toping: 'Topping',
+        print_bill: 'In hóa đơn',
+        print_confirm_title: 'Xác nhận in',
+        print_confirm_msg: 'Bạn muốn in hóa đơn cho bàn {name}?',
+        select_print_lang: 'Chọn ngôn ngữ in',
+        vi_lang: 'Tiếng Việt',
+        en_lang: 'Tiếng Anh',
+        print: 'In',
+        unit_price: 'Đơn giá',
+        item_total: 'TT'
     },
     modal: {
         edit_product: 'Chỉnh sửa mặt hàng',

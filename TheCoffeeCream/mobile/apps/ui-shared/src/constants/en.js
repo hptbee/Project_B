@@ -3,7 +3,7 @@ export const en = {
         overview: 'Business Overview',
         invoices: 'Order History',
         menu: 'Menu Management',
-        hr: 'HR Management',
+        hr: 'User Management',
         floorplan: 'Floor Plan',
         shift_report: 'Shift Report',
         reports: 'Sales Reports',
@@ -159,8 +159,17 @@ export const en = {
         try_another_search: 'Try another keyword or category',
         update_success_msg: 'Updated {name}',
         add_to_table_success: '{name} added to Table {table}',
-        add_to_cart_success: '{name} added to cart',
-        subtitle: 'Order Management System'
+        add_to_cart_success: 'Added to cart',
+        subtitle: 'Order Management System',
+        print_bill: 'Print Bill',
+        print_confirm_title: 'Confirm Print',
+        print_confirm_msg: 'Do you want to print the bill for table {name}?',
+        select_print_lang: 'Select print language',
+        vi_lang: 'Vietnamese',
+        en_lang: 'English',
+        print: 'Print',
+        unit_price: 'Price',
+        item_total: 'Total'
     },
     modal: {
         create_product: 'Create Product',

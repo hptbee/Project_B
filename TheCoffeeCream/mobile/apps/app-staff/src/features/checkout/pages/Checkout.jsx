@@ -4,7 +4,9 @@ import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContex
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
 import { calculateCartTotal, calculateDiscount, calculateTotal } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
-import { IconChevron, useTranslation } from '@thecoffeecream/ui-shared'
+import { IconChevron, useTranslation, Icon } from '@thecoffeecream/ui-shared'
+import BillTemplate from '../../orders/components/BillTemplate'
+import PrintBillModal from '../../orders/components/PrintBillModal'
 import './Checkout.scss'
 
 export default function Checkout() {
@@ -18,6 +20,8 @@ export default function Checkout() {
     const [paymentMethod, setPaymentMethod] = useState('CASH') // CASH, TRANSFER, COMBINED
     const [cashAmount, setCashAmount] = useState(0)
     const [transferAmount, setTransferAmount] = useState(0)
+    const [showPrintModal, setShowPrintModal] = useState(false)
+    const [printLang, setPrintLang] = useState('vi')
 
 
     // Discount State
@@ -79,6 +83,14 @@ export default function Checkout() {
         nav('/', { replace: true })
     }
 
+    const handleConfirmPrint = (lang) => {
+        setPrintLang(lang)
+        setShowPrintModal(false)
+        setTimeout(() => {
+            window.print()
+        }, 300)
+    }
+
     return (
         <div className="page checkout-page">
             <header className="page-header">
@@ -89,6 +101,9 @@ export default function Checkout() {
                     <div className="title">{t('action.checkout')}</div>
                     <div className="subtitle">{t('common.table')} {tableId}: {tableCart.orderId || t('status.draft')}</div>
                 </div>
+                <button className="icon-btn print-action-btn" onClick={() => setShowPrintModal(true)} title={t('common.print_bill')}>
+                    <Icon name="printer" size={24} />
+                </button>
             </header>
 
             <div className="checkout-content">
@@ -243,6 +258,21 @@ export default function Checkout() {
 
 
 
+            <PrintBillModal
+                show={showPrintModal}
+                tableName={tableId}
+                onConfirm={handleConfirmPrint}
+                onCancel={() => setShowPrintModal(false)}
+            />
+
+            <BillTemplate
+                tableId={tableId}
+                items={tableCart.items}
+                subtotal={subtotal}
+                discount={discountAmount}
+                total={total}
+                lang={printLang}
+            />
         </div>
     )
 }

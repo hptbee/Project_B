@@ -16,3 +16,10 @@ export const API_CONFIG = {
     MAX_RETRIES: 3,
     RETRY_DELAY_MS: 2000,
 };
+
+export const STORE_INFO = {
+    NAME: 'THE COFFEE CREAM',
+    ADDRESS: '123 Street, District 1, HCM City',
+    PHONE: 'Tel: 0123 456 789',
+    POWERED_BY: 'Powered by The Coffee Cream'
+};

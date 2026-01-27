@@ -37,11 +37,27 @@ body {
 
 
 .page-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: 16px;
 
     .back,
-    .menu {
+    .menu,
+    .print-action-btn {
         position: relative;
         z-index: 5;
+    }
+
+    .print-action-btn {
+        margin-left: auto;
+        color: var(--text-primary);
+        opacity: 0.8;
+
+        &:active {
+            opacity: 1;
+            transform: scale(0.9);
+        }
     }
 }
 

@@ -1,0 +1,164 @@
+.bill-print-template {
+    display: none; // Hidden by default
+    padding: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #000;
+    background: #fff;
+    width: 80mm; // Standard thermal paper width
+    margin: 0 auto;
+
+    .bill-header {
+        text-align: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #000;
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+
+        .brand-address,
+        .brand-phone {
+            font-size: 12px;
+            margin: 2px 0;
+        }
+
+        .bill-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+    }
+
+    .bill-info {
+        font-size: 13px;
+        margin-bottom: 15px;
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+    }
+
+    .bill-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-bottom: 15px;
+
+        th {
+            text-align: left;
+            border-bottom: 1px solid #000;
+            padding: 5px 0;
+        }
+
+        td {
+            padding: 5px 0;
+            vertical-align: top;
+        }
+
+        .col-qty {
+            width: 30px;
+            text-align: center;
+        }
+
+        .col-unit-price {
+            text-align: right;
+            width: 70px;
+        }
+
+        .col-total {
+            text-align: right;
+            width: 80px;
+        }
+
+        .col-name {
+            .product-title {
+                font-weight: bold;
+            }
+
+            .item-note {
+                font-size: 0.8em;
+                font-style: italic;
+                font-weight: normal;
+                margin-top: 2px;
+            }
+        }
+
+        .main-item {
+            font-weight: bold;
+        }
+
+        .topping-item {
+            font-size: 12px;
+            font-style: italic;
+
+            td {
+                padding-top: 0;
+            }
+        }
+    }
+
+    .bill-summary {
+        border-top: 1px dashed #000;
+        padding-top: 10px;
+        font-size: 14px;
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+
+            &.total {
+                font-weight: bold;
+                font-size: 16px;
+                margin-top: 5px;
+                padding-top: 5px;
+                border-top: 1px solid #000;
+            }
+        }
+    }
+
+    .bill-footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px dashed #000;
+        font-size: 12px;
+
+        .thank-you {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    }
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #bill-print-template,
+    #bill-print-template * {
+        visibility: visible;
+    }
+
+    #bill-print-template {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+    }
+
+    @page {
+        size: auto;
+        margin: 0;
+    }
+}

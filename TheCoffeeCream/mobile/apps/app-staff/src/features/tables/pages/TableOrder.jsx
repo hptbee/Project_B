@@ -4,6 +4,8 @@ import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContex
 import { calculateCartTotal, formatPrice, useAutoSave, useTranslation } from '@thecoffeecream/ui-shared'
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
 import { Fab, Icon, ConfirmModal, IconChevron, Badge, EmptyState } from '@thecoffeecream/ui-shared'
+import BillTemplate from '../../orders/components/BillTemplate'
+import PrintBillModal from '../../orders/components/PrintBillModal'
 import './TableOrder.scss'
 
 export default function TableOrder() {
@@ -16,6 +18,8 @@ export default function TableOrder() {
     const [noteText, setNoteText] = useState('')
     const [editingItemKey, setEditingItemKey] = useState(null)
     const [confirmDelete, setConfirmDelete] = useState({ show: false, key: null })
+    const [showPrintModal, setShowPrintModal] = useState(false)
+    const [printLang, setPrintLang] = useState('vi')
 
     // On first mount, if table is empty -> go to ProductList.
     // But when items later become empty (e.g. after deleting last item), do NOT redirect.
@@ -117,6 +121,14 @@ export default function TableOrder() {
     //     setShowNoteModal(true)
     // }
 
+    const handleConfirmPrint = (lang) => {
+        setPrintLang(lang)
+        setShowPrintModal(false)
+        setTimeout(() => {
+            window.print()
+        }, 300)
+    }
+
     return (
         <div className="page">
             <header className="page-header">
@@ -124,6 +136,9 @@ export default function TableOrder() {
                     <IconChevron variant="bold" />
                 </button>
                 <h2>{t('common.table_name', { name: tableId })}</h2>
+                <button className="icon-btn print-action-btn" onClick={() => setShowPrintModal(true)} title={t('common.print_bill')}>
+                    <Icon name="printer" size={24} />
+                </button>
             </header>
 
             <div className="order-metadata">
@@ -238,7 +253,21 @@ export default function TableOrder() {
                 type="danger"
             />
 
+            <PrintBillModal
+                show={showPrintModal}
+                tableName={tableId}
+                onConfirm={handleConfirmPrint}
+                onCancel={() => setShowPrintModal(false)}
+            />
 
+            <BillTemplate
+                tableId={tableId}
+                items={tableCart.items}
+                subtotal={total}
+                discount={0}
+                total={total}
+                lang={printLang}
+            />
         </div>
     )
 }

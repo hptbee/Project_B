@@ -50,7 +50,7 @@
         background: var(--bg-logo);
         border: 3px solid var(--border-glass);
         border-radius: 50%;
-        filter: var(--logo-filter, none) drop-shadow(0 0 10px var(--accent-amber-glow));
+        filter: var(--logo-filter) drop-shadow(0 0 10px var(--accent-amber-glow));
 
         .side-logo {
             width: 100%;
