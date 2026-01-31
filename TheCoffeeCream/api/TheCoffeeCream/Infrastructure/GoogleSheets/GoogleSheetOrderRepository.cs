@@ -238,8 +238,8 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 if (!DateTimeOffset.TryParse(createdAtStr, out var createdAt)) continue;
 
                 // Filter by date range if provided
-                if (startDate.HasValue && createdAt.UtcDateTime < startDate.Value.UtcDateTime) continue;
-                if (endDate.HasValue && createdAt.UtcDateTime > endDate.Value.UtcDateTime) continue;
+                if (startDate.HasValue && createdAt < startDate.Value) continue;
+                if (endDate.HasValue && createdAt > endDate.Value) continue;
 
                 var clientOrderIdStr = GetRowValue(row, 1);
                 if (!Guid.TryParse(clientOrderIdStr, out var clientOrderId)) continue;

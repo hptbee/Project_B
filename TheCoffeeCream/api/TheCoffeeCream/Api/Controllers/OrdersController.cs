@@ -47,8 +47,40 @@ namespace TheCoffeeCream.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
         {
-            var start = startDate ?? DateTimeOffset.Now.AddDays(-1);
-            var end = endDate ?? DateTimeOffset.Now.AddDays(1);
+            var vnOffset = TimeSpan.FromHours(7);
+            var nowVn = DateTimeOffset.UtcNow.ToOffset(vnOffset);
+
+            // Default: Yesterday and Tomorrow (VN Time)
+            var start = startDate ?? new DateTimeOffset(nowVn.Date.AddDays(-1), vnOffset); 
+            
+            // If endDate provided, take the Date part and set to End of Day in VN Time (23:59:59...) -> effectively Start of Next Day
+            // If inputs came as UTC 00:00 (e.g. from binder), we treat that 'Date' as the VN Date.
+            
+            if (startDate.HasValue && startDate.Value.Offset == TimeSpan.Zero && startDate.Value.TimeOfDay == TimeSpan.Zero)
+            {
+                // Likely just "YYYY-MM-DD" passed and bound as UTC midnight.
+                // Treat as VN Midnight: 00:00 UTC -> 00:00 VN = 17:00 UTC prev day.
+                start = new DateTimeOffset(startDate.Value.Date, vnOffset);
+            }
+
+            var end = DateTimeOffset.Now; // placeholder
+            if (endDate.HasValue)
+            {
+                 if (endDate.Value.Offset == TimeSpan.Zero && endDate.Value.TimeOfDay == TimeSpan.Zero)
+                 {
+                     // Treat as VN Midnight
+                     var endDateVn = new DateTimeOffset(endDate.Value.Date, vnOffset);
+                     end = endDateVn.AddDays(1);
+                 }
+                 else
+                 {
+                     end = endDate.Value.AddDays(1);
+                 }
+            }
+            else
+            {
+                end = new DateTimeOffset(nowVn.Date.AddDays(1), vnOffset);
+            }
 
             var orders = await _orderService.GetOrdersByDateRangeAsync(start, end);
             var response = orders.Select(MapOrderToResponse).ToList();

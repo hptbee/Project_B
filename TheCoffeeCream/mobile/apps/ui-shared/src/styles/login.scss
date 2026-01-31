@@ -55,7 +55,7 @@
                 object-fit: contain;
                 transform: scale(1.3); // Minimal scaling to avoid blurriness
                 transform-origin: center center;
-                filter: brightness(1.2);
+                filter: var(--logo-filter);
             }
         }
 
