@@ -53,8 +53,8 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 order.TransferAmount.ToString(CultureInfo.InvariantCulture),
                 order.DiscountType?.ToString() ?? string.Empty,
                 order.DiscountValue.ToString(CultureInfo.InvariantCulture),
-                order.DiscountAmount.ToString(CultureInfo.InvariantCulture),
-                order.SubTotal.ToString(CultureInfo.InvariantCulture),
+                order.SubTotal.ToString(CultureInfo.InvariantCulture), // 10: Swapped to match "SubTotal" header
+                order.DiscountAmount.ToString(CultureInfo.InvariantCulture), // 11: Swapped to match "DiscountAmount" header
                 order.Total.ToString(CultureInfo.InvariantCulture),
                 order.Status.ToString(),
                 order.Note ?? string.Empty,
@@ -121,15 +121,19 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
             }
 
             // 2. Append to OrderItem sheet
-            // Columns: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Toppings, Note
+            // New 14-Col Structure:
+            // 0:Id, 1:OrderId, 2:CreatedAt, 3:ProductId, 4:Name, 5:UnitPrice, 6:Quantity, 7:DiscType, 8:DiscVal, 9:DiscAmt, 10:Total, 11:Toppings, 12:Note, 13:IsActive
             var itemRows = order.Items.Select(item =>
             {
-                // Follow the image: OrderId, ProductId, Name, UnitPrice, Quantity, DiscountType, DiscountValue, DiscountAmount, Total, Note, IsActive
-                // NOTE: Toppings are not in the new 11-column structure image, but we can append them to Name if needed.
-                // For now, following image structure exactly.
+                var toppingsStr = item.SelectedToppings != null && item.SelectedToppings.Any()
+                    ? string.Join(";", item.SelectedToppings.Select(t => $"{t.Name}|{t.Code}|{t.Price.ToString(CultureInfo.InvariantCulture)}|{t.ProductId}"))
+                    : string.Empty;
+
                 return new object[]
                 {
-                    order.Id.ToString(), // FK to Order
+                    (item.Id == Guid.Empty ? Guid.NewGuid() : item.Id).ToString(),
+                    order.Id.ToString(), // FK
+                    item.CreatedAt.ToString("o"),
                     item.ProductId.ToString(),
                     item.Name,
                     item.UnitPrice.ToString(CultureInfo.InvariantCulture),
@@ -138,6 +142,7 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                     item.DiscountValue.ToString(CultureInfo.InvariantCulture),
                     item.DiscountAmount.ToString(CultureInfo.InvariantCulture),
                     item.Total.ToString(CultureInfo.InvariantCulture),
+                    toppingsStr,
                     item.Note ?? string.Empty,
                     item.IsActive ? "1" : "0"
                 };
@@ -155,17 +160,36 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
             for (int i = 1; i < itemRows.Count; i++)
             {
                 var ir = itemRows[i];
-                if (ir != null && ir.Count > 0 && string.Equals(ir[0]?.ToString()?.Trim(), orderId.ToString(), StringComparison.OrdinalIgnoreCase))
+                if (ir == null || ir.Count == 0) continue;
+
+                // Check Old Format (Col 0 = OrderId) vs New Format (Col 1 = OrderId)
+                // Heuristic: Check Col 3. 
+                // Old: Col 3 = UnitPrice (Number)
+                // New: Col 3 = ProductId (Guid)
+                
+                string rowOrderId = string.Empty;
+                bool isNewFormat = false;
+                
+                if (ir.Count > 3 && Guid.TryParse(GetRowValue(ir, 3), out _))
                 {
-                    rowsToDelete.Add(i + 1); // 1-indexed for Google Sheets row numbers
+                    // Likely new format
+                    rowOrderId = GetRowValue(ir, 1); // OrderId is Col 1
+                    isNewFormat = true;
+                }
+                else
+                {
+                    // Likely old format
+                    rowOrderId = GetRowValue(ir, 0); // OrderId is Col 0
+                }
+
+                if (string.Equals(rowOrderId, orderId.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    rowsToDelete.Add(i + 1); 
                 }
             }
 
             if (rowsToDelete.Any())
             {
-                // Optimizing delete: Delete in batches or use a smart delete if _client supports it. 
-                // Assuming DeleteRowsAsync handles list of indices.
-                // Sort descending to avoid index shifting problems during delete loop in client
                 rowsToDelete.Sort((a, b) => b.CompareTo(a));
                 await _client.DeleteRowsAsync(_options.OrdersSheetId, "OrderItem", rowsToDelete);
             }
@@ -173,7 +197,6 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
 
         public async Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId)
         {
-            // For now, scan all orders. In Google Sheets this is slow but we don't have indexes.
             var allOrders = await FetchOrdersAsync(null, null);
             return allOrders.LastOrDefault(o => o.ClientOrderId == clientOrderId);
         }
@@ -253,32 +276,133 @@ namespace TheCoffeeCream.Infrastructure.GoogleSheets
                 foreach (var ir in itemRows.Skip(1))
                 {
                     if (ir == null || ir.Count == 0) continue;
-                    if (GetRowValue(ir, 0) != orderId.ToString()) continue;
 
-                    var productIdStr = GetRowValue(ir, 1);
+                    // Detect Format
+                    // Update ClearOrderItemsAsync logic above to match
+                    
+                    bool isNewFormat = false; // 14 Cols
+                    
+                    // Check Col 3 (Index 3). New Format: Col 3 is ProductId (Guid). Old Format: Col 3 is UnitPrice (Number).
+                    if (ir.Count > 3 && Guid.TryParse(GetRowValue(ir, 3), out _))
+                    {
+                        isNewFormat = true;
+                    }
+
+                    // Map fields based on format
+                    string fkOrderIdStr;
+                    Guid itemId = Guid.Empty;
+                    DateTimeOffset itemCreatedAt = DateTimeOffset.MinValue;
+                    int idx_prodId, idx_name, idx_uPrice, idx_qty, idx_discType, idx_discVal, idx_toppings, idx_note, idx_active;
+
+                    if (isNewFormat)
+                    {
+                        // 0:Id, 1:OrderId, 2:CreatedAt, 3:ProductId, 4:Name, 5:UnitPrice, 6:Quantity, ...
+                        Guid.TryParse(GetRowValue(ir, 0), out itemId);
+                        fkOrderIdStr = GetRowValue(ir, 1);
+                        DateTimeOffset.TryParse(GetRowValue(ir, 2), out itemCreatedAt);
+                        idx_prodId = 3; 
+                        idx_name = 4;
+                        idx_uPrice = 5;
+                        idx_qty = 6;
+                        idx_discType = 7;
+                        idx_discVal = 8;
+                        // 9: DiscAmt, 10: Total - skipped derived
+                        idx_toppings = 11;
+                        idx_note = 12;
+                        idx_active = 13;
+                    }
+                    else
+                    {
+                        // 0:OrderId, 1:ProductId, 2:Name, 3:UnitPrice, 4:Qty, ...
+                        fkOrderIdStr = GetRowValue(ir, 0);
+                        idx_prodId = 1;
+                        idx_name = 2;
+                        idx_uPrice = 3;
+                        idx_qty = 4;
+                        idx_discType = 5;
+                        idx_discVal = 6;
+                        // 7: DiscAmt, 8: Total
+                        idx_toppings = 9; // In 11/12 col format
+                        idx_note = 10;
+                        idx_active = 11;
+
+                        // Heuristic for old 12 col or 11 col:
+                        // 12 Col: 9:Toppings, 10:Note, 11:Active
+                        // 11 Col: 9:Note, 10:Active
+                        // Since new format detection relies on Col 3, we fall here for standard old.
+                        // Check if Col 9 looks like toppings or Note
+                        // Toppings usually has '|' or is empty. Note is text.
+                        // But wait, step 434 logic handled 11/12 distinction.
+                        // If ir.Count >= 12, standard 12 col.
+                        if (ir.Count < 12)
+                        {
+                           // 11 Col fallback: 9=Note, 10=Active
+                           idx_toppings = -1; // No toppings col
+                           idx_note = 9;
+                           idx_active = 10;
+                        }
+                    }
+
+                    if (!string.Equals(fkOrderIdStr, orderId.ToString(), StringComparison.OrdinalIgnoreCase)) continue;
+
+                    var productIdStr = GetRowValue(ir, idx_prodId);
                     var productId = Guid.TryParse(productIdStr, out var pid) ? pid : Guid.Empty;
-                    var itemName = GetRowValue(ir, 2);
-                    var unitPriceStr = GetRowValue(ir, 3, "0");
-                    var unitPrice = decimal.Parse(unitPriceStr, CultureInfo.InvariantCulture);
-                    var quantityStr = GetRowValue(ir, 4, "1");
-                    var quantity = int.Parse(quantityStr);
+                    var itemName = GetRowValue(ir, idx_name);
+                    
+                    var unitPriceStr = GetRowValue(ir, idx_uPrice, "0");
+                    var unitPrice = decimal.TryParse(unitPriceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var up) ? up : 0;
+                    
+                    var quantityStr = GetRowValue(ir, idx_qty, "1");
+                    var quantity = int.TryParse(quantityStr, out var iq) ? iq : 1;
+                    
+                    var itemDiscTypeStr = GetRowValue(ir, idx_discType);
+                    var itemDiscountType = string.IsNullOrEmpty(itemDiscTypeStr) ? (DiscountType?)null :
+                        (Enum.TryParse<DiscountType>(itemDiscTypeStr, true, out var idt) ? idt : (DiscountType?)null);
 
-                    var itemDiscountTypeStr = GetRowValue(ir, 5);
-                    var itemDiscountType = string.IsNullOrEmpty(itemDiscountTypeStr) ? (DiscountType?)null : Enum.Parse<DiscountType>(itemDiscountTypeStr);
-
-                    var itemDiscountValueStr = GetRowValue(ir, 6, "0");
+                    var itemDiscountValueStr = GetRowValue(ir, idx_discVal, "0");
                     var itemDiscountValue = decimal.Parse(itemDiscountValueStr, CultureInfo.InvariantCulture);
+                    
+                    string toppingsStr = idx_toppings >= 0 ? GetRowValue(ir, idx_toppings) : string.Empty;
+                    string itemNote = GetRowValue(ir, idx_note);
+                    bool itemIsActive = GetRowValue(ir, idx_active, "1") == "1";
 
-                    // Note is now column 9 (index 9) and IsActive is column 10 (index 10)
-                    var itemNote = GetRowValue(ir, 9);
-                    var itemIsActive = GetRowValue(ir, 10, "1") == "1";
+                    var selectedToppings = new List<OrderItemTopping>();
+                    if (!string.IsNullOrEmpty(toppingsStr))
+                    {
+                        var parts = toppingsStr.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var part in parts)
+                        {
+                            var subParts = part.Split('|');
+                            if (subParts.Length >= 3)
+                            {
+                                var tName = subParts[0];
+                                var tCode = subParts[1];
+                                var tPrice = decimal.TryParse(subParts[2], NumberStyles.Any, CultureInfo.InvariantCulture, out var tp) ? tp : 0;
+                                var tId = subParts.Length >= 4 && Guid.TryParse(subParts[3], out var tid) ? tid : Guid.Empty;
+                                
+                                if (tId != Guid.Empty)
+                                {
+                                    selectedToppings.Add(new OrderItemTopping(tId, tName, tPrice, tCode));
+                                }
+                            }
+                        }
+                    }
 
-                    var item = new OrderItem(productId, itemName, unitPrice, quantity, null, itemDiscountType, itemDiscountValue, itemNote);
+                    var item = new OrderItem(productId, itemName, unitPrice, quantity, selectedToppings, itemDiscountType, itemDiscountValue, itemNote);
                     item.IsActive = itemIsActive;
+                    if (itemId != Guid.Empty) item.Id = itemId;
+                    if (itemCreatedAt != DateTimeOffset.MinValue) item.CreatedAt = itemCreatedAt;
+                    
                     orderItems.Add(item);
                 }
 
-                // Use reflection to create Order with private setters (keeping this for now, though properties are public now)
+                if (!orderItems.Any())
+                {
+                    // Skip orders without items to avoid crash in domain constructor
+                    // This can happen if an order was partially written or corrupted in sheet
+                    continue;
+                }
+
                 var order = new Order(clientOrderId, orderType, orderItems, tableNumber, paymentMethod, cashAmount, transferAmount, discountType, discountValue, status, note, orderId);
                 order.CreatedAt = createdAt;
                 order.IsActive = isActive;

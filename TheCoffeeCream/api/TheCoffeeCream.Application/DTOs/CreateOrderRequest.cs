@@ -29,5 +29,6 @@ namespace TheCoffeeCream.Application.DTOs
         public string? Note { get; set; }
         // Optional: selected topping names to snapshot prices at order time.
         public List<string>? SelectedToppingNames { get; set; }
+        public List<string>? SelectedToppingCodes { get; set; }
     }
 }

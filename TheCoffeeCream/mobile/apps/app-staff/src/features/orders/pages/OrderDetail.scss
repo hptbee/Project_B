@@ -23,6 +23,7 @@
         inset: 0;
         background: linear-gradient(135deg, var(--bg-secondary), transparent);
         pointer-events: none;
+        z-index: -1;
     }
 
     .receipt-header {
@@ -38,10 +39,11 @@
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            // Removed gradient for better visibility in light mode
+            // background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            // background-clip: text;
+            // -webkit-background-clip: text;
+            // -webkit-text-fill-color: transparent;
         }
 
         .receipt-subtitle {
@@ -50,7 +52,7 @@
             color: var(--accent-amber);
             text-transform: uppercase;
             letter-spacing: 2px;
-            opacity: 0.8;
+            opacity: 1; // Increased visual weight
         }
     }
 
@@ -71,7 +73,7 @@
             font-size: 14px;
 
             .label {
-                color: var(--text-muted);
+                color: var(--text-secondary); // Darker than text-muted
                 font-weight: 800;
                 text-transform: uppercase;
                 font-size: 11px;
@@ -119,6 +121,12 @@
                     font-size: 16px;
                     flex: 1;
                     padding-right: 12px;
+
+                    .unit-price-hint {
+                        font-size: 13px;
+                        font-weight: 400;
+                        color: var(--text-muted);
+                    }
                 }
 
                 .item-total {

@@ -25,33 +25,10 @@
 
             .search-bar {
                 width: 280px;
-                background: var(--bg-secondary);
-                border: 1px solid var(--border-glass);
-                border-radius: var(--radius-lg);
-                padding: 0 16px;
-                height: 48px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                transition: var(--trans-fast);
+                flex-shrink: 0;
 
-                &:focus-within {
-                    border-color: var(--accent-amber);
-                    box-shadow: 0 0 15px var(--accent-amber-glow);
-                }
-
-                input {
-                    background: transparent;
-                    border: none;
-                    color: var(--text-primary);
-                    font-size: 15px;
-                    font-weight: 600;
-                    outline: none;
+                @media (max-width: 768px) {
                     width: 100%;
-
-                    &::placeholder {
-                        color: var(--text-muted);
-                    }
                 }
             }
 

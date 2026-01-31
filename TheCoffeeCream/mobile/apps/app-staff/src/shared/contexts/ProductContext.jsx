@@ -68,7 +68,9 @@ export function ProductProvider({ children }) {
                 ...p,
                 category: catName,
                 title: p.name,
-                toppings: (p.toppings || []).map(t => ({ ...t, title: t.name }))
+                toppings: (p.toppings || [])
+                    .map(t => ({ ...t, title: t.name }))
+                    .sort((a, b) => (a.price - b.price) || (a.title || '').localeCompare(b.title || ''))
             }
         })
 

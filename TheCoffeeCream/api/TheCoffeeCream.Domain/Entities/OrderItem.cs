@@ -7,6 +7,7 @@ namespace TheCoffeeCream.Domain.Entities
     public class OrderItem
     {
         public Guid Id { get; set; }
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
         public Guid ProductId { get; set; }
         public string Name { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }

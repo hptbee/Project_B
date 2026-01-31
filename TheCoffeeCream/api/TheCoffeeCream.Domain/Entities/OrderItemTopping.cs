@@ -7,11 +7,12 @@ namespace TheCoffeeCream.Domain.Entities
     {
         public Guid ProductId { get; private set; }
         public string Name { get; private set; } = string.Empty;
+        public string Code { get; private set; } = string.Empty;
         public decimal Price { get; private set; }
 
         private OrderItemTopping() { }
 
-        public OrderItemTopping(Guid productId, string name, decimal price)
+        public OrderItemTopping(Guid productId, string name, decimal price, string code = "")
         {
             if (productId == Guid.Empty) throw new ArgumentException("productId required", nameof(productId));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name required", nameof(name));
@@ -20,6 +21,7 @@ namespace TheCoffeeCream.Domain.Entities
             ProductId = productId;
             Name = name;
             Price = price;
+            Code = code ?? string.Empty;
         }
     }
 }

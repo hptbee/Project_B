@@ -71,9 +71,12 @@ export default function ProductList() {
     const categories = ['All', ...new Set(products.map(p => p.category))]
 
     const filteredAndSortedProducts = useMemo(() => {
+        const term = searchQuery.trim().toLowerCase()
         let result = products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                product.code.toLowerCase().includes(searchQuery.toLowerCase())
+            const name = product.name?.toLowerCase() || ''
+            const code = product.code?.toLowerCase() || ''
+            const matchesSearch = !term || name.includes(term) || code.includes(term)
+
             const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory
             return matchesSearch && matchesCategory
         })
@@ -207,7 +210,9 @@ export default function ProductList() {
                         <Icon name="coffee" size={48} />
                         <h3>{t('common.no_data')}</h3>
                         <p>{t('modal.no_result')}</p>
-                        <button className="text-btn" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setCurrentPage(1); }}>{t('modal.clear_search')}</button>
+                        <button className="text-btn" onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setCurrentPage(1); }}>
+                            <Icon name="refresh-cw" size={14} /> {t('modal.clear_search')}
+                        </button>
                     </div>
                 )}
 

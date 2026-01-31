@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { useTranslation } from '../../../contexts/LanguageContext'
 import { Icon } from '../Icon'
+import './SearchBar.scss'
 
 export function SearchBar({ value, onChange, placeholder, autoFocus = false }) {
     const { t } = useTranslation()
@@ -13,9 +14,20 @@ export function SearchBar({ value, onChange, placeholder, autoFocus = false }) {
         }
     }, [autoFocus])
 
+    const handleClear = () => {
+        if (onChange) {
+            onChange({ target: { value: '' } });
+        }
+    };
+
     return (
         <div className="search-bar">
-            <Icon name="search" size={20} color="var(--text-muted)" />
+            {/* Search Icon */}
+            <div className="search-icon-wrapper">
+                <Icon name="search" size={20} color="var(--text-muted)" />
+            </div>
+
+            {/* Input */}
             <input
                 ref={ref}
                 type="text"
@@ -24,6 +36,19 @@ export function SearchBar({ value, onChange, placeholder, autoFocus = false }) {
                 value={value}
                 onChange={onChange}
             />
+
+            {/* Clear Button */}
+            {value && (
+                <button
+                    type="button"
+                    className="search-clear-btn"
+                    onClick={handleClear}
+                    title={t('action.clear')}
+                >
+                    <Icon name="x" size={16} color="var(--text-muted)" />
+                    <span className="sr-only">Clear</span>
+                </button>
+            )}
         </div>
     )
 }

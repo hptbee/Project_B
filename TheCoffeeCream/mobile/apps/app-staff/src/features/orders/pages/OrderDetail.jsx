@@ -84,13 +84,17 @@ export default function OrderDetail() {
                         {order.items.map((item, idx) => (
                             <div key={idx} className="order-item-row">
                                 <div className="item-main">
-                                    <span className="item-name">{item.name} x{item.quantity}</span>
+                                    <span className="item-name">
+                                        {item.name}
+                                        <span className="unit-price-hint"> ({formatPrice(item.unitPrice)})</span>
+                                        <span className="qty-x"> x{item.quantity}</span>
+                                    </span>
                                     <span className="item-total">{formatPrice(item.total, true)}</span>
                                 </div>
                                 <div className="item-meta">
                                     {item.selectedToppings && item.selectedToppings.length > 0 && (
                                         <div className="toppings">
-                                            + {item.selectedToppings.map(t => t.name).join(', ')}
+                                            + {item.selectedToppings.map(t => `${t.name} (${formatPrice(t.price)})`).join(', ')}
                                         </div>
                                     )}
                                     {item.note && <div className="note">{t('common.note')}: {item.note}</div>}

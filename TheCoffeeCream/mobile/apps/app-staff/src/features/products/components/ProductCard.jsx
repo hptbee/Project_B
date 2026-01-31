@@ -15,7 +15,15 @@ export default function ProductCard({ product, onAdd, highlight = '' }) {
     const navigate = useNavigate()
     return (
         <div className="product-row product-row-clickable" onClick={() => navigate(`/products/${product.id}${window.location.search}`)}>
-            <div className="thumb-small" />
+            <div
+                className="thumb-small"
+                style={{
+                    backgroundImage: `url(${product.imageUrl})`,
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
+                }}
+            />
             <div className="meta">
                 <div className="title">{highlightText(product.title, highlight)}</div>
                 <div className="price">{formatPrice(product.price, true)}</div>

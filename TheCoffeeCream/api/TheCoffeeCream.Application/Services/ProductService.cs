@@ -25,7 +25,6 @@ namespace TheCoffeeCream.Application.Services
         {
             var products = (await _productRepository.GetAllAsync()).ToList();
             var categories = await _productRepository.GetCategoriesAsync();
-            var productsById = products.ToDictionary(p => p.Id);
 
             return new MenuDto
             {
@@ -33,14 +32,15 @@ namespace TheCoffeeCream.Application.Services
                 Products = products.Select(p => new ProductMenuDto
                 {
                     Id = p.Id,
+                    CategoryId = p.CategoryId,
                     Name = p.Name,
-                    Category = p.Category,
+                    Category = p.Category?.Name ?? string.Empty,
                     Code = p.Code,
                     Price = p.Price,
                     ImageUrl = p.ImageUrl,
                     IsActive = p.IsActive,
                     IsTopping = p.IsTopping,
-                    Toppings = ResolveToppings(p, productsById).Select(MapToDto).ToList()
+                    Toppings = MapToDto(p).Toppings
                 }).ToList()
             };
         }
@@ -75,6 +75,8 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<ProductDto> CreateAsync(ProductUpsertRequest request)
         {
+            var categoryId = await ResolveCategoryId(request.CategoryId, request.Category);
+            
             var toppingMapping = request.ToppingIds != null && request.ToppingIds.Any()
                 ? string.Join(";", request.ToppingIds)
                 : string.Empty;
@@ -84,7 +86,8 @@ namespace TheCoffeeCream.Application.Services
                 request.Name,
                 request.Price,
                 request.IsTopping,
-                request.Category,
+                categoryId,
+                null, // Category object will be resolved by repo or later
                 request.Code,
                 request.Cost,
                 request.ImageUrl,
@@ -94,7 +97,10 @@ namespace TheCoffeeCream.Application.Services
             );
 
             await _productRepository.CreateAsync(product);
-            return MapToDto(product);
+            
+            // Re-fetch to get resolved toppings and category
+            var createdProduct = await _productRepository.GetByIdAsync(product.Id);
+            return MapToDto(createdProduct ?? product);
         }
 
         public async Task<ProductDto?> UpdateAsync(Guid id, ProductUpsertRequest request)
@@ -102,12 +108,14 @@ namespace TheCoffeeCream.Application.Services
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null) return null;
 
+            var categoryId = await ResolveCategoryId(request.CategoryId, request.Category);
+
             var toppingMapping = request.ToppingIds != null && request.ToppingIds.Any()
                 ? string.Join(";", request.ToppingIds)
                 : string.Empty;
 
             product.Name = request.Name;
-            product.Category = request.Category;
+            product.CategoryId = categoryId;
             product.Code = request.Code;
             product.Cost = request.Cost;
             product.Price = request.Price;
@@ -117,7 +125,20 @@ namespace TheCoffeeCream.Application.Services
             product.ToppingMapping = toppingMapping;
 
             await _productRepository.UpdateAsync(product);
-            return MapToDto(product);
+
+            // Re-fetch to get resolved toppings and category
+            var updatedProduct = await _productRepository.GetByIdAsync(id);
+            return MapToDto(updatedProduct ?? product);
+        }
+
+        private async Task<Guid> ResolveCategoryId(Guid categoryId, string categoryName)
+        {
+            if (categoryId != Guid.Empty) return categoryId;
+            if (string.IsNullOrWhiteSpace(categoryName)) return Guid.Empty;
+
+            var categories = await _productRepository.GetCategoriesAsync();
+            var matched = categories.FirstOrDefault(c => c.Name.Equals(categoryName, System.StringComparison.OrdinalIgnoreCase));
+            return matched?.Id ?? Guid.Empty;
         }
 
         public async Task<bool> ToggleActiveAsync(Guid id)
@@ -135,7 +156,8 @@ namespace TheCoffeeCream.Application.Services
             {
                 Id = p.Id,
                 Name = p.Name,
-                Category = p.Category,
+                CategoryId = p.CategoryId,
+                Category = p.Category?.Name ?? string.Empty,
                 Code = p.Code,
                 Cost = p.Cost,
                 Price = p.Price,
@@ -146,7 +168,8 @@ namespace TheCoffeeCream.Application.Services
                 {
                     Id = t.Id,
                     Name = t.Name,
-                    Category = t.Category,
+                    CategoryId = t.CategoryId,
+                    Category = t.Category?.Name ?? string.Empty,
                     Price = t.Price,
                     IsActive = t.IsActive,
                     IsTopping = true

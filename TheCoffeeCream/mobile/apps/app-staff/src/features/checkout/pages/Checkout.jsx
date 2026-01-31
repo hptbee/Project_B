@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
-import { calculateCartTotal, calculateDiscount, calculateTotal } from '@thecoffeecream/ui-shared'
+import { calculateCartTotal, calculateDiscount, calculateTotal, calculateItemTotal } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import { IconChevron, useTranslation, Icon } from '@thecoffeecream/ui-shared'
 import BillTemplate from '../../orders/components/BillTemplate'
@@ -25,7 +25,7 @@ export default function Checkout() {
 
 
     // Discount State
-    const [discountType, setDiscountType] = useState('AMOUNT') // AMOUNT, PERCENTAGE
+    const [discountType, setDiscountType] = useState('FIXED') // FIXED, PERCENTAGE
     const [discountValue, setDiscountValue] = useState(0)
     const [showDiscountInput, setShowDiscountInput] = useState(false)
 
@@ -52,25 +52,27 @@ export default function Checkout() {
     const handleFinalize = () => {
         // No loading state needed, we fire and forget
         const orderItems = tableCart.items.map(item => ({
-            ProductId: item.product.id,
-            Name: item.product.title,
-            UnitPrice: item.product.price,
-            Quantity: item.qty,
-            SelectedToppingNames: (item.toppings || []).map(t => t.title),
-            Note: item.note
+            productId: item.product.id,
+            name: item.product.title,
+            unitPrice: item.product.price,
+            quantity: item.qty,
+            selectedToppingNames: (item.toppings || []).map(t => t.title),
+            selectedToppingCodes: (item.toppings || []).map(t => t.code).filter(Boolean),
+            note: item.note
         }))
 
         const payload = {
-            ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
-            OrderType: 'DINE_IN',
-            TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
-            PaymentMethod: paymentMethod,
-            CashAmount: paymentMethod === 'COMBINED' ? cashAmount : (paymentMethod === 'CASH' ? total : 0),
-            TransferAmount: paymentMethod === 'COMBINED' ? transferAmount : (paymentMethod === 'TRANSFER' ? total : 0),
-            Items: orderItems,
-            Status: 'SUCCESS',
-            Note: tableCart.note,
-            DiscountAmount: discountAmount || 0
+            clientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
+            orderType: 'DINE_IN',
+            tableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
+            paymentMethod: paymentMethod,
+            cashAmount: paymentMethod === 'COMBINED' ? cashAmount : (paymentMethod === 'CASH' ? total : 0),
+            transferAmount: paymentMethod === 'COMBINED' ? transferAmount : (paymentMethod === 'TRANSFER' ? total : 0),
+            items: orderItems,
+            status: 'SUCCESS',
+            note: tableCart.note,
+            discountType: discountType,
+            discountValue: discountValue
         }
 
         // 1. Call API with useOffline: true (background sync)
@@ -113,6 +115,52 @@ export default function Checkout() {
                     <button className="customer-edit-btn icon-btn" aria-label={t('common.change_customer')}>✎</button>
                 </div>
 
+                <div className="checkout-items-preview">
+                    <div className="preview-header">
+                        <h4>{t('common.items_list')}</h4>
+                    </div>
+                    <div className="items-mini-list">
+                        {(tableCart?.items || []).map(item => {
+                            const cleanToppingTitle = (title, prodTitle) => {
+                                if (!title || !prodTitle) return title
+                                // Remove " - ProductName" suffix common in some DB setups
+                                return title.split(' - ')[0].trim()
+                            }
+
+                            return (
+                                <div key={item.key} className="preview-item-refined">
+                                    <div className="item-header">
+                                        <div className="item-identity">
+                                            <span className="qty-circle">{item.qty}</span>
+                                            <div className="name-wrapper">
+                                                <span className="prod-name">
+                                                    {item.product.title}
+                                                    <span className="unit-price-hint"> ({formatPrice(item.product.price)})</span>
+                                                </span>
+                                                <div className="price-breakdown">
+                                                    {item.toppings && item.toppings.length > 0 && (
+                                                        <span className="toppings-summary">
+                                                            {item.toppings.map(t => `+ ${cleanToppingTitle(t.title, item.product.title)} (${formatPrice(t.price)})`).join(', ')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="item-total-col">
+                                            <span className="total-amount">{formatPrice(calculateItemTotal(item))}</span>
+                                            {item.toppings && item.toppings.length > 0 && (
+                                                <span className="toppings-total-hint">
+                                                    (+{formatPrice((item.toppings || []).reduce((s, t) => s + t.price, 0) * item.qty)})
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+
                 <div className="order-summary-box">
                     <div className="summary-row">
                         <div className="label">{t('report.revenue')} <span className="items-badge">{(tableCart.items || []).reduce((s, it) => s + (it.qty ?? it.quantity ?? 1), 0)} {t('pos.qty')}</span></div>
@@ -131,8 +179,8 @@ export default function Checkout() {
                         <div className="discount-input-area">
                             <div className="type-tabs">
                                 <button
-                                    className={discountType === 'AMOUNT' ? 'active' : ''}
-                                    onClick={(e) => { e.stopPropagation(); setDiscountType('AMOUNT'); }}
+                                    className={discountType === 'FIXED' ? 'active' : ''}
+                                    onClick={(e) => { e.stopPropagation(); setDiscountType('FIXED'); }}
                                 >
                                     {t('common.amount_money')} (đ)
                                 </button>

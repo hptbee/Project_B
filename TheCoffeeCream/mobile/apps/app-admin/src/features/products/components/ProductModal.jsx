@@ -10,6 +10,7 @@ export default function ProductModal({ product, onClose, onSave }) {
     const [formData, setFormData] = useState({
         name: '',
         category: '',
+        categoryId: '',
         code: '',
         price: 0,
         cost: 0,
@@ -38,6 +39,7 @@ export default function ProductModal({ product, onClose, onSave }) {
                     setFormData({
                         name: product.name,
                         category: product.category,
+                        categoryId: product.categoryId,
                         code: product.code,
                         price: product.price,
                         cost: product.cost,
@@ -47,7 +49,7 @@ export default function ProductModal({ product, onClose, onSave }) {
                         toppingIds: product.toppings ? product.toppings.map(t => t.id) : []
                     })
                 } else if (cats.length > 0) {
-                    setFormData(prev => ({ ...prev, category: cats[0].name }))
+                    setFormData(prev => ({ ...prev, category: cats[0].name, categoryId: cats[0].id }))
                 }
             } catch (error) {
                 showToast('Lỗi tải dữ liệu khởi tạo', 'error')
@@ -134,9 +136,13 @@ export default function ProductModal({ product, onClose, onSave }) {
                                     </div>
                                     <Select
                                         label={t('form.category')}
-                                        value={formData.category}
-                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
-                                        options={categories.map(c => ({ value: c.name, label: c.name }))}
+                                        value={formData.categoryId}
+                                        onChange={e => {
+                                            const catId = e.target.value;
+                                            const cat = categories.find(c => c.id === catId);
+                                            setFormData({ ...formData, categoryId: catId, category: cat ? cat.name : '' });
+                                        }}
+                                        options={categories.map(c => ({ value: c.id, label: c.name }))}
                                         placeholder={false}
                                     />
                                 </div>

@@ -30,17 +30,7 @@ namespace TheCoffeeCream.Application.Services
             var items = request.Items.Select(i =>
             {
                 var itemDiscountType = ParseNullableEnum<DiscountType>(i.DiscountType);
-                System.Collections.Generic.List<OrderItemTopping>? selected = null;
-
-                if (allProducts.TryGetValue(i.ProductId, out var product) && i.SelectedToppingNames?.Any() == true)
-                {
-                    var productToppings = product.Toppings.ToDictionary(t => t.Name, StringComparer.OrdinalIgnoreCase);
-                    selected = i.SelectedToppingNames
-                        .Where(name => productToppings.ContainsKey(name))
-                        .Select(name => new OrderItemTopping(productToppings[name].Id, productToppings[name].Name, productToppings[name].Price))
-                        .ToList();
-                }
-
+                var selected = ResolveToppings(i, allProducts);
                 return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue, i.Note);
             });
 
@@ -67,15 +57,21 @@ namespace TheCoffeeCream.Application.Services
             var existing = await _orderRepository.GetByIdAsync(id);
             if (existing == null) throw new ArgumentException("Order not found");
 
-            var items = request.Items.Select(i => new OrderItem(
-                i.ProductId,
-                i.Name,
-                i.UnitPrice,
-                i.Quantity,
-                null,
-                ParseNullableEnum<DiscountType>(i.DiscountType),
-                i.DiscountValue,
-                i.Note));
+            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+
+            var items = request.Items.Select(i =>
+            {
+                var selected = ResolveToppings(i, allProducts);
+                return new OrderItem(
+                    i.ProductId,
+                    i.Name,
+                    i.UnitPrice,
+                    i.Quantity,
+                    selected,
+                    ParseNullableEnum<DiscountType>(i.DiscountType),
+                    i.DiscountValue,
+                    i.Note);
+            });
 
             var order = new Order(
                 request.ClientOrderId,
@@ -96,6 +92,37 @@ namespace TheCoffeeCream.Application.Services
             };
 
             await _orderRepository.UpdateAsync(order);
+        }
+
+        private System.Collections.Generic.List<OrderItemTopping>? ResolveToppings(CreateOrderItemRequest itemRequest, System.Collections.Generic.Dictionary<Guid, Product> allProducts)
+        {
+            if (!allProducts.TryGetValue(itemRequest.ProductId, out var product)) return null;
+            if ((itemRequest.SelectedToppingNames?.Any() != true) && (itemRequest.SelectedToppingCodes?.Any() != true)) return null;
+
+            var selected = new System.Collections.Generic.List<OrderItemTopping>();
+            var productToppings = product.Toppings;
+
+            if (itemRequest.SelectedToppingNames?.Any() == true)
+            {
+                foreach (var name in itemRequest.SelectedToppingNames)
+                {
+                    var match = productToppings.FirstOrDefault(t => t.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                    if (match != null) selected.Add(new OrderItemTopping(match.Id, match.Name, match.Price, match.Code));
+                }
+            }
+
+            if (itemRequest.SelectedToppingCodes?.Any() == true)
+            {
+                foreach (var code in itemRequest.SelectedToppingCodes)
+                {
+                    if (selected.Any(s => s.Code.Equals(code, StringComparison.OrdinalIgnoreCase))) continue;
+
+                    var match = productToppings.FirstOrDefault(t => t.Code.Equals(code, StringComparison.OrdinalIgnoreCase));
+                    if (match != null) selected.Add(new OrderItemTopping(match.Id, match.Name, match.Price, match.Code));
+                }
+            }
+
+            return selected.Any() ? selected : null;
         }
 
         private static T ParseEnum<T>(string value, T defaultValue) where T : struct

@@ -47,14 +47,17 @@ export default function BillTemplate({ order, items, subtotal, discount, total, 
                                 <td className="col-qty">{item.qty}</td>
                                 <td className="col-total">{formatPrice(item.product.price * item.qty)}</td>
                             </tr>
-                            {item.toppings && item.toppings.length > 0 && item.toppings.map((topping, tIdx) => (
-                                <tr key={`t-${tIdx}`} className="topping-item">
-                                    <td className="col-name">+ {topping.title}</td>
-                                    <td className="col-unit-price">{formatPrice(topping.price || 0)}</td>
-                                    <td className="col-qty">1</td>
-                                    <td className="col-total">{formatPrice(topping.price || 0)}</td>
-                                </tr>
-                            ))}
+                            {item.toppings && item.toppings.length > 0 && item.toppings.map((topping, tIdx) => {
+                                const cleanTitle = (topping.title || '').split(' - ')[0].trim();
+                                return (
+                                    <tr key={`t-${tIdx}`} className="topping-item">
+                                        <td className="col-name">+ {cleanTitle}{topping.code ? ` (${topping.code})` : ''}</td>
+                                        <td className="col-unit-price">{formatPrice(topping.price || 0)}</td>
+                                        <td className="col-qty">1</td>
+                                        <td className="col-total">{formatPrice(topping.price || 0)}</td>
+                                    </tr>
+                                );
+                            })}
                         </React.Fragment>
                     ))}
                 </tbody>

@@ -55,7 +55,7 @@ namespace TheCoffeeCream.Application.Services
                 {
                     var productId = g.Key;
                     var productName = g.First().Name;
-                    var productCategory = products.ContainsKey(productId) ? products[productId].Category : "Unknown";
+                    var productCategory = products.ContainsKey(productId) ? (products[productId].Category?.Name ?? "Unknown") : "Unknown";
 
                     return new ProductSalesReport
                     {

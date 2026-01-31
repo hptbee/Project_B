@@ -78,7 +78,8 @@ namespace TheCoffeeCream.Api.Controllers
             {
                 Id = p.Id,
                 Name = p.Name,
-                Category = p.Category,
+                CategoryId = p.CategoryId,
+                Category = p.Category?.Name ?? string.Empty,
                 Code = p.Code,
                 Cost = p.Cost,
                 Price = p.Price,
@@ -89,7 +90,8 @@ namespace TheCoffeeCream.Api.Controllers
                 {
                     Id = t.Id,
                     Name = t.Name,
-                    Category = t.Category,
+                    CategoryId = t.CategoryId,
+                    Category = t.Category?.Name ?? string.Empty,
                     Price = t.Price,
                     IsActive = t.IsActive,
                     IsTopping = true

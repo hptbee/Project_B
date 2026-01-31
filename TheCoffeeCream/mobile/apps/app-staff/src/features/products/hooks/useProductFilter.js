@@ -56,7 +56,10 @@ export function useProductFilter(products, sortedCategories) {
 
         // Filter by search
         if (term) {
-            res = res.filter(p => p.title.toLowerCase().includes(term))
+            res = res.filter(p =>
+                p.title.toLowerCase().includes(term) ||
+                (p.code && p.code.toLowerCase().includes(term))
+            )
         }
 
         return res

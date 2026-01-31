@@ -20,12 +20,11 @@ npm install
 npm run dev
 ```
 
-## 🏗️ Android Build
+## 🏗️ Android Build (Automated)
 ```bash
-npm run build
-npx cap sync android
-cd android; ./gradlew assembleDebug
+npm run build:apk
 ```
+*Auto-builds, syncs, compiles, and exports timestamped APK to `mobile/publish/` folder.*
 *Output: `TheCoffeeCream-Admin-1.0-YYYYMMDDHHMMSS.apk`*
 
 ---

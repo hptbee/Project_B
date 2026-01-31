@@ -52,6 +52,8 @@ export default function OrderEditModal({ order, onClose, onSave }) {
                     quantity: i.quantity,
                     discountType: i.discountType,
                     discountValue: i.discountValue,
+                    selectedToppingNames: (i.selectedToppings || []).map(t => t.name),
+                    selectedToppingCodes: (i.selectedToppings || []).map(t => t.code).filter(Boolean),
                     note: i.note
                 }))
             }
@@ -116,12 +118,24 @@ export default function OrderEditModal({ order, onClose, onSave }) {
                             <label>{t('form.item_list')} ({order.items.length})</label>
                             <div className="items-list">
                                 {order.items.map((item, idx) => (
-                                    <div key={idx} className="item-row">
-                                        <div className="item-info">
-                                            <span className="name">{item.name}</span>
-                                            <span className="qty">x{item.quantity}</span>
+                                    <div key={idx} className="item-row item-row-with-toppings">
+                                        <div className="item-main">
+                                            <div className="item-info">
+                                                <span className="name">{item.name}</span>
+                                                <span className="qty">x{item.quantity}</span>
+                                            </div>
+                                            <span className="item-total">{formatPrice(item.total, true)}</span>
                                         </div>
-                                        <span className="item-total">{formatPrice(item.total, true)}</span>
+                                        {item.selectedToppings && item.selectedToppings.length > 0 && (
+                                            <div className="item-toppings">
+                                                {item.selectedToppings.map(t => (
+                                                    <span key={t.productId} className="topping-tag">
+                                                        +{t.name}{t.code ? ` (${t.code})` : ''}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {item.note && <div className="item-note">✎ {item.note}</div>}
                                     </div>
                                 ))}
                             </div>

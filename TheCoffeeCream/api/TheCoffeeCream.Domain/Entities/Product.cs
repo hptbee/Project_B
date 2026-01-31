@@ -6,7 +6,8 @@ namespace TheCoffeeCream.Domain.Entities
     public class Product
     {
         public Guid Id { get; set; }
-        public string Category { get; set; } = string.Empty;
+        public Guid CategoryId { get; set; }
+        public Category? Category { get; set; }
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Cost { get; set; }
@@ -24,7 +25,7 @@ namespace TheCoffeeCream.Domain.Entities
 
         private Product() { }
 
-        public Product(Guid id, string name, decimal price, bool isTopping = false, string? category = null, string? code = null, decimal cost = 0, string? imageUrl = null, bool isActive = true, IEnumerable<Product>? toppings = null, string? toppingMapping = null)
+        public Product(Guid id, string name, decimal price, bool isTopping = false, Guid categoryId = default, Category? category = null, string? code = null, decimal cost = 0, string? imageUrl = null, bool isActive = true, IEnumerable<Product>? toppings = null, string? toppingMapping = null)
         {
             if (id == Guid.Empty) throw new ArgumentException("id required", nameof(id));
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name required", nameof(name));
@@ -34,7 +35,8 @@ namespace TheCoffeeCream.Domain.Entities
             Name = name;
             Price = price;
             IsTopping = isTopping;
-            Category = category ?? string.Empty;
+            CategoryId = categoryId;
+            Category = category;
             Code = code ?? string.Empty;
             Cost = cost;
             ImageUrl = imageUrl ?? string.Empty;

@@ -18,13 +18,11 @@ npm install
 npm run dev
 ```
 
-## 🏗️ Android Build
+## 🏗️ Android Build (Automated)
 ```bash
-npm run build
-npx cap sync android
-cd android; ./gradlew assembleDebug
+npm run build:apk
 ```
-*Output: `TheCoffeeCream-Staff-1.0-YYYYMMDDHHMMSS.apk`*
+*Auto-builds, syncs, compiles, and exports timestamped APK to `mobile/publish/` folder.*
 
 ---
 Proprietary © 2026 The Coffee Cream

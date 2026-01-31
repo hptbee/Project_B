@@ -68,24 +68,25 @@ export default function TableOrder() {
 
     const handleSaveDraft = () => {
         const orderItems = tableCart.items.map(item => ({
-            ProductId: item.product.id,
-            Name: item.product.title,
-            UnitPrice: item.product.price,
-            Quantity: item.qty,
-            SelectedToppingNames: (item.toppings || []).map(t => t.title),
-            Note: item.note
+            productId: item.product.id,
+            name: item.product.title,
+            unitPrice: item.product.price,
+            quantity: item.qty,
+            selectedToppingNames: (item.toppings || []).map(t => t.title),
+            selectedToppingCodes: (item.toppings || []).map(t => t.code).filter(Boolean),
+            note: item.note
         }))
 
         const payload = {
-            ClientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
-            OrderType: 'DINE_IN',
-            TableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
-            PaymentMethod: 'CASH',
-            CashAmount: total,
-            TransferAmount: 0,
-            Items: orderItems,
-            Status: 'DRAFT',
-            Note: tableCart.note || ''
+            clientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
+            orderType: 'DINE_IN',
+            tableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
+            paymentMethod: 'CASH',
+            cashAmount: total,
+            transferAmount: 0,
+            items: orderItems,
+            status: 'DRAFT',
+            note: tableCart.note || ''
         }
 
         // 1. Call API with useOffline: true (background sync)
@@ -168,7 +169,10 @@ export default function TableOrder() {
                                 <div className="item-title">{item.product.title}</div>
                                 {item.toppings && item.toppings.length > 0 && (
                                     <div className="item-toppings">
-                                        {item.toppings.map(t => `+1 ${t.title}`).join(', ')}
+                                        {item.toppings.map(t => {
+                                            const codeStr = t.code ? ` (${t.code})` : ''
+                                            return `+1 ${t.title}${codeStr}`
+                                        }).join(', ')}
                                     </div>
                                 )}
                                 {item.note && (

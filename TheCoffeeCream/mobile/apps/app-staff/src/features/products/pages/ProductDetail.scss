@@ -6,8 +6,9 @@
 }
 
 .product-detail-thumb {
-    background-size: cover;
+    background-size: contain;
     background-position: center;
+    background-repeat: no-repeat;
 }
 
 .detail .product-card {
@@ -56,6 +57,65 @@
     letter-spacing: 2px;
     font-weight: 900;
     opacity: 0.8;
+}
+
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 32px 24px 16px;
+
+    .detail-section-title {
+        margin: 0;
+    }
+}
+
+.topping-search-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-glass);
+    flex: 0 1 180px;
+
+    input {
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 13px;
+        color: var(--text-primary);
+        width: 100%;
+        font-weight: 600;
+
+        &::placeholder {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+    }
+
+    .clear-search {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 12px;
+        padding: 0 4px;
+        cursor: pointer;
+    }
+}
+
+.topping-code {
+    opacity: 0.6;
+    font-size: 0.9em;
+}
+
+.empty-toppings-filtered {
+    padding: 32px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .toppings {

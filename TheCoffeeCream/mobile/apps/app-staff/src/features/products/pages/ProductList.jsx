@@ -89,7 +89,7 @@ export default function ProductList() {
                 ))}
             </div>
 
-            <SearchBar value={q} onChange={setQ} autoFocus={focus} />
+            <SearchBar value={q} onChange={e => setQ(e.target.value)} autoFocus={focus} />
 
             <div className="list">
                 {filtered.length === 0 ? (

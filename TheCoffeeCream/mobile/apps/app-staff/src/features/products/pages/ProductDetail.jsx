@@ -42,10 +42,23 @@ export default function ProductDetail() {
         return baseToppings
     })
 
+    // Topping Search State
+    const [toppingSearch, setToppingSearch] = useState('')
+
+    // Filtered Toppings
+    const filteredToppings = useMemo(() => {
+        const term = toppingSearch.trim().toLowerCase()
+        if (!term) return toppingsState
+        return toppingsState.filter(t =>
+            t.title.toLowerCase().includes(term) ||
+            (t.code && t.code.toLowerCase().includes(term))
+        )
+    }, [toppingSearch, toppingsState])
+
     // Calculate dynamic total
     const total = useMemo(() => {
         if (!product) return 0
-        const toppingsTotal = toppingsState.reduce((s, t) => s + (t.price * t.qty), 0)
+        const toppingsTotal = toppingsState.reduce((s, t) => s + (t.price * (t.qty || 0)), 0)
         return (product.price + toppingsTotal) * qty
     }, [product, toppingsState, qty])
 
@@ -63,6 +76,7 @@ export default function ProductDetail() {
         const selectedToppings = toppingsState.filter(t => t.qty > 0).map(t => ({
             id: t.id,
             title: t.title,
+            code: t.code,
             price: t.price,
             qty: t.qty
         }))
@@ -115,12 +129,29 @@ export default function ProductDetail() {
 
             {toppingsState.length > 0 && (
                 <>
-                    <h4 className="detail-section-title">{t('common.topping')}</h4>
+                    <div className="section-header-flex">
+                        <h4 className="detail-section-title">{t('common.topping')}</h4>
+                        {toppingsState.length > 5 && (
+                            <div className="topping-search-mini">
+                                <Icon name="search" size={14} />
+                                <input
+                                    type="text"
+                                    placeholder={t('common.search') + '...'}
+                                    value={toppingSearch}
+                                    onChange={e => setToppingSearch(e.target.value)}
+                                />
+                                {toppingSearch && <button className="clear-search" onClick={() => setToppingSearch('')}>✕</button>}
+                            </div>
+                        )}
+                    </div>
                     <div className="toppings">
-                        {toppingsState.map(t => (
+                        {filteredToppings.map(t => (
                             <div className="topping" key={t.id}>
                                 <div className="topping-info">
-                                    <div className="topping-title">{t.title}</div>
+                                    <div className="topping-title">
+                                        {t.title}
+                                        {t.code && <span className="topping-code"> ({t.code})</span>}
+                                    </div>
                                     <div className="topping-price">+{formatPrice(t.price)}</div>
                                 </div>
                                 {t.qty > 0 ? (
@@ -140,6 +171,9 @@ export default function ProductDetail() {
                                 )}
                             </div>
                         ))}
+                        {filteredToppings.length === 0 && (
+                            <div className="empty-toppings-filtered">{t('common.no_match')}</div>
+                        )}
                     </div>
                 </>
             )}

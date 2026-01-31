@@ -19,6 +19,7 @@ namespace TheCoffeeCream.Application.DTOs
     public class ProductMenuDto
     {
         public Guid Id { get; set; }
+        public Guid CategoryId { get; set; }
         public string Category { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
