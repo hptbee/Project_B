@@ -8,6 +8,8 @@ namespace TheCoffeeCream.Domain.Entities
         public string Name { get; private set; } = string.Empty;
 
         public int Rank { get; private set; }
+        
+        public ICollection<Product> Products { get; private set; } = new List<Product>();
 
         private Category() { }
 

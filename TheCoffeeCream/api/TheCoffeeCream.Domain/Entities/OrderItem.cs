@@ -19,6 +19,8 @@ namespace TheCoffeeCream.Domain.Entities
         public string Note { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
 
+        public Guid OrderId { get; set; }
+        public Order? Order { get; set; }
         public IReadOnlyList<OrderItemTopping> SelectedToppings => _selectedToppings.AsReadOnly();
 
         private readonly List<OrderItemTopping> _selectedToppings = new();
@@ -38,7 +40,7 @@ namespace TheCoffeeCream.Domain.Entities
 
         public decimal Total => (UnitPrice * Quantity + _selectedToppings.Sum(t => t.Price) * Quantity) - DiscountAmount;
 
-        private OrderItem() { }
+        public OrderItem() { }
 
         // Backwards-compatible constructor (no toppings, no discount, no note)
         public OrderItem(Guid productId, string name, decimal unitPrice, int quantity)

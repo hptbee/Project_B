@@ -33,9 +33,6 @@ builder.Services.AddCors(options =>
 // Configure options
 builder.Services.Configure<TheCoffeeCream.Shared.Middleware.ApiKeyOptions>(builder.Configuration.GetSection("ApiKeyOptions"));
 
-// Bind GoogleSheets options from configuration
-builder.Services.Configure<TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetsOptions>(builder.Configuration.GetSection("GoogleSheets"));
-
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JWT");
 var keyString = jwtSettings["Key"] ?? "TheCoffeeCream_Super_Secret_Key_2026_!@#";
@@ -62,11 +59,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Register Google Sheets client and repositories
-builder.Services.AddSingleton<TheCoffeeCream.Infrastructure.GoogleSheets.IGoogleSheetsClient, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetsClient>();
-builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IOrderRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetOrderRepository>();
-builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IProductRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetProductRepository>();
-builder.Services.AddSingleton<TheCoffeeCream.Application.Interfaces.IUserRepository, TheCoffeeCream.Infrastructure.GoogleSheets.GoogleSheetUserRepository>();
+// Add DapperContext
+builder.Services.AddSingleton<TheCoffeeCream.Infrastructure.Data.DapperContext>();
+
+// Register Dapper Type Handlers
+Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.DapperEnumTypeHandler<TheCoffeeCream.Domain.Entities.OrderType>());
+Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.DapperEnumTypeHandler<TheCoffeeCream.Domain.Entities.DiscountType>());
+
+// Register Repositories (Dapper)
+builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IOrderRepository, TheCoffeeCream.Infrastructure.Repositories.DapperOrderRepository>();
+builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IProductRepository, TheCoffeeCream.Infrastructure.Repositories.DapperProductRepository>();
+builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IUserRepository, TheCoffeeCream.Infrastructure.Repositories.DapperUserRepository>();
 
 builder.Services.AddScoped<TheCoffeeCream.Application.Services.OrderService>();
 builder.Services.AddScoped<TheCoffeeCream.Application.Services.ProductService>();
