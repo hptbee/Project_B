@@ -24,6 +24,13 @@ namespace TheCoffeeCream.Domain.Entities
 
         private readonly List<OrderItem> _items = new();
 
+        public void UpdateItems(IEnumerable<OrderItem> newItems)
+        {
+            if (newItems == null) throw new ArgumentNullException(nameof(newItems));
+            _items.Clear();
+            _items.AddRange(newItems);
+        }
+
         public decimal SubTotal => _items.Sum(i => i.Total);
 
         public decimal DiscountAmount

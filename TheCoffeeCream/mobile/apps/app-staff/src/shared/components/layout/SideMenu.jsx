@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToast, SideMenu as SharedSideMenu, useTranslation, ordersApi, reportsApi, cacheService, CACHE_KEYS } from '@thecoffeecream/ui-shared'
 import { useProducts } from '@/shared/contexts/ProductContext'
 import logo from '@/assets/icons/logo.png'
@@ -8,6 +8,21 @@ export default function SideMenu() {
     const { syncProducts } = useProducts()
     const { showToast } = useToast()
     const [syncing, setSyncing] = useState(false)
+    const [isOffline, setIsOffline] = useState(!navigator.onLine)
+
+    useEffect(() => {
+        const handleStatusChange = () => {
+            setIsOffline(!navigator.onLine)
+        }
+
+        window.addEventListener('online', handleStatusChange)
+        window.addEventListener('offline', handleStatusChange)
+
+        return () => {
+            window.removeEventListener('online', handleStatusChange)
+            window.removeEventListener('offline', handleStatusChange)
+        }
+    }, [])
 
     const menuItems = [
         { to: '/', icon: 'menu', label: t('nav.floorplan') },
@@ -50,6 +65,7 @@ export default function SideMenu() {
             footer="Staff v2.0.0"
             onSync={handleSync}
             isSyncing={syncing}
+            isOffline={isOffline} // Pass isOffline prop to SharedSideMenu
         />
     )
 }

@@ -21,9 +21,44 @@ namespace TheCoffeeCream.Application.Services
         public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
         {
             var existing = await _orderRepository.GetByClientOrderIdAsync(request.ClientOrderId);
+            
+            // If exists and NOT Draft -> Error
             if (existing != null && existing.Status != OrderStatus.DRAFT)
                 throw new InvalidOperationException("This order has already been finalized and cannot be modified.");
 
+            // If exists AND Draft -> Update it
+            if (existing != null && existing.Status == OrderStatus.DRAFT)
+            {
+                // Logic to update existing Draft
+                var allProductsMap = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+                var newItems = request.Items.Select(i =>
+                {
+                    var itemDiscountType = ParseNullableEnum<DiscountType>(i.DiscountType);
+                    var selected = ResolveToppings(i, allProductsMap);
+                    return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue, i.Note);
+                }).ToList();
+
+                // Update properties
+                existing.UpdateItems(newItems);
+                existing.TableNumber = request.TableNumber;
+                existing.PaymentMethod = ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH);
+                existing.CashAmount = request.CashAmount;
+                existing.TransferAmount = request.TransferAmount;
+                existing.DiscountType = ParseNullableEnum<DiscountType>(request.DiscountType);
+                existing.DiscountValue = request.DiscountValue;
+                existing.Status = ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS); // Client might send DRAFT or SUCCESS
+                existing.Note = request.Note;
+                
+                // Recalculate totals (implicitly handled by Order domain logic usually, but here we might need to trigger it if Order is anaemic)
+                // Assuming Order entity doesn't auto-calc on property set, we might rely on the Repository Update to replace the document.
+                // But let's verify Order.cs or just re-instantiate if needed? 
+                // The current Repository implementation seems to replace the whole object for MongoDB usually.
+                
+                await _orderRepository.UpdateAsync(existing);
+                return existing;
+            }
+
+            // Normal Creation
             var orderType = ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN);
             var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
 

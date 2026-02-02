@@ -59,6 +59,57 @@ body {
             transform: scale(0.9);
         }
     }
+
+    h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 950;
+        line-height: 1.2;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+}
+
+/* Global Filter Chips / Tabs */
+.filter-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding: 0 16px 16px;
+    gap: 10px;
+    background: transparent;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-tab {
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-glass);
+        padding: 8px 20px;
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: var(--trans-fast);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &.active {
+            background: var(--accent-amber);
+            color: var(--text-on-accent);
+            border-color: var(--accent-amber);
+            box-shadow: 0 0 15px var(--accent-amber-glow);
+        }
+
+        &:active {
+            transform: scale(0.95);
+        }
+    }
 }
 
 

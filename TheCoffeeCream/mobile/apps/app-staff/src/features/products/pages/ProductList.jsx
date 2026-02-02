@@ -65,15 +65,15 @@ export default function ProductList() {
     return (
         <div className="page products-page">
             <header className="page-header">
-                <button className="back product-list-back" onClick={handleBack} aria-label={t('cart.back')}>
-                    <IconChevron size={22} />
+                <button className="back icon-btn" onClick={handleBack} aria-label={t('cart.back')}>
+                    <IconChevron size={22} variant="bold" />
                 </button>
-                <h2 className="product-list-title">{title}</h2>
+                <h2>{title}</h2>
             </header>
 
-            <div className="tabs">
+            <div className="filter-tabs">
                 <button
-                    className={`tab ${selectedCat === 'all' ? 'active' : ''}`}
+                    className={`filter-tab ${selectedCat === 'all' ? 'active' : ''}`}
                     onClick={() => setSelectedCat('all')}
                 >
                     {t('common.all')}
@@ -81,7 +81,7 @@ export default function ProductList() {
                 {categories.filter(c => c !== 'all').map(c => (
                     <button
                         key={c}
-                        className={`tab ${selectedCat === c ? 'active' : ''}`}
+                        className={`filter-tab ${selectedCat === c ? 'active' : ''}`}
                         onClick={() => setSelectedCat(c)}
                     >
                         {c}

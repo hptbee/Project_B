@@ -15,6 +15,57 @@ function cartReducer(state, action) {
             }
             return { ...state, items: [...state.items, { key, product, qty, toppings, note }] }
         }
+        case 'SYNC_DRAFT_FROM_SERVER': {
+            const { tableId, order } = action.payload
+
+            // Map Server Order Items -> Cart Items
+            // We need to reconstruct keys and product objects (minimal)
+            const syncedItems = order.items.map(serverItem => {
+                // We need to map basic product details. serverItem lacks some product data like image/category 
+                // but for cart display title/price is mostly enough.
+                // Ideally we should lookup from ProductContext, but standard cart usage embeds product.
+                // We construct a 'product' object from serverItem.
+                const product = {
+                    id: serverItem.productId,
+                    title: serverItem.name,
+                    price: serverItem.unitPrice,
+                }
+
+                const toppings = (serverItem.selectedToppings || []).map(t => ({
+                    id: t.id,
+                    title: t.name,
+                    price: t.price,
+                    code: t.code,
+                    isTopping: true
+                }))
+
+                const key = generateCartItemKey(product, toppings, serverItem.note || '')
+
+                return {
+                    key,
+                    product,
+                    qty: serverItem.quantity,
+                    toppings,
+                    note: serverItem.note || ''
+                }
+            })
+
+            return {
+                ...state,
+                tables: {
+                    ...state.tables,
+                    [tableId]: {
+                        items: syncedItems,
+                        orderId: order.id,
+                        clientOrderId: order.clientOrderId,
+                        status: 'DRAFT',
+                        customer: null, // Server might not store customer name in simple order object yet if not in DTO
+                        createdAt: order.createdAt,
+                        note: order.note
+                    }
+                }
+            }
+        }
         case 'REMOVE': {
             return { ...state, items: state.items.filter(i => i.key !== action.payload.key) }
         }

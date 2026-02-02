@@ -52,15 +52,48 @@ export default function TableOrder() {
     }
 
     const handleAutoSave = async () => {
-        // Debounce Auto-save trigger
+        // If empty, we don't save draft yet to avoid spamming empty orders? 
+        // User might want to clear draft if items == 0 effectively deleting it?
+        // For now, let's only save if items > 0.
+
+        if (tableCart.items.length === 0) return
+
+        const orderItems = tableCart.items.map(item => ({
+            productId: item.product.id,
+            name: item.product.title,
+            unitPrice: item.product.price,
+            quantity: item.qty,
+            selectedToppingNames: (item.toppings || []).map(t => t.title),
+            selectedToppingCodes: (item.toppings || []).map(t => t.code).filter(Boolean),
+            note: item.note
+        }))
+
+        const payload = {
+            clientOrderId: tableCart.clientOrderId || crypto.randomUUID(),
+            orderType: 'DINE_IN',
+            tableNumber: !isNaN(parseInt(tableId)) ? parseInt(tableId) : 0,
+            paymentMethod: 'CASH', // Default for draft
+            cashAmount: total,
+            transferAmount: 0,
+            items: orderItems,
+            status: 'DRAFT',
+            note: tableCart.note || ''
+        }
+
+        // "Push immediately": useOffline=true puts it in queue and triggers sync instantly.
+        try {
+            await api.createOrder(payload, { useOffline: true })
+        } catch (e) {
+            console.error('Auto-save failed', e)
+        }
     }
 
-    // Auto-save on changes
+    // Auto-save on changes (debounce 2s to avoid too many requests while typing/clicking)
     useAutoSave((_data) => {
         if (tableCart.items.length > 0) {
             handleAutoSave()
         }
-    }, [tableCart.items, tableCart.note], 3000)
+    }, [tableCart, total], 2000)
 
     const handleCheckout = () => {
         navigate(`/checkout/${tableId}`)

@@ -1,8 +1,14 @@
+import React, { Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
-import Login from '@/features/auth/pages/Login'
-import Logout from '@/features/auth/pages/Logout'
-import Insights from '@/features/dashboard/pages/Insights'
+import { useAuth, LoadingSpinner } from '@thecoffeecream/ui-shared'
+
+// Lazy Load Pages
+const Login = React.lazy(() => import('@/features/auth/pages/Login'))
+const Logout = React.lazy(() => import('@/features/auth/pages/Logout'))
+const Insights = React.lazy(() => import('@/features/dashboard/pages/Insights'))
+const OrderList = React.lazy(() => import('@/features/orders/pages/OrderList'))
+const UserList = React.lazy(() => import('@/features/users/pages/UserList'))
+const ProductList = React.lazy(() => import('@/features/products/pages/ProductList'))
 
 function ProtectedRoute({ children }) {
     const { isAuthenticated, loading } = useAuth()
@@ -17,39 +23,37 @@ function ProtectedRoute({ children }) {
     return children
 }
 
-import OrderList from '@/features/orders/pages/OrderList'
-import UserList from '@/features/users/pages/UserList'
-import ProductList from '@/features/products/pages/ProductList'
-
 export default function AppRoutes() {
     return (
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={
-                <ProtectedRoute>
-                    <Insights />
-                </ProtectedRoute>
-            } />
-            <Route path="/orders" element={
-                <ProtectedRoute>
-                    <OrderList />
-                </ProtectedRoute>
-            } />
-            <Route path="/products" element={
-                <ProtectedRoute>
-                    <ProductList />
-                </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-                <ProtectedRoute>
-                    <UserList />
-                </ProtectedRoute>
-            } />
-            <Route path="/logout" element={
-                <ProtectedRoute>
-                    <Logout />
-                </ProtectedRoute>
-            } />
-        </Routes>
+        <Suspense fallback={<LoadingSpinner fullScreen />}>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={
+                    <ProtectedRoute>
+                        <Insights />
+                    </ProtectedRoute>
+                } />
+                <Route path="/orders" element={
+                    <ProtectedRoute>
+                        <OrderList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/products" element={
+                    <ProtectedRoute>
+                        <ProductList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/users" element={
+                    <ProtectedRoute>
+                        <UserList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/logout" element={
+                    <ProtectedRoute>
+                        <Logout />
+                    </ProtectedRoute>
+                } />
+            </Routes>
+        </Suspense>
     )
 }

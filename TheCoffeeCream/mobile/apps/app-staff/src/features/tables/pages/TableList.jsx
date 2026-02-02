@@ -64,10 +64,10 @@ export default function TableList() {
                 <h2>{t('nav.floorplan')}</h2>
             </header>
 
-            <div className="home-tabs">
-                <button className={`home-tab ${tab === 'all' ? 'active' : ''}`} onClick={() => setTab('all')}>{t('common.all')}</button>
-                <button className={`home-tab ${tab === 'active' ? 'active' : ''}`} onClick={() => setTab('active')}>{t('status.occupied')}</button>
-                <button className={`home-tab ${tab === 'empty' ? 'active' : ''}`} onClick={() => setTab('empty')}>{t('status.empty')}</button>
+            <div className="filter-tabs">
+                <button className={`filter-tab ${tab === 'all' ? 'active' : ''}`} onClick={() => setTab('all')}>{t('common.all')}</button>
+                <button className={`filter-tab ${tab === 'active' ? 'active' : ''}`} onClick={() => setTab('active')}>{t('status.occupied')}</button>
+                <button className={`filter-tab ${tab === 'empty' ? 'active' : ''}`} onClick={() => setTab('empty')}>{t('status.empty')}</button>
             </div>
 
             <div className="grid">

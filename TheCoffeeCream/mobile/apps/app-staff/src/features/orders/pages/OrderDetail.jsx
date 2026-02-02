@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ordersApi as api } from '@thecoffeecream/ui-shared'
+import { ordersApi as api, cacheService, CACHE_KEYS } from '@thecoffeecream/ui-shared'
 import { LoadingSpinner, IconChevron, Badge, useTranslation, Icon } from '@thecoffeecream/ui-shared'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './OrderDetail.scss'
@@ -25,12 +25,23 @@ export default function OrderDetail() {
     }, [id])
 
     const fetchOrder = async () => {
+        setLoading(true)
         try {
-            setLoading(true)
+            // 1. Try Network
             const data = await api.getOrder(id)
             setOrder(data)
         } catch (err) {
-            console.error(err)
+            console.error('Fetch error, checking cache...', err)
+            // 2. Fallback to Cache
+            const cachedOrders = cacheService.get(CACHE_KEYS.ORDERS) || []
+            const cachedOrder = cachedOrders.find(o => String(o.id) === String(id))
+
+            if (cachedOrder) {
+                setOrder(cachedOrder)
+            } else {
+                // If not in cache, we can't show it
+                console.error('Order not found in cache')
+            }
         } finally {
             setLoading(false)
         }

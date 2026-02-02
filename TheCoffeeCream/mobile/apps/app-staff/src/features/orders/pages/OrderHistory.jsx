@@ -75,28 +75,25 @@ export default function OrderHistory() {
                 <h2>{t('common.order_history')}</h2>
             </header>
 
-            <div className="filter-chips" style={{ padding: '0 1rem 1rem', display: 'flex', gap: '8px', overflowX: 'auto' }}>
-                <Badge
-                    variant={paymentMethodFilter === '' ? 'primary' : 'outline'}
+            <div className="filter-tabs">
+                <button
+                    className={`filter-tab ${paymentMethodFilter === '' ? 'active' : ''}`}
                     onClick={() => setPaymentMethodFilter('')}
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                     {t('common.all')}
-                </Badge>
-                <Badge
-                    variant={paymentMethodFilter === 'TRANSFER' ? 'primary' : 'outline'}
+                </button>
+                <button
+                    className={`filter-tab ${paymentMethodFilter === 'TRANSFER' ? 'active' : ''}`}
                     onClick={() => setPaymentMethodFilter('TRANSFER')}
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                     {t('common.transfer')}
-                </Badge>
-                <Badge
-                    variant={paymentMethodFilter === 'CASH' ? 'primary' : 'outline'}
+                </button>
+                <button
+                    className={`filter-tab ${paymentMethodFilter === 'CASH' ? 'active' : ''}`}
                     onClick={() => setPaymentMethodFilter('CASH')}
-                    style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                     {t('common.cash')}
-                </Badge>
+                </button>
             </div>
 
             <div className="orders-list">
