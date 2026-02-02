@@ -67,6 +67,10 @@ async function apiFetch(url, options = {}, retries = API_CONFIG.MAX_RETRIES) {
             throw new Error(errorText || `API Error: ${response.status}`);
         }
 
+        if (response.status === 204) {
+            return null;
+        }
+
         const data = await response.json();
         return data;
     } catch (error) {

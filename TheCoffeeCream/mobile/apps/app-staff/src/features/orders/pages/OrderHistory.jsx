@@ -9,6 +9,7 @@ export default function OrderHistory() {
     const [searchParams] = useSearchParams()
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
+    const [paymentMethodFilter, setPaymentMethodFilter] = useState('') // ''=All, CASH, TRANSFER, COMBINED
 
     const paramDate = searchParams.get('date')
     const paramStatus = searchParams.get('status')
@@ -31,15 +32,18 @@ export default function OrderHistory() {
                     setLoading(true)
                 }
 
-                // 2. Background Fetch
-                const data = await api.getOrders(targetDate, null)
-                let filteredData = data || []
+                // 2. Background Fetch - Fetch ALL orders (no filter)
+                const data = await api.getOrders(targetDate, null, null)
+
+                let fetchedData = data || []
                 if (paramStatus) {
-                    filteredData = filteredData.filter(o => o.status === paramStatus)
+                    fetchedData = fetchedData.filter(o => o.status === paramStatus)
                 }
 
-                setOrders(filteredData)
-                if (isToday) cacheService.set(CACHE_KEYS.ORDERS, filteredData, 15 * 60 * 1000) // 15m cache
+                setOrders(fetchedData)
+                if (isToday && !paramStatus) {
+                    cacheService.set(CACHE_KEYS.ORDERS, fetchedData, 15 * 60 * 1000)
+                }
             } catch (err) {
                 console.error(err)
             } finally {
@@ -47,7 +51,13 @@ export default function OrderHistory() {
             }
         }
         fetchOrders()
-    }, [paramDate, paramStatus])
+    }, [paramDate, paramStatus]) // Removed paymentMethodFilter dependency
+
+    // Client-side filtering
+    const filteredOrders = orders.filter(order => {
+        if (!paymentMethodFilter) return true;
+        return order.paymentMethod === paymentMethodFilter;
+    });
 
     const formatTime = (dateStr) => {
         const d = new Date(dateStr)
@@ -65,15 +75,39 @@ export default function OrderHistory() {
                 <h2>{t('common.order_history')}</h2>
             </header>
 
+            <div className="filter-chips" style={{ padding: '0 1rem 1rem', display: 'flex', gap: '8px', overflowX: 'auto' }}>
+                <Badge
+                    variant={paymentMethodFilter === '' ? 'primary' : 'outline'}
+                    onClick={() => setPaymentMethodFilter('')}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                    {t('common.all')}
+                </Badge>
+                <Badge
+                    variant={paymentMethodFilter === 'TRANSFER' ? 'primary' : 'outline'}
+                    onClick={() => setPaymentMethodFilter('TRANSFER')}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                    {t('common.transfer')}
+                </Badge>
+                <Badge
+                    variant={paymentMethodFilter === 'CASH' ? 'primary' : 'outline'}
+                    onClick={() => setPaymentMethodFilter('CASH')}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                >
+                    {t('common.cash')}
+                </Badge>
+            </div>
+
             <div className="orders-list">
-                {orders.length === 0 ? (
+                {filteredOrders.length === 0 ? (
                     <EmptyState
                         icon="history"
                         title={t('common.no_orders_today')}
-                        subtitle="Hãy hoàn thành đơn hàng đầu tiên trong ngày nhé!"
+                        subtitle={paymentMethodFilter ? "Không có đơn hàng nào theo bộ lọc." : "Hãy hoàn thành đơn hàng đầu tiên trong ngày nhé!"}
                     />
                 ) : (
-                    orders.map(order => (
+                    filteredOrders.map(order => (
                         <div
                             key={order.id}
                             className="order-history-card"

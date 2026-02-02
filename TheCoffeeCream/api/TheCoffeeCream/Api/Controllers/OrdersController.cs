@@ -45,7 +45,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate)
+        public async Task<IActionResult> Get([FromQuery] DateTimeOffset? startDate, [FromQuery] DateTimeOffset? endDate, [FromQuery] string? paymentMethod)
         {
             var vnOffset = TimeSpan.FromHours(7);
             var nowVn = DateTimeOffset.UtcNow.ToOffset(vnOffset);
@@ -83,6 +83,13 @@ namespace TheCoffeeCream.Api.Controllers
             }
 
             var orders = await _orderService.GetOrdersByDateRangeAsync(start, end);
+
+            // Filter by Payment Method if provided
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                orders = orders.Where(o => o.PaymentMethod.ToString().Equals(paymentMethod, StringComparison.OrdinalIgnoreCase));
+            }
+
             var response = orders.Select(MapOrderToResponse).ToList();
 
             return Ok(response);
@@ -123,6 +130,20 @@ namespace TheCoffeeCream.Api.Controllers
             await _orderService.SoftDeleteOrderAsync(id);
             return NoContent();
         }
+
+        [HttpPatch("{id}/payment-method")]
+        public async Task<IActionResult> UpdatePaymentMethod(Guid id, [FromBody] UpdatePaymentMethodRequest request)
+        {
+            if (request == null) return BadRequest("Request body is required");
+            try
+            {
+                await _orderService.UpdateOrderPaymentMethodAsync(id, request);
+                return NoContent();
+            }
+            catch (ArgumentException ex) { return BadRequest(ex.Message); }
+            catch (Exception ex) { return StatusCode(500, ex.Message); }
+        }
+
 
         private OrderResponse MapOrderToResponse(Order order)
         {

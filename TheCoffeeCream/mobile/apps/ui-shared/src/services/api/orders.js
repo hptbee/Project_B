@@ -4,14 +4,16 @@ import { apiFetch } from './client'
 // Admin app just uses the standard methods
 export const ordersApi = {
     /**
-     * Get orders with optional date range
+     * Get orders with optional date range and payment method
      */
-    getOrders: async (startDate, endDate) => {
+    getOrders: async (startDate, endDate, paymentMethod) => {
         let url = '/Orders'
-        if (startDate || endDate) {
-            const params = new URLSearchParams()
-            if (startDate) params.set('startDate', startDate)
-            if (endDate) params.set('endDate', endDate)
+        const params = new URLSearchParams()
+        if (startDate) params.set('startDate', startDate)
+        if (endDate) params.set('endDate', endDate)
+        if (paymentMethod) params.set('paymentMethod', paymentMethod)
+
+        if ([...params].length > 0) {
             url += `?${params.toString()}`
         }
         return apiFetch(url)
@@ -57,6 +59,16 @@ export const ordersApi = {
         return apiFetch(`/Orders/${id}`, {
             method: 'PUT',
             body: JSON.stringify(orderData)
+        });
+    },
+
+    /**
+     * Update payment method
+     */
+    updatePaymentMethod: async (id, data) => {
+        return apiFetch(`/Orders/${id}/payment-method`, {
+            method: 'PATCH',
+            body: JSON.stringify(data)
         });
     },
 

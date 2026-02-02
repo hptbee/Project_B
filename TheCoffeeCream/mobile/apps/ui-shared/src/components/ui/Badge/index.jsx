@@ -13,7 +13,8 @@ export function Badge({
     size = 'md',
     pill = true,
     className = '',
-    children
+    children,
+    ...props
 }) {
     const classes = [
         'app-badge',
@@ -24,7 +25,7 @@ export function Badge({
     ].filter(Boolean).join(' ')
 
     return (
-        <span className={classes}>
+        <span className={classes} {...props}>
             {children}
         </span>
     )

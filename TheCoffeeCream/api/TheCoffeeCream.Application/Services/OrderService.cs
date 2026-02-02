@@ -151,5 +151,42 @@ namespace TheCoffeeCream.Application.Services
         {
             await _orderRepository.ToggleActiveAsync(id);
         }
+
+        public async Task UpdateOrderPaymentMethodAsync(Guid id, UpdatePaymentMethodRequest request)
+        {
+            var existing = await _orderRepository.GetByIdAsync(id);
+            if (existing == null) throw new ArgumentException("Order not found");
+
+            var paymentMethod = ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH);
+            
+            // Re-construct the order with new payment details
+            // Order is immutable-ish but we can use the constructor to create a modified copy (or just modify properties)
+            // Since Order properties like PaymentMethod are public with set, we could modify them directly if domain allows.
+            // Checking Order.cs... properties have public setters.
+            
+            // Start with partial amounts from request
+            existing.PaymentMethod = paymentMethod;
+            existing.CashAmount = request.CashAmount;
+            existing.TransferAmount = request.TransferAmount;
+
+            // Enforce Full Amount for Single Payment Methods
+            if (existing.PaymentMethod == PaymentMethod.CASH)
+            {
+                existing.CashAmount = existing.Total;
+                existing.TransferAmount = 0;
+            }
+            else if (existing.PaymentMethod == PaymentMethod.TRANSFER)
+            {
+                existing.TransferAmount = existing.Total;
+                existing.CashAmount = 0;
+            }
+            else if (existing.PaymentMethod == PaymentMethod.COMBINED)
+            {
+                if (Math.Abs(existing.CashAmount + existing.TransferAmount - existing.Total) > 0.001m)
+                    throw new ArgumentException($"Cash amount ({existing.CashAmount}) + Transfer amount ({existing.TransferAmount}) must equal Total ({existing.Total})");
+            }
+
+            await _orderRepository.UpdateAsync(existing);
+        }
     }
 }

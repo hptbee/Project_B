@@ -12,6 +12,7 @@ export default function OrderList() {
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [filterStatus, setFilterStatus] = useState('ALL')
+    const [paymentMethodFilter, setPaymentMethodFilter] = useState('') // ''=All, CASH, TRANSFER, COMBINED
     const [searchQuery, setSearchQuery] = useState('')
     const [dateRange, setDateRange] = useState({
         start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
@@ -30,7 +31,8 @@ export default function OrderList() {
     const fetchOrders = async () => {
         setLoading(true)
         try {
-            const data = await orderApi.getOrders(dateRange.start, dateRange.end)
+            // Fetch ALL orders (no payment method filter)
+            const data = await orderApi.getOrders(dateRange.start, dateRange.end, null)
             setOrders(data)
         } catch (err) { // eslint-disable-line no-unused-vars
             showToast(t('modal.load_orders_error'), 'error')
@@ -72,7 +74,7 @@ export default function OrderList() {
 
     useEffect(() => {
         fetchOrders()
-    }, [dateRange])
+    }, [dateRange]) // Removed paymentMethodFilter
 
     const filteredAndSortedOrders = useMemo(() => {
         let result = orders.filter(order => {
@@ -83,7 +85,9 @@ export default function OrderList() {
                 order.id.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (order.customerName && order.customerName.toLowerCase().includes(searchQuery.toLowerCase()))
 
-            return statusMatch && searchMatch
+            const paymentMatch = !paymentMethodFilter || order.paymentMethod === paymentMethodFilter
+
+            return statusMatch && searchMatch && paymentMatch
         })
 
         // Sort
@@ -97,7 +101,7 @@ export default function OrderList() {
         })
 
         return result
-    }, [orders, filterStatus, searchQuery, sortConfig])
+    }, [orders, filterStatus, searchQuery, sortConfig, paymentMethodFilter])
 
     const paginatedOrders = useMemo(() => {
         const start = (currentPage - 1) * itemsPerPage
@@ -192,6 +196,38 @@ export default function OrderList() {
                             }}
                         />
                     </div>
+                </div>
+
+                {/* Payment Method Filter */}
+                <div className="filter-chips" style={{ padding: '0 0 1rem', display: 'flex', gap: '8px', overflowX: 'auto', marginTop: '-12px' }}>
+                    <Badge
+                        variant={paymentMethodFilter === '' ? 'primary' : 'outline'}
+                        onClick={() => setPaymentMethodFilter('')}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                        {t('common.all')}
+                    </Badge>
+                    <Badge
+                        variant={paymentMethodFilter === 'TRANSFER' ? 'primary' : 'outline'}
+                        onClick={() => setPaymentMethodFilter('TRANSFER')}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                        {t('common.transfer')}
+                    </Badge>
+                    <Badge
+                        variant={paymentMethodFilter === 'CASH' ? 'primary' : 'outline'}
+                        onClick={() => setPaymentMethodFilter('CASH')}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                        {t('common.cash')}
+                    </Badge>
+                    <Badge
+                        variant={paymentMethodFilter === 'COMBINED' ? 'primary' : 'outline'}
+                        onClick={() => setPaymentMethodFilter('COMBINED')}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
+                    >
+                        {t('common.mixed')}
+                    </Badge>
                 </div>
 
                 <div className="orders-container">
