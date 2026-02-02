@@ -75,7 +75,7 @@ function main() {
         const tableName = `"${sheetName.trim()}"`;
 
         sqlScript += `-- Table: ${sheetName}\n`;
-        sqlScript += `DROP TABLE IF EXISTS ${tableName};\n`;
+        sqlScript += `DROP TABLE IF EXISTS ${tableName} CASCADE;\n`;
         sqlScript += `CREATE TABLE ${tableName} (\n`;
 
         const colDefs = headers.map((header, i) => {
@@ -95,7 +95,18 @@ function main() {
             return `    ${colName} ${colType}`;
         }).join(',\n');
 
+        // Auto-add Id column for OrderItem if missing
+        if (sheetName === 'OrderItem' && !headers.some(h => h.trim() === 'Id')) {
+            colDefs += ',\n    "Id" TEXT DEFAULT gen_random_uuid()::text';
+        }
+
         sqlScript += colDefs;
+
+        // Add Primary Key if Id exists (or we just added it)
+        if (headers.some(h => h.trim() === 'Id') || sheetName === 'OrderItem') {
+            sqlScript += ',\n    PRIMARY KEY ("Id")';
+        }
+
         sqlScript += '\n);\n\n';
 
         // 2. Generate INSERT statements

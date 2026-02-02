@@ -92,7 +92,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
             
             using (var connection = _context.CreateConnection())
             {
-                var orders = await connection.QueryAsync<Order>(query, new { StartDate = startDate, EndDate = endDate });
+                var orders = await connection.QueryAsync<Order>(query, new { StartDate = startDate.ToString("O"), EndDate = endDate.ToString("O") });
                 var orderList = orders.ToList();
                 
                 if (orderList.Any())

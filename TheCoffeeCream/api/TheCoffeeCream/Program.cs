@@ -65,6 +65,8 @@ builder.Services.AddSingleton<TheCoffeeCream.Infrastructure.Data.DapperContext>(
 // Register Dapper Type Handlers
 Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.DapperEnumTypeHandler<TheCoffeeCream.Domain.Entities.OrderType>());
 Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.DapperEnumTypeHandler<TheCoffeeCream.Domain.Entities.DiscountType>());
+Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.DateTimeOffsetTypeHandler());
+Dapper.SqlMapper.AddTypeHandler(new TheCoffeeCream.Infrastructure.Data.TypeHandlers.GuidTypeHandler());
 
 // Register Repositories (Dapper)
 builder.Services.AddScoped<TheCoffeeCream.Application.Interfaces.IOrderRepository, TheCoffeeCream.Infrastructure.Repositories.DapperOrderRepository>();
