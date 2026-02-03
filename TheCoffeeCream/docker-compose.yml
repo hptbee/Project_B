@@ -7,9 +7,23 @@ services:
       - "8080:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # Add other environment variables as needed, e.g., DB connection string
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TheCoffeeCream;User Id=sa;Password=YourStrong(!)Password;TrustServerCertificate=True
     networks:
       - coffee-net
+    depends_on:
+      - db
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong(!)Password
+    ports:
+      - "1433:1433"
+    networks:
+      - coffee-net
+    volumes:
+      - mssql_data:/var/opt/mssql
 
   app-admin:
     build:
@@ -47,3 +61,6 @@ services:
 networks:
   coffee-net:
     driver: bridge
+
+volumes:
+  mssql_data:

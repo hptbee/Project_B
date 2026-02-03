@@ -151,7 +151,8 @@ namespace TheCoffeeCream.Infrastructure.Data
                         DurationDays = 15,
                         Price = 0,
                         Description = "Free trial for new users",
-                        IsActive = true
+                        IsActive = true,
+                        IsDefault = true
                     },
                     new Plan
                     {
@@ -161,7 +162,8 @@ namespace TheCoffeeCream.Infrastructure.Data
                         DurationDays = 30,
                         Price = 500000,
                         Description = "Basic monthly subscription",
-                        IsActive = true
+                        IsActive = true,
+                        IsDefault = false
                     },
                     new Plan
                     {
@@ -171,7 +173,8 @@ namespace TheCoffeeCream.Infrastructure.Data
                         DurationDays = 180,
                         Price = 2500000,
                         Description = "Premium half-year subscription",
-                        IsActive = true
+                        IsActive = true,
+                        IsDefault = false
                     },
                     new Plan
                     {
@@ -181,7 +184,8 @@ namespace TheCoffeeCream.Infrastructure.Data
                         DurationDays = 365,
                         Price = 4500000,
                         Description = "Premium annual subscription",
-                        IsActive = true
+                        IsActive = true,
+                        IsDefault = false
                     }
                 );
             });

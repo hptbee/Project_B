@@ -1,8 +1,17 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@thecoffeecream/ui-shared'
-import Login from '@/features/auth/pages/Login'
-import Logout from '@/features/auth/pages/Logout'
-import Insights from '@/features/dashboard/pages/Insights'
+import { Suspense, lazy } from 'react'
+
+// Lazy load components
+const Login = lazy(() => import('@/features/auth/pages/Login'))
+const Logout = lazy(() => import('@/features/auth/pages/Logout'))
+const Register = lazy(() => import('@/features/auth/pages/Register'))
+const VerifyEmail = lazy(() => import('@/features/auth/pages/VerifyEmail'))
+const Insights = lazy(() => import('@/features/dashboard/pages/Insights'))
+const OrderList = lazy(() => import('@/features/orders/pages/OrderList'))
+const UserList = lazy(() => import('@/features/users/pages/UserList'))
+const ProductList = lazy(() => import('@/features/products/pages/ProductList'))
+const ShopSettings = lazy(() => import('@/features/settings/pages/ShopSettings'))
 
 function ProtectedRoute({ children }) {
     const { isAuthenticated, loading } = useAuth()
@@ -17,51 +26,50 @@ function ProtectedRoute({ children }) {
     return children
 }
 
-import OrderList from '@/features/orders/pages/OrderList'
-import UserList from '@/features/users/pages/UserList'
-import ProductList from '@/features/products/pages/ProductList'
-import ShopSettings from '@/features/settings/pages/ShopSettings'
-
-import Register from '@/features/auth/pages/Register'
-import VerifyEmail from '@/features/auth/pages/VerifyEmail'
+const LoadingFallback = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div className="spinner"></div>
+    </div>
+)
 
 export default function AppRoutes() {
     return (
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/verify-email" element={<VerifyEmail />} />
-            <Route path="/" element={
-                <ProtectedRoute>
-                    <Insights />
-                </ProtectedRoute>
-            } />
-            <Route path="/orders" element={
-                <ProtectedRoute>
-                    <OrderList />
-                </ProtectedRoute>
-            } />
-            <Route path="/products" element={
-                <ProtectedRoute>
-                    <ProductList />
-                </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-                <ProtectedRoute>
-                    <UserList />
-                </ProtectedRoute>
-            } />
-            <Route path="/settings" element={
-                <ProtectedRoute>
-                    <ShopSettings />
-                </ProtectedRoute>
-            } />
-            <Route path="/logout" element={
-                <ProtectedRoute>
-                    <Logout />
-                </ProtectedRoute>
-            } />
-
-        </Routes>
+        <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/" element={
+                    <ProtectedRoute>
+                        <Insights />
+                    </ProtectedRoute>
+                } />
+                <Route path="/orders" element={
+                    <ProtectedRoute>
+                        <OrderList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/products" element={
+                    <ProtectedRoute>
+                        <ProductList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/users" element={
+                    <ProtectedRoute>
+                        <UserList />
+                    </ProtectedRoute>
+                } />
+                <Route path="/settings" element={
+                    <ProtectedRoute>
+                        <ShopSettings />
+                    </ProtectedRoute>
+                } />
+                <Route path="/logout" element={
+                    <ProtectedRoute>
+                        <Logout />
+                    </ProtectedRoute>
+                } />
+            </Routes>
+        </Suspense>
     )
 }

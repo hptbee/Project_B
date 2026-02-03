@@ -183,8 +183,8 @@ $topbar-height: 70px;
 
         .toggle-switch {
             position: relative;
-            width: 52px;
-            height: 28px;
+            width: 65px;
+            height: 35px;
             background: var(--bg-primary);
             border: 1px solid var(--border-glass);
             border-radius: var(--radius-full);
@@ -198,9 +198,9 @@ $topbar-height: 70px;
                 position: absolute;
                 top: 2px;
                 left: 2px;
-                width: 22px;
-                height: 22px;
-                font-size: var(--text-xs);
+                width: 29px;
+                height: 29px;
+                font-size: 16px;
                 background: var(--accent-amber);
                 border-radius: 50%;
                 transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -210,7 +210,7 @@ $topbar-height: 70px;
                 background: var(--accent-amber-glow);
 
                 .knob {
-                    transform: translateX(24px);
+                    transform: translateX(32px);
                 }
             }
         }

@@ -21,7 +21,15 @@ namespace TheCoffeeCream.Infrastructure
             // Database - Entity Framework Core
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly("TheCoffeeCream.Migrations")));
+                    b => 
+                    {
+                        b.MigrationsAssembly("TheCoffeeCream.Migrations");
+                        b.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null
+                        );
+                    }));
 
             // Repositories
             services.AddScoped<IUserRepository, EfUserRepository>();

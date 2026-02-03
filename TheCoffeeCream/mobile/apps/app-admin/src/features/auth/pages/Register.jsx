@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from '@thecoffeecream/ui-shared'
+import AuthToggles from '../components/AuthToggles'
 import logo from '@/assets/icons/logo.png'
 import './Register.scss'
 
@@ -30,6 +31,40 @@ export default function Register() {
         })
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setError('')
+
+        if (formData.adminPassword !== formData.confirmPassword) {
+            setError(t('auth.pass_mismatch'))
+            return
+        }
+
+        setLoading(true)
+        try {
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+            const response = await fetch(`${apiUrl}/Auth/register-shop`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message || t('common.error'))
+            }
+
+            navigate('/login', { state: { message: t('auth.register_success') } })
+        } catch (err) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const [plans, setPlans] = useState([])
     const [loadingPlans, setLoadingPlans] = useState(true)
 
@@ -39,24 +74,25 @@ export default function Register() {
 
     const fetchPlans = async () => {
         try {
-            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
-            // Need a public endpoint or use a specific one for registration if auth is required. 
-            // PlansController usually requires auth. 
-            // We might need to allow anonymous access to GetAllPlans or create a public endpoint.
-            // For now, assuming we can get them or hardcode fallback if fetch fails (security concern if PlanController is protected).
-            // Checking PlansController: [Authorize(Roles = "Super_Admin")] - This will BLOCK fetching.
-            // WE NEED TO MODIFY PLANS CONTROLLER or create a public one.
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+            const response = await fetch(`${apiUrl}/Plans`)
+            if (response.ok) {
+                const data = await response.json()
+                setPlans(data)
 
-            // Wait! The implementation plan didn't specify unprotecting the endpoint.
-            // But Register page is for anonymous users.
-            // I should request the user to allow public access to fetches plans OR hardcode the initial state logic for now if I can't change controller permissions easily without logic review.
-            // BUT, the goal is "IsDefault" from DB. So I MUST fetch from DB.
-            // I will assume I should make GetPlans public or create a public endpoint in AuthController/PlansController.
-            // Let's mistakenly try to fetch and if it fails, fallback? No, I should fix the controller first.
-
-            // RE-PLAN: Modify PlansController to AllowAnonymous for GetAllPlans OR create GetPublicPlans.
+                // Find default plan
+                const defaultPlan = data.find(p => p.isDefault)
+                if (defaultPlan) {
+                    setFormData(prev => ({ ...prev, planType: defaultPlan.code }))
+                } else if (data.length > 0) {
+                    // Fallback to first plan
+                    setFormData(prev => ({ ...prev, planType: data[0].code }))
+                }
+            }
         } catch (err) {
-            console.error(err)
+            console.error("Failed to fetch plans", err)
+        } finally {
+            setLoadingPlans(false)
         }
     }
 
@@ -76,6 +112,7 @@ export default function Register() {
                         </div>
                         <h1 className="brand-name">{t('auth.register_title')}</h1>
                         <p>{t('auth.register_subtitle')}</p>
+                        <AuthToggles />
                     </div>
 
                     <form onSubmit={handleSubmit} className="register-form">
@@ -119,16 +156,13 @@ export default function Register() {
                                 name="planType"
                                 value={formData.planType}
                                 onChange={handleChange}
-                                disabled={loadingPlans}
+                                disabled={true}
                             >
                                 {plans.map(plan => (
                                     <option key={plan.id} value={plan.code}>
                                         {plan.name} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(plan.price)}
                                     </option>
                                 ))}
-                                {plans.length === 0 && (
-                                    <option value="TRIAL_15_DAYS">Trial (15 Days)</option>
-                                )}
                             </select>
                         </div>
 

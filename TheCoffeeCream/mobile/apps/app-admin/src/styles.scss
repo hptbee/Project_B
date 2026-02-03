@@ -1,4 +1,7 @@
 @use '@ui-shared/styles/variables' as *;
+@use '../../ui-shared/src/styles/buttons.scss' as *;
+@use '../../ui-shared/src/styles/layout.scss' as *;
+@use '../../ui-shared/src/styles/animations.scss' as *;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
@@ -19,9 +22,6 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-@import '../../ui-shared/src/styles/buttons.scss';
-@import '../../ui-shared/src/styles/layout.scss';
-@import '../../ui-shared/src/styles/animations.scss';
 
 // App specific layout overrides
 .page {

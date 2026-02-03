@@ -1,3 +1,4 @@
+@use 'sass:color';
 $primary: #D4AF37;
 $bg-dark: #1A1A1A;
 $text-light: #F4F4F4;
@@ -49,7 +50,7 @@ $error: #FF6B6B;
     }
 
     .shape-3 {
-        background: mix($primary, #333);
+        background: color.mix($primary, #333);
         width: 200px;
         height: 200px;
         top: 40%;

@@ -51,6 +51,7 @@ export { default as TableSkeleton } from './components/ui/Skeleton/TableSkeleton
 export * from './components/ui/EmptyState/EmptyState';
 export * from './components/ui/DatePicker';
 export * from './components/ui/DateRangePicker';
+export * from './components/ui/Toggles';
 
 // Hooks
 export { default as useAutoSave } from './hooks/useAutoSave';

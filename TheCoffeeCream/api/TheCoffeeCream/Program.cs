@@ -71,6 +71,28 @@ builder.Services.AddApplication();
 
 var app = builder.Build();
 
+// Automatically apply migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        Console.WriteLine("[DB-INIT] Applying migrations...");
+        var context = services.GetRequiredService<TheCoffeeCream.Infrastructure.Data.ApplicationDbContext>();
+        if (context.Database.IsSqlServer())
+        {
+            context.Database.Migrate();
+            Console.WriteLine("[DB-INIT] Migrations applied successfully.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[DB-INIT] ERROR: {ex.Message}");
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
+
 // 0. Global Exception Handling
 app.UseMiddleware<TheCoffeeCream.Shared.Middleware.ExceptionMiddleware>();
 

@@ -39,8 +39,15 @@ namespace TheCoffeeCream.Api.Controllers
                  return BadRequest(ModelState);
              }
 
-             var result = await _authService.RegisterShopAsync(request);
-             return Ok(result);
+             try
+             {
+                 var result = await _authService.RegisterShopAsync(request);
+                 return Ok(result);
+             }
+             catch (Exception ex)
+             {
+                 return BadRequest(new { message = ex.Message });
+             }
         }
 
         [HttpGet("verify-email")]

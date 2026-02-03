@@ -113,6 +113,26 @@ namespace TheCoffeeCream.Application.Services
             DateTimeOffset expiry = now.AddDays(selectedPlan.DurationDays);
 
             // 2. Create Shop
+            // Check for existing shop code
+            var existingShopByCode = await _shopRepository.GetByCodeAsync(dto.ShopCode);
+            if (existingShopByCode != null)
+            {
+                 throw new Exception($"Shop Code '{dto.ShopCode}' is already taken.");
+            }
+
+            // Check for existing user with same email or username
+            var existingUserByEmail = await _userRepository.GetByEmailAsync(dto.AdminEmail);
+            if (existingUserByEmail != null)
+            {
+                 throw new Exception($"Email '{dto.AdminEmail}' is already taken.");
+            }
+
+            var existingUserByUsername = await _userRepository.GetByUsernameAsync(dto.AdminUsername);
+            if (existingUserByUsername != null)
+            {
+                 throw new Exception($"Username '{dto.AdminUsername}' is already taken.");
+            }
+
             var shop = new Shop
             {
                 Id = Guid.NewGuid().ToString(),

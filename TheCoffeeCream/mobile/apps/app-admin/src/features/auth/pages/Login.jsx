@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useAuth, LoginPage, useTranslation, useTheme, Icon } from '@thecoffeecream/ui-shared'
+import { useAuth, LoginPage, useTranslation } from '@thecoffeecream/ui-shared'
+import AuthToggles from '../components/AuthToggles'
 import logo from '@/assets/icons/logo.png'
 import './Login.scss'
 
@@ -42,45 +43,7 @@ export default function Login() {
                 {t('auth.have_account').replace('?', '')}? <Link to="/register">{t('register.register_btn')}</Link>
             </div>
 
-            <div className="auth-toggles">
-                <ThemeToggle />
-                <LanguageToggle />
-            </div>
+            <AuthToggles />
         </LoginPage>
-    )
-}
-
-function ThemeToggle() {
-    const { theme, toggleTheme } = useTheme()
-
-    // Safety check in case theme context is missing or loading
-    if (!toggleTheme) return null;
-
-    return (
-        <button
-            onClick={toggleTheme}
-            className="toggle-btn"
-        >
-            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={16} />
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-        </button>
-    )
-}
-
-function LanguageToggle() {
-    const { locale, setLocale } = useTranslation()
-
-    const toggleLanguage = () => {
-        setLocale(locale === 'vi' ? 'en' : 'vi')
-    }
-
-    return (
-        <button
-            onClick={toggleLanguage}
-            className="toggle-btn"
-        >
-            <span className="lang-badge">{locale === 'vi' ? 'EN' : 'VN'}</span>
-            {locale === 'vi' ? 'English' : 'Tiếng Việt'}
-        </button>
     )
 }

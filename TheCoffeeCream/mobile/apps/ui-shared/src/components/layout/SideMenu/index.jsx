@@ -6,6 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext'
 import { useTranslation } from '../../../contexts/LanguageContext'
 import { Icon } from '../../ui/Icon'
 import { ConfirmModal } from '../../ui/ConfirmModal'
+import { ThemeToggle, LanguageToggle } from '../../ui/Toggles'
 import './SideMenu.scss'
 
 export function SideMenu({
@@ -64,32 +65,18 @@ export function SideMenu({
                         </div>
                     </nav>
 
+                    import {ThemeToggle, LanguageToggle} from '../../ui/Toggles'
+
+                    // ... (in component)
                     <div className="side-controls">
                         <div className="control-box">
                             <span className="label">{t('nav.language')}</span>
-                            <div className="lang-switcher">
-                                <button
-                                    className={`lang-btn ${locale === 'vi' ? 'active' : ''}`}
-                                    onClick={() => setLocale('vi')}
-                                >
-                                    🇻🇳
-                                </button>
-                                <button
-                                    className={`lang-btn ${locale === 'en' ? 'active' : ''}`}
-                                    onClick={() => setLocale('en')}
-                                >
-                                    🇺🇸
-                                </button>
-                            </div>
+                            <LanguageToggle />
                         </div>
 
                         <div className="control-box">
                             <span className="label">{t('common.dark_mode')}</span>
-                            <div className={`toggle-switch ${isDarkMode ? 'active' : ''}`} onClick={toggleTheme}>
-                                <div className="knob">
-                                    {isDarkMode ? '🌙' : '☀️'}
-                                </div>
-                            </div>
+                            <ThemeToggle />
                         </div>
                     </div>
 
