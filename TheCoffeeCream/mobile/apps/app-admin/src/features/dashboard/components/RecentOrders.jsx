@@ -1,21 +1,24 @@
+import { useTranslation } from '@thecoffeecream/ui-shared'
 import './RecentOrders.scss'
 
 export default function RecentOrders({ orders }) {
+    const { t } = useTranslation()
+
     if (!orders || orders.length === 0) {
         return (
             <div className="recent-orders">
-                <h3 className="section-title">Đơn hàng gần đây</h3>
-                <div className="empty-state">Chưa có đơn hàng nào</div>
+                <h3 className="section-title">{t('dashboard.recent_orders')}</h3>
+                <div className="empty-state">{t('dashboard.no_orders')}</div>
             </div>
         )
     }
 
     const getStatusBadge = (status) => {
         const statusMap = {
-            'COMPLETED': { label: 'Hoàn thành', class: 'success' },
-            'PENDING': { label: 'Chờ xử lý', class: 'warning' },
-            'CANCELLED': { label: 'Đã hủy', class: 'danger' },
-            'DRAFT': { label: 'Nháp', class: 'secondary' }
+            'COMPLETED': { label: t('status.completed'), class: 'success' },
+            'PENDING': { label: t('status.pending'), class: 'warning' },
+            'CANCELLED': { label: t('status.cancelled'), class: 'danger' },
+            'DRAFT': { label: t('status.draft'), class: 'secondary' }
         }
         return statusMap[status] || { label: status, class: 'secondary' }
     }
@@ -34,7 +37,7 @@ export default function RecentOrders({ orders }) {
 
     return (
         <div className="recent-orders">
-            <h3 className="section-title">Đơn hàng gần đây</h3>
+            <h3 className="section-title">{t('dashboard.recent_orders')}</h3>
             <div className="orders-list">
                 {orders.map((order) => {
                     const badge = getStatusBadge(order.status)

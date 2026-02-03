@@ -82,7 +82,7 @@ export default function OrderDetail() {
                 <button className="back icon-btn" onClick={() => navigate(-1)} aria-label="Quay lại">
                     <IconChevron variant="bold" />
                 </button>
-                <h2>Chi tiết đơn hàng</h2>
+                <h2>{t('common.order_detail')}</h2>
             </header>
             <div className="page-content">{t('common.no_data')}</div>
         </div>
@@ -206,11 +206,11 @@ export default function OrderDetail() {
                 <div className="payment-modal-overlay" onClick={() => setShowEditPayment(false)}>
                     <div className="payment-modal-container" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <span className="modal-title">Cập nhật thanh toán</span>
+                            <span className="modal-title">{t('common.update_payment')}</span>
                         </div>
                         <div className="modal-body">
                             <div className="form-group">
-                                <label>Hình thức thanh toán</label>
+                                <label>{t('common.payment_method')}</label>
                                 <select
                                     value={editMethod}
                                     onChange={e => {
@@ -227,16 +227,16 @@ export default function OrderDetail() {
                                         // For COMBINED, keep existing or let user type
                                     }}
                                 >
-                                    <option value="CASH">Tiền mặt</option>
-                                    <option value="TRANSFER">Chuyển khoản</option>
-                                    <option value="COMBINED">Kết hợp</option>
+                                    <option value="CASH">{t('common.cash')}</option>
+                                    <option value="TRANSFER">{t('common.transfer')}</option>
+                                    <option value="COMBINED">{t('common.mixed')}</option>
                                 </select>
                             </div>
 
                             {editMethod === 'COMBINED' && (
                                 <>
                                     <div className="form-group">
-                                        <label>Tiền mặt</label>
+                                        <label>{t('common.cash')}</label>
                                         <input
                                             type="number"
                                             value={editCash}
@@ -251,7 +251,7 @@ export default function OrderDetail() {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label>Chuyển khoản</label>
+                                        <label>{t('common.transfer')}</label>
                                         <input
                                             type="number"
                                             value={editTransfer}

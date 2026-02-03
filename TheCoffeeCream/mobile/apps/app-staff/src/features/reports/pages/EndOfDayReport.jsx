@@ -211,7 +211,7 @@ export default function EndOfDayReport() {
                     {selectedTab === 'products' && (
                         <div className="report-container">
                             {loadingProducts ? (
-                                <div className="report-status-msg">Đang tải...</div>
+                                <div className="report-status-msg">{t('common.loading')}</div>
                             ) : (
                                 <div className="product-sales-list">
                                     <div className="product-sales-header">

@@ -275,15 +275,16 @@ CREATE TABLE "Plan" (
     "Price" DECIMAL(18,2),
     "Description" TEXT,
     "IsActive" BOOLEAN,
+    "IsDefault" BOOLEAN DEFAULT FALSE,
     PRIMARY KEY ("Id")
 );
 
-INSERT INTO "Plan" ("Id", "Code", "Name", "DurationDays", "Price", "Description", "IsActive")
+INSERT INTO "Plan" ("Id", "Code", "Name", "DurationDays", "Price", "Description", "IsActive", "IsDefault")
 VALUES
-('1', 'TRIAL_15_DAYS', 'Trial (15 Days)', 15, 0, 'Free trial for new users', TRUE),
-('2', 'BASIC_30_DAYS', 'Basic (30 Days)', 30, 500000, 'Basic monthly subscription', TRUE),
-('3', 'PREMIUM_6_MONTHS', 'Premium (6 Months)', 180, 2500000, 'Premium half-year subscription', TRUE),
-('4', 'PREMIUM_1_YEAR', 'Premium (1 Year)', 365, 4500000, 'Premium annual subscription', TRUE);
+('1', 'TRIAL_15_DAYS', 'Trial (15 Days)', 15, 0, 'Free trial for new users', TRUE, TRUE),
+('2', 'BASIC_30_DAYS', 'Basic (30 Days)', 30, 500000, 'Basic monthly subscription', TRUE, FALSE),
+('3', 'PREMIUM_6_MONTHS', 'Premium (6 Months)', 180, 2500000, 'Premium half-year subscription', TRUE, FALSE),
+('4', 'PREMIUM_1_YEAR', 'Premium (1 Year)', 365, 4500000, 'Premium annual subscription', TRUE, FALSE);
 
 
 -- Relationships

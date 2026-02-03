@@ -34,7 +34,7 @@ export default function SideMenu() {
             cacheService.set(CACHE_KEYS.ORDERS, orders)
             cacheService.set(CACHE_KEYS.REPORT, report)
 
-            showToast('Đã đồng bộ dữ liệu (Menu, Đơn hàng, Báo cáo)!')
+            showToast(t('modal.sync_all_success'))
         } catch (error) {
             console.error('Sync error:', error)
             showToast(t('modal.sync_error') + ': ' + (error.message || 'Unknown error'))

@@ -16,13 +16,17 @@ namespace TheCoffeeCream.Application.Services
         private readonly IShopRepository _shopRepository;
         private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
+        private readonly IPlanRepository _planRepository;
+        private readonly ISubscriptionHistoryRepository _subscriptionHistoryRepository;
 
-        public AuthService(IUserRepository userRepository, IShopRepository shopRepository, IEmailService emailService, ITokenService tokenService)
+        public AuthService(IUserRepository userRepository, IShopRepository shopRepository, IEmailService emailService, ITokenService tokenService, IPlanRepository planRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository)
         {
             _userRepository = userRepository;
             _shopRepository = shopRepository;
             _emailService = emailService;
             _tokenService = tokenService;
+            _planRepository = planRepository;
+            _subscriptionHistoryRepository = subscriptionHistoryRepository;
         }
 
         public async Task<LoginResult?> LoginAsync(string username, string password)
@@ -82,18 +86,31 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<ShopDto> RegisterShopAsync(RegisterShopDto dto)
         {
-            // 1. Calculate Expiry Date
             var now = DateTimeOffset.UtcNow;
-            DateTimeOffset expiry = now;
             
-            switch (dto.PlanType)
+            // 1. Get Plan Details (Fetch from DB to support IsDefault logic)
+            var plans = await _planRepository.GetAllAsync();
+            var selectedPlan = plans.FirstOrDefault(p => p.Code == dto.PlanType.ToString());
+
+            if (selectedPlan == null)
             {
-                case SubscriptionPlanType.TRIAL_15_DAYS: expiry = now.AddDays(15); break;
-                case SubscriptionPlanType.BASIC_30_DAYS: expiry = now.AddDays(30); break;
-                case SubscriptionPlanType.PREMIUM_6_MONTHS: expiry = now.AddMonths(6); break;
-                case SubscriptionPlanType.PREMIUM_1_YEAR: expiry = now.AddYears(1); break;
-                default: expiry = now.AddDays(15); break;
+                // Fallback to default plan
+                selectedPlan = plans.FirstOrDefault(p => p.IsDefault);
+                
+                // Absolute fallback if no default set
+                if (selectedPlan == null)
+                {
+                    selectedPlan = new Plan 
+                    { 
+                        Code = SubscriptionPlanType.TRIAL_15_DAYS.ToString(),
+                        Name = "Trial (15 Days)",
+                        DurationDays = 15,
+                        Price = 0
+                    };
+                }
             }
+
+            DateTimeOffset expiry = now.AddDays(selectedPlan.DurationDays);
 
             // 2. Create Shop
             var shop = new Shop
@@ -105,7 +122,7 @@ namespace TheCoffeeCream.Application.Services
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.ShopEmail,
                 TaxCode = dto.TaxCode,
-                SubscriptionPlan = dto.PlanType.ToString(),
+                SubscriptionPlan = selectedPlan.Code, // Use code from plan entity
                 StartDate = now,
                 ExpiryDate = expiry,
                 IsActive = true,
@@ -113,6 +130,22 @@ namespace TheCoffeeCream.Application.Services
             };
 
             await _shopRepository.CreateAsync(shop);
+
+            // 2.1 Create Subscription History
+            var subscriptionHistory = new SubscriptionHistory
+            {
+                Id = Guid.NewGuid().ToString(),
+                ShopId = shop.Id,
+                PlanName = selectedPlan.Name,
+                DurationDays = selectedPlan.DurationDays,
+                PurchaseDate = now,
+                NewExpiryDate = expiry,
+                Amount = selectedPlan.Price,
+                Status = "SUCCESS",
+                ShopName = shop.Name
+            };
+
+            await _subscriptionHistoryRepository.CreateAsync(subscriptionHistory);
 
             // 3. Create Admin User
             var adminUser = new User

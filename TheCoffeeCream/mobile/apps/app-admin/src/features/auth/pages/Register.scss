@@ -1,21 +1,16 @@
-$primary: #D4AF37; // Gold
-$secondary: #2C2C2C; // Dark Gray
-$bg-dark: #1A1A1A; // Almost Black
-$text-light: #F4F4F4;
-$text-muted: #A0A0A0;
-$error: #FF6B6B;
-$success: #4CAF50;
+@use '../../../../../ui-shared/src/styles/_tokens.scss' as *;
 
 .register-page {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: $bg-dark;
+    background-color: var(--bg-primary);
     position: relative;
     overflow: hidden;
     padding: 20px;
-    color: $text-light;
+    font-family: var(--font-main);
+    color: var(--text-primary);
 }
 
 .bg-shapes {
@@ -35,7 +30,7 @@ $success: #4CAF50;
     }
 
     .shape-1 {
-        background: $primary;
+        background: var(--accent-amber);
         width: 400px;
         height: 400px;
         top: -100px;
@@ -43,7 +38,7 @@ $success: #4CAF50;
     }
 
     .shape-2 {
-        background: lighten($secondary, 10%);
+        background: var(--accent-red);
         width: 300px;
         height: 300px;
         bottom: -50px;
@@ -51,7 +46,7 @@ $success: #4CAF50;
     }
 
     .shape-3 {
-        background: mix($primary, $secondary);
+        background: var(--accent-blue);
         width: 200px;
         height: 200px;
         top: 40%;
@@ -67,12 +62,12 @@ $success: #4CAF50;
 }
 
 .register-card {
-    background: rgba(30, 30, 30, 0.95);
-    border-radius: 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
     padding: 40px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    box-shadow: var(--glass-shadow);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: var(--glass-blur);
 }
 
 .register-header {
@@ -82,41 +77,46 @@ $success: #4CAF50;
     .brand-logo-wrapper {
         width: 80px;
         height: 80px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--bg-logo);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 15px;
-        border: 2px solid $primary;
+        border: 2px solid var(--accent-amber);
     }
 
     .brand-logo {
-        width: 100px;
+        width: 110%;
         height: auto;
-        filter: brightness(0) invert(1); // Make logo white
+        filter: var(--logo-filter);
     }
 
     .brand-name {
-        font-family: 'Playfair Display', serif;
-        color: $primary;
+        font-family: var(--font-heading);
+        color: var(--text-primary);
         font-size: 2rem;
         margin: 0 0 5px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
     p {
-        color: $text-muted;
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 }
 
 .register-form {
     .section-title {
-        color: $primary;
+        color: var(--accent-amber);
         font-size: 1.1rem;
         margin: 25px 0 15px;
-        border-bottom: 1px solid rgba($primary, 0.2);
+        border-bottom: 1px solid var(--border-glass);
         padding-bottom: 5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
 
         &:first-of-type {
             margin-top: 0;
@@ -142,53 +142,58 @@ $success: #4CAF50;
 
         label {
             display: block;
-            color: $text-light;
+            color: var(--text-secondary);
             margin-bottom: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         input,
         select {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: $text-light;
+            padding: 14px 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
             font-size: 1rem;
             transition: all 0.3s ease;
 
             &:focus {
                 outline: none;
-                border-color: $primary;
-                box-shadow: 0 0 0 2px rgba($primary, 0.2);
+                border-color: var(--accent-amber);
+                box-shadow: 0 0 0 4px var(--accent-amber-glow);
+                background: var(--bg-glass-active);
             }
 
             &::placeholder {
-                color: rgba($text-muted, 0.5);
+                color: var(--text-muted);
             }
         }
     }
 
     .register-btn {
         width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, $primary, darken($primary, 10%));
+        padding: 16px;
+        background: var(--accent-amber);
         border: none;
-        border-radius: 10px;
-        color: #000;
-        font-weight: 700;
+        border-radius: var(--radius-lg);
+        color: var(--text-on-accent);
+        font-weight: 800;
         font-size: 1rem;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: var(--trans-bounce);
         margin-top: 10px;
         position: relative;
         overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
 
         &:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba($primary, 0.4);
+            box-shadow: 0 10px 20px var(--accent-amber-glow);
         }
 
         &:disabled {
@@ -199,34 +204,36 @@ $success: #4CAF50;
         .spinner {
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top-color: #000;
+            border-top-color: var(--text-on-accent);
             animation: spin 1s ease-in-out infinite;
             margin: 0 auto;
         }
     }
 
     .error-alert {
-        color: $error;
-        background: rgba($error, 0.1);
-        padding: 10px;
-        border-radius: 5px;
+        color: var(--danger-color);
+        background: var(--danger-bg);
+        border: 1px solid var(--border-glass);
+        padding: 12px;
+        border-radius: var(--radius-md);
         margin-bottom: 15px;
         text-align: center;
+        font-weight: 600;
     }
 }
 
 .register-footer {
     text-align: center;
     margin-top: 25px;
-    color: $text-muted;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 
     a {
-        color: $primary;
+        color: var(--accent-amber);
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
 
         &:hover {
             text-decoration: underline;

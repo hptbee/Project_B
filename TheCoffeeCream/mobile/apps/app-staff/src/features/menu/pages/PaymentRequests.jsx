@@ -3,9 +3,9 @@ export default function PaymentRequests() {
     return (
         <div className="page">
             <header className="page-header">
-                <h2>Yêu cầu thanh toán</h2>
+                <h2>{t('nav.payment_requests')}</h2>
             </header>
-            <div className="page-content">Yêu cầu thanh toán (mock)</div>
+            <div className="page-content">{t('nav.payment_requests')} (mock)</div>
         </div>
     )
 }

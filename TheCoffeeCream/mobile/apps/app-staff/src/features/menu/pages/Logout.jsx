@@ -15,7 +15,7 @@ export default function Logout() {
     return (
         <div className="page">
             <div className="page-content content-center">
-                <p>Đang đăng xuất...</p>
+                <p>{t('nav.logout_processing')}</p>
             </div>
         </div>
     )

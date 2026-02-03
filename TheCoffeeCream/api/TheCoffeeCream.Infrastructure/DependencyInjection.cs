@@ -29,6 +29,7 @@ namespace TheCoffeeCream.Infrastructure
             services.AddScoped<IProductRepository, EfProductRepository>();
             services.AddScoped<IShopRepository, EfShopRepository>();
             services.AddScoped<IPlanRepository, EfPlanRepository>();
+            services.AddScoped<ISubscriptionHistoryRepository, EfSubscriptionHistoryRepository>();
 
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ITokenService, JwtTokenService>();

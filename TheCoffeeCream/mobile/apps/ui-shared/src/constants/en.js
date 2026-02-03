@@ -15,7 +15,17 @@ export const en = {
         product_qty: 'Product (Qty)',
         topping: 'Topping',
         history: 'History',
-        language: 'Language'
+        history: 'History',
+        language: 'Language',
+        terms: 'Terms',
+        sync_data: 'Sync Data',
+        support: 'Support',
+        settings: 'Settings',
+        receipts: 'Receipts',
+        payment_requests: 'Payment Requests',
+        kitchen_notifs: 'Kitchen Notifications',
+        help: 'Help',
+        logout_processing: 'Logging out...'
     },
     app: {
         exit_title: 'Exit App',
@@ -43,6 +53,7 @@ export const en = {
         empty: 'Available',
         paid: 'Completed',
         pending: 'Pending',
+        cancelled: 'Cancelled',
         removed: 'Removed',
         draft: 'Draft',
         occupied: 'Occupied'
@@ -98,10 +109,37 @@ export const en = {
         logout_confirm: 'Are you sure you want to end your session?',
         role_admin: 'Store Manager',
         role_staff: 'Cashier',
-        invalid_creds: 'Invalid username or password.'
+        invalid_creds: 'Invalid username or password.',
+        register_success: 'Registration successful! Please check your email to verify your account.',
+        pass_mismatch: 'Passwords do not match',
+        register_title: 'Create Account',
+        register_subtitle: 'Register your shop and start managing',
+        shop_info: 'Shop Information',
+        admin_account: 'Admin Account',
+        have_account: 'Already have an account?',
+        confirm_password: 'Confirm Password'
     },
+    register: {
+        shop_code: 'Shop Code',
+        shop_name: 'Shop Name',
+        address: 'Address',
+        phone: 'Phone Number',
+        email: 'Shop Email',
+        tax_code: 'Tax Code',
+        plan: 'Subscription Plan',
+        enter_shop_code: 'Enter shop code',
+        enter_shop_name: 'Enter shop name',
+        enter_address: 'Enter address',
+        enter_phone: 'Enter phone',
+        enter_email: 'Enter shop email',
+        enter_tax: 'Enter tax code',
+        enter_username: 'Enter username',
+        register_btn: 'Register'
+    },
+
     common: {
-        loading: 'Loading data...',
+        loading: 'Loading...',
+        loading_data: 'Loading data...',
         processing: 'Processing...',
         error: 'An error occurred',
         no_data: 'No data found',
@@ -112,10 +150,12 @@ export const en = {
         action: 'Actions',
         note: 'Note',
         payment_method: 'Payment Method',
+        update_payment: 'Update Payment',
         cash: 'Cash',
         transfer: 'Transfer',
         mixed: 'Mixed',
         update: 'Update',
+        save_changes: 'Save Changes',
         create: 'Create',
         receipt_title: 'Sales Receipt',
         code: 'Code',
@@ -185,6 +225,7 @@ export const en = {
         load_error: 'Failed to load data',
         action_failed: 'Action failed',
         sync_success: 'Menu synced successfully!',
+        sync_all_success: 'Data synced (Menu, Orders, Reports)!',
         sync_error: 'Sync error',
         confirm_status_title: 'Confirm Status Change',
         confirm_status_msg: 'Are you sure you want to change the status of {name}?',
@@ -228,5 +269,22 @@ export const en = {
         active: 'Active',
         enable: 'Enable',
         locked: 'Locked'
+    },
+    settings: {
+        shop_settings: 'Shop Settings',
+        shop_settings_desc: 'Manage your shop information and tax configurations',
+        general_info: 'General Information',
+        tax_fees: 'Tax & Fees',
+        tax_fees_desc: 'These rates will be applied to all future orders automatically.',
+        logo_url: 'Logo URL',
+        vat_rate: 'VAT Rate (%)',
+        surcharge_rate: 'Surcharge Rate (%)',
+        service_charge: 'Service Charge (%)'
+    },
+    dashboard: {
+        revenue_7_days: 'Revenue last 7 days',
+        recent_orders: 'Recent Orders',
+        no_orders: 'No orders yet',
+        title: 'Dashboard'
     }
 }

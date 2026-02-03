@@ -1,15 +1,18 @@
+import { useTranslation } from '@thecoffeecream/ui-shared'
 import './RevenueChart.scss'
 
 export default function RevenueChart({ data }) {
+    const { t } = useTranslation()
+
     if (!data || data.length === 0) {
-        return <div className="revenue-chart-empty">Không có dữ liệu</div>
+        return <div className="revenue-chart-empty">{t('common.no_data')}</div>
     }
 
     const maxRevenue = Math.max(...data.map(d => d.revenue))
 
     return (
         <div className="revenue-chart">
-            <h3 className="chart-title">Doanh thu 7 ngày qua</h3>
+            <h3 className="chart-title">{t('dashboard.revenue_7_days')}</h3>
             <div className="chart-container">
                 {data.map((item, index) => {
                     const height = maxRevenue > 0 ? (item.revenue / maxRevenue) * 100 : 0

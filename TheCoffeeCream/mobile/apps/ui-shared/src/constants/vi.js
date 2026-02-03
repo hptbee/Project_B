@@ -15,7 +15,17 @@ export const vi = {
         product_qty: 'Sản phẩm (Ly)',
         topping: 'Topping',
         history: 'Lịch sử',
-        language: 'Ngôn ngữ'
+        history: 'Lịch sử',
+        language: 'Ngôn ngữ',
+        terms: 'Điều khoản',
+        sync_data: 'Đồng bộ dữ liệu',
+        support: 'Hỗ trợ',
+        settings: 'Thiết lập',
+        receipts: 'Phiếu thu',
+        payment_requests: 'Yêu cầu thanh toán',
+        kitchen_notifs: 'Thông báo bếp',
+        help: 'Hướng dẫn sử dụng',
+        logout_processing: 'Đang đăng xuất...'
     },
     app: {
         exit_title: 'Thoát ứng dụng',
@@ -43,6 +53,7 @@ export const vi = {
         empty: 'Bàn trống',
         paid: 'Đã hoàn thành',
         pending: 'Đang chờ',
+        cancelled: 'Đã hủy',
         removed: 'Đã xóa',
         draft: 'Bản nháp',
         occupied: 'Có khách'
@@ -98,10 +109,37 @@ export const vi = {
         logout_confirm: 'Bạn có chắc chắn muốn kết thúc phiên làm việc?',
         role_admin: 'Quản lý',
         role_staff: 'Nhân viên',
-        invalid_creds: 'Sai tài khoản hoặc mật khẩu.'
+        invalid_creds: 'Sai tài khoản hoặc mật khẩu.',
+        register_success: 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.',
+        pass_mismatch: 'Mật khẩu không khớp',
+        register_title: 'Tạo tài khoản',
+        register_subtitle: 'Đăng ký cửa hàng của bạn và bắt đầu quản lý',
+        shop_info: 'Thông tin cửa hàng',
+        admin_account: 'Tài khoản quản trị',
+        have_account: 'Đã có tài khoản?',
+        confirm_password: 'Xác nhận mật khẩu'
     },
+    register: {
+        shop_code: 'Mã cửa hàng',
+        shop_name: 'Tên cửa hàng',
+        address: 'Địa chỉ',
+        phone: 'Số điện thoại',
+        email: 'Email liên hệ',
+        tax_code: 'Mã số thuế',
+        plan: 'Gói đăng ký',
+        enter_shop_code: 'Nhập mã cửa hàng',
+        enter_shop_name: 'Nhập tên cửa hàng',
+        enter_address: 'Nhập địa chỉ',
+        enter_phone: 'Nhập số điện thoại',
+        enter_email: 'Nhập email liên hệ',
+        enter_tax: 'Nhập mã số thuế',
+        enter_username: 'Nhập tên đăng nhập',
+        register_btn: 'Đăng ký'
+    },
+
     common: {
-        loading: 'Đang tải dữ liệu...',
+        loading: 'Đang tải...',
+        loading_data: 'Đang tải dữ liệu...',
         processing: 'Đang xử lý...',
         error: 'Đã có lỗi xảy ra',
         no_data: 'Không tìm thấy dữ liệu',
@@ -112,10 +150,12 @@ export const vi = {
         action: 'Thao tác',
         note: 'Ghi chú',
         payment_method: 'Phương thức thanh toán',
+        update_payment: 'Cập nhật thanh toán',
         cash: 'Tiền mặt',
         transfer: 'Chuyển khoản',
         mixed: 'Hỗn hợp',
         update: 'Cập nhật',
+        save_changes: 'Lưu thay đổi',
         create: 'Tạo mới',
         receipt_title: 'Hóa đơn bán hàng',
         code: 'Mã đơn',
@@ -188,6 +228,7 @@ export const vi = {
         load_error: 'Không thể tải dữ liệu',
         action_failed: 'Thao tác thất bại',
         sync_success: 'Đã đồng bộ thực đơn mới!',
+        sync_all_success: 'Đã đồng bộ dữ liệu (Menu, Đơn hàng, Báo cáo)!',
         sync_error: 'Lỗi đồng bộ',
         confirm_status_title: 'Xác nhận thay đổi trạng thái',
         confirm_status_msg: 'Bạn có chắc chắn muốn thay đổi trạng thái của {name} không?',
@@ -231,5 +272,22 @@ export const vi = {
         active: 'Hoạt động',
         enable: 'Kích hoạt',
         locked: 'Đã khóa'
+    },
+    settings: {
+        shop_settings: 'Cài đặt cửa hàng',
+        shop_settings_desc: 'Quản lý thông tin cửa hàng và cấu hình thuế',
+        general_info: 'Thông tin chung',
+        tax_fees: 'Thuế & Phí',
+        tax_fees_desc: 'Các tỷ lệ này sẽ được áp dụng tự động cho tất cả đơn hàng mới.',
+        logo_url: 'URL Logo',
+        vat_rate: 'Thuế VAT (%)',
+        surcharge_rate: 'Phụ thu (%)',
+        service_charge: 'Phí phục vụ (%)'
+    },
+    dashboard: {
+        revenue_7_days: 'Doanh thu 7 ngày qua',
+        recent_orders: 'Đơn hàng gần đây',
+        no_orders: 'Chưa có đơn hàng nào',
+        title: 'Bảng điều khiển'
     }
 }

@@ -40,7 +40,7 @@ export function LoginPage({
     };
 
     return (
-        <div className="login-page" data-theme="dark">
+        <div className="login-page">
             <div className="login-container">
                 <div className="login-card">
                     <div className="login-header">

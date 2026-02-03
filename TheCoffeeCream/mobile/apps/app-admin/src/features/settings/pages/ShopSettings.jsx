@@ -5,10 +5,12 @@ import {
     LoadingSpinner,
     PageHeaderSkeleton,
     API_CONFIG,
-    Icon
+    Icon,
+    useTranslation
 } from '@thecoffeecream/ui-shared'
 
 export default function ShopSettings() {
+    const { t } = useTranslation()
     const [shop, setShop] = useState(null)
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -74,9 +76,9 @@ export default function ShopSettings() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        Shop Settings
+                        {t('settings.shop_settings')}
                     </h1>
-                    <p className="text-base-content/60 mt-1">Manage your shop information and tax configurations</p>
+                    <p className="text-base-content/60 mt-1">{t('settings.shop_settings_desc')}</p>
                 </div>
                 <button
                     onClick={handleSubmit}
@@ -84,7 +86,7 @@ export default function ShopSettings() {
                     className="btn btn-primary gap-2"
                 >
                     {saving ? <LoadingSpinner size="sm" /> : <Icon name="save" />}
-                    Save Changes
+                    {t('common.save_changes')}
                 </button>
             </div>
 
@@ -93,13 +95,13 @@ export default function ShopSettings() {
                 <div className="card glass-card p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <span className="w-2 h-8 bg-primary rounded-full"></span>
-                        General Information
+                        {t('settings.general_info')}
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Shop Name</span>
+                                <span className="label-text">{t('register.shop_name')}</span>
                             </label>
                             <input
                                 type="text"
@@ -113,7 +115,7 @@ export default function ShopSettings() {
 
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Phone Number</span>
+                                <span className="label-text">{t('register.phone')}</span>
                             </label>
                             <input
                                 type="tel"
@@ -126,7 +128,7 @@ export default function ShopSettings() {
 
                         <div className="form-control md:col-span-2">
                             <label className="label">
-                                <span className="label-text">Address</span>
+                                <span className="label-text">{t('register.address')}</span>
                             </label>
                             <input
                                 type="text"
@@ -139,7 +141,7 @@ export default function ShopSettings() {
 
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Email</span>
+                                <span className="label-text">{t('register.email')}</span>
                             </label>
                             <input
                                 type="email"
@@ -152,7 +154,7 @@ export default function ShopSettings() {
 
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Tax Code</span>
+                                <span className="label-text">{t('register.tax_code')}</span>
                             </label>
                             <input
                                 type="text"
@@ -165,7 +167,7 @@ export default function ShopSettings() {
 
                         <div className="form-control md:col-span-2">
                             <label className="label">
-                                <span className="label-text">Logo URL</span>
+                                <span className="label-text">{t('settings.logo_url')}</span>
                             </label>
                             <input
                                 type="text"
@@ -183,18 +185,18 @@ export default function ShopSettings() {
                 <div className="card glass-card p-6">
                     <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                         <span className="w-2 h-8 bg-secondary rounded-full"></span>
-                        Tax & Fees
+                        {t('settings.tax_fees')}
                     </h2>
 
                     <div className="alert alert-info bg-info/10 text-info border-info/20 mb-6 font-medium text-sm">
                         <Icon name="info" className="text-lg" />
-                        <span>These rates will be applied to all future orders automatically.</span>
+                        <span>{t('settings.tax_fees_desc')}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">VAT Rate (%)</span>
+                                <span className="label-text">{t('settings.vat_rate')}</span>
                             </label>
                             <div className="relative">
                                 <input
@@ -213,7 +215,7 @@ export default function ShopSettings() {
 
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Surcharge Rate (%)</span>
+                                <span className="label-text">{t('settings.surcharge_rate')}</span>
                             </label>
                             <div className="relative">
                                 <input
@@ -232,7 +234,7 @@ export default function ShopSettings() {
 
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Service Charge (%)</span>
+                                <span className="label-text">{t('settings.service_charge')}</span>
                             </label>
                             <div className="relative">
                                 <input
