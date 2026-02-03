@@ -88,7 +88,7 @@ app.UseAuthorization();
 // 2. Health check before any middleware (allows monitoring without API key)
 app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // 3. API key middleware
 app.UseMiddleware<TheCoffeeCream.Shared.Middleware.ApiKeyMiddleware>();
