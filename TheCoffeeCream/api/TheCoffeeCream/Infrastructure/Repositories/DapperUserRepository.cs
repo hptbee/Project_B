@@ -18,8 +18,8 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task CreateAsync(User user)
         {
             var query = @"
-                INSERT INTO ""User"" (""Id"", ""email"", ""username"", ""PasswordHash"", ""Role"", ""IsActive"")
-                VALUES (@Id::text, @Email, @Username, @PasswordHash, @Role, @IsActive)
+                INSERT INTO [User] ([Id], [email], [username], [PasswordHash], [Role], [IsActive])
+                VALUES (@Id, @Email, @Username, @PasswordHash, @Role, @IsActive)
             ";
 
             using (var connection = _context.CreateConnection())
@@ -32,13 +32,13 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         {
             using (var connection = _context.CreateConnection())
             {
-                return await connection.QueryAsync<User>("SELECT * FROM \"User\"");
+                return await connection.QueryAsync<User>("SELECT * FROM [User]");
             }
         }
 
         public async Task<User?> GetByIdAsync(string id)
         {
-            var query = "SELECT * FROM \"User\" WHERE \"Id\" = @Id";
+            var query = "SELECT * FROM [User] WHERE [Id] = @Id";
             using (var connection = _context.CreateConnection())
             {
                 return await connection.QuerySingleOrDefaultAsync<User>(query, new { Id = id });
@@ -47,7 +47,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task<User?> GetByUsernameAsync(string username)
         {
-            var query = "SELECT * FROM \"User\" WHERE \"username\" = @Username"; 
+            var query = "SELECT * FROM [User] WHERE [username] = @Username"; 
             // Postgres case sensitivity check: 'username' column in init_db is lowercase? 
             // In init_db.sql: "username" TEXT. (Case sensitive if created with quotes). 
             // Correct.
@@ -59,7 +59,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task ToggleActiveAsync(string id)
         {
-            var query = "UPDATE \"User\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\" = @Id";
+            var query = "UPDATE [User] SET [IsActive] = [IsActive] ^ 1 WHERE [Id] = @Id";
             using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, new { Id = id });
@@ -69,14 +69,14 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task UpdateAsync(User user)
         {
             var query = @"
-                UPDATE ""User"" 
+                UPDATE [User] 
                 SET 
-                    ""email"" = @Email, 
-                    ""username"" = @Username, 
-                    ""PasswordHash"" = @PasswordHash, 
-                    ""Role"" = @Role, 
-                    ""IsActive"" = @IsActive 
-                WHERE ""Id"" = @Id::text
+                    [email] = @Email, 
+                    [username] = @Username, 
+                    [PasswordHash] = @PasswordHash, 
+                    [Role] = @Role, 
+                    [IsActive] = @IsActive 
+                WHERE [Id] = @Id
             ";
             using (var connection = _context.CreateConnection())
             {

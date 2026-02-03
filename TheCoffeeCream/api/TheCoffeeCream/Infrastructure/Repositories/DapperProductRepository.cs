@@ -18,8 +18,8 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
             var query = @"
-                SELECT * FROM ""Product"";
-                SELECT * FROM ""Category"";
+                SELECT * FROM [Product];
+                SELECT * FROM [Category];
             ";
 
             using (var connection = _context.CreateConnection())
@@ -52,16 +52,14 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         {
             using (var connection = _context.CreateConnection())
             {
-                return await connection.QueryAsync<Category>("SELECT * FROM \"Category\"");
+                return await connection.QueryAsync<Category>("SELECT * FROM [Category]");
             }
         }
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            var query = @"SELECT * FROM ""Product"" WHERE ""Id"" = @Id::text"; 
-            // Cast Guid param to text because column is TEXT but Dapper sends Guid as uuid/text depending on config
-            // Better to match types. DB is TEXT. Param is Guid. Dapper might send UUID type. 
-            // Explicit cast @Id::text is safest if DB column is TEXT.
+            var query = @"SELECT * FROM [Product] WHERE [Id] = @Id"; 
+            // Removed ::text cast, Dapper + SqlClient handles Guid correctly
 
             using (var connection = _context.CreateConnection())
             {
@@ -73,7 +71,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
                     if (product.CategoryId != Guid.Empty)
                     {
                         var category = await connection.QuerySingleOrDefaultAsync<Category>(
-                            "SELECT * FROM \"Category\" WHERE \"Id\" = @Id::text", new { Id = product.CategoryId });
+                            "SELECT * FROM [Category] WHERE [Id] = @Id", new { Id = product.CategoryId });
                         product.Category = category;
                     }
 
@@ -88,10 +86,10 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task CreateAsync(Product product)
         {
             var query = @"
-                INSERT INTO ""Product"" 
-                (""Id"", ""CategoryId"", ""Code"", ""Name"", ""Cost"", ""Price"", ""ImageUrl"", ""IsActive"", ""IsTopping"", ""ToppingMapping"")
+                INSERT INTO [Product] 
+                ([Id], [CategoryId], [Code], [Name], [Cost], [Price], [ImageUrl], [IsActive], [IsTopping], [ToppingMapping])
                 VALUES 
-                (@Id::text, @CategoryId::text, @Code, @Name, @Cost, @Price, @ImageUrl, @IsActive, @IsTopping, @ToppingMapping)
+                (@Id, @CategoryId, @Code, @Name, @Cost, @Price, @ImageUrl, @IsActive, @IsTopping, @ToppingMapping)
             ";
 
             using (var connection = _context.CreateConnection())
@@ -103,18 +101,18 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task UpdateAsync(Product product)
         {
             var query = @"
-                UPDATE ""Product""
+                UPDATE [Product]
                 SET 
-                    ""CategoryId"" = @CategoryId::text,
-                    ""Code"" = @Code,
-                    ""Name"" = @Name,
-                    ""Cost"" = @Cost,
-                    ""Price"" = @Price,
-                    ""ImageUrl"" = @ImageUrl,
-                    ""IsActive"" = @IsActive,
-                    ""IsTopping"" = @IsTopping,
-                    ""ToppingMapping"" = @ToppingMapping
-                WHERE ""Id"" = @Id::text
+                    [CategoryId] = @CategoryId,
+                    [Code] = @Code,
+                    [Name] = @Name,
+                    [Cost] = @Cost,
+                    [Price] = @Price,
+                    [ImageUrl] = @ImageUrl,
+                    [IsActive] = @IsActive,
+                    [IsTopping] = @IsTopping,
+                    [ToppingMapping] = @ToppingMapping
+                WHERE [Id] = @Id
             ";
 
             using (var connection = _context.CreateConnection())
@@ -125,7 +123,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task ToggleActiveAsync(Guid id)
         {
-            var query = @"UPDATE ""Product"" SET ""IsActive"" = NOT ""IsActive"" WHERE ""Id"" = @Id::text";
+            var query = @"UPDATE [Product] SET [IsActive] = [IsActive] ^ 1 WHERE [Id] = @Id";
             using (var connection = _context.CreateConnection())
             {
                 await connection.ExecuteAsync(query, new { Id = id });
@@ -165,8 +163,8 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
             var idGuids = product.ToppingMapping.Split(';', StringSplitOptions.RemoveEmptyEntries);
             
-            var query = "SELECT * FROM \"Product\" WHERE \"Id\" = ANY(@Ids::text[])"; 
-            // Using Postgres array search
+            var query = "SELECT * FROM [Product] WHERE [Id] IN @Ids"; 
+            // Using Dapper IN clause support
 
             var toppings = await connection.QueryAsync<Product>(query, new { Ids = idGuids });
             

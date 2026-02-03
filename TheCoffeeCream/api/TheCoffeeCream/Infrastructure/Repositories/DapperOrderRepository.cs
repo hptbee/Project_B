@@ -34,10 +34,10 @@ namespace TheCoffeeCream.Infrastructure.Repositories
                         await connection.ExecuteAsync(orderQuery, order, transaction: transaction);
 
                         var itemQuery = @"
-                            INSERT INTO ""OrderItem""
-                            (""Id"", ""OrderId"", ""ProductId"", ""Name"", ""UnitPrice"", ""Quantity"", ""DiscountType"", ""DiscountValue"", ""DiscountAmount"", ""Total"", ""Note"", ""IsActive"")
+                            INSERT INTO [OrderItem]
+                            ([Id], [OrderId], [ProductId], [Name], [UnitPrice], [Quantity], [DiscountType], [DiscountValue], [DiscountAmount], [Total], [Note], [IsActive])
                             VALUES
-                            (@Id, @OrderId::text, @ProductId::text, @Name, @UnitPrice, @Quantity, @DiscountType, @DiscountValue, @DiscountAmount, @Total, @Note, @IsActive)
+                            (@Id, @OrderId, @ProductId, @Name, @UnitPrice, @Quantity, @DiscountType, @DiscountValue, @DiscountAmount, @Total, @Note, @IsActive)
                         ";
 
                         foreach (var item in order.Items)
@@ -63,7 +63,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task<bool> ExistsByClientOrderIdAsync(Guid clientOrderId)
         {
-            var query = "SELECT COUNT(1) FROM \"Order\" WHERE \"ClientOrderId\" = @ClientOrderId::text";
+            var query = "SELECT COUNT(1) FROM [Order] WHERE [ClientOrderId] = @ClientOrderId";
             using (var connection = _context.CreateConnection())
             {
                 return await connection.ExecuteScalarAsync<bool>(query, new { ClientOrderId = clientOrderId });
@@ -72,22 +72,22 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId)
         {
-            var query = @"SELECT * FROM ""Order"" WHERE ""ClientOrderId"" = @ClientOrderId::text";
+            var query = @"SELECT * FROM [Order] WHERE [ClientOrderId] = @ClientOrderId";
             return await GetOrderWithItemsAsync(query, new { ClientOrderId = clientOrderId });
         }
 
         public async Task<Order?> GetByIdAsync(Guid id)
         {
-             var query = @"SELECT * FROM ""Order"" WHERE ""Id"" = @Id::text";
+             var query = @"SELECT * FROM [Order] WHERE [Id] = @Id";
              return await GetOrderWithItemsAsync(query, new { Id = id });
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
         {
             var query = @"
-                SELECT * FROM ""Order"" 
-                WHERE ""CreatedAt"" >= @StartDate AND ""CreatedAt"" <= @EndDate
-                ORDER BY ""CreatedAt"" DESC
+                SELECT * FROM [Order] 
+                WHERE [CreatedAt] >= @StartDate AND [CreatedAt] <= @EndDate
+                ORDER BY [CreatedAt] DESC
             ";
             
             using (var connection = _context.CreateConnection())
@@ -98,7 +98,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
                 if (orderList.Any())
                 {
                     var orderIds = orderList.Select(o => o.Id.ToString()).ToArray();
-                    var itemsQuery = "SELECT * FROM \"OrderItem\" WHERE \"OrderId\" = ANY(@OrderIds)";
+                    var itemsQuery = "SELECT * FROM [OrderItem] WHERE [OrderId] IN @OrderIds";
                     
                     var allItems = await connection.QueryAsync<OrderItem>(itemsQuery, new { OrderIds = orderIds });
                     var itemsList = allItems.ToList();
@@ -116,7 +116,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
 
         public async Task ToggleActiveAsync(Guid id)
         {
-             var query = @"UPDATE ""Order"" SET ""IsActive"" = NOT ""IsActive"" WHERE ""Id"" = @Id::text";
+             var query = @"UPDATE [Order] SET [IsActive] = [IsActive] ^ 1 WHERE [Id] = @Id";
              using (var connection = _context.CreateConnection())
              {
                  await connection.ExecuteAsync(query, new { Id = id });
@@ -126,20 +126,20 @@ namespace TheCoffeeCream.Infrastructure.Repositories
         public async Task UpdateAsync(Order order)
         {
              var query = @"
-                UPDATE ""Order""
+                UPDATE [Order]
                 SET 
-                    ""ClientOrderId"" = @ClientOrderId::text,
-                    ""OrderType"" = @OrderType, 
-                    ""TableNumber"" = @TableNumber,
-                    ""PaymentMethod"" = @PaymentMethod,
-                    ""CashAmount"" = @CashAmount,
-                    ""TransferAmount"" = @TransferAmount,
-                    ""DiscountType"" = @DiscountType,
-                    ""DiscountValue"" = @DiscountValue,
-                    ""Status"" = @Status,
-                    ""Note"" = @Note,
-                    ""IsActive"" = @IsActive
-                WHERE ""Id"" = @Id::text
+                    [ClientOrderId] = @ClientOrderId,
+                    [OrderType] = @OrderType, 
+                    [TableNumber] = @TableNumber,
+                    [PaymentMethod] = @PaymentMethod,
+                    [CashAmount] = @CashAmount,
+                    [TransferAmount] = @TransferAmount,
+                    [DiscountType] = @DiscountType,
+                    [DiscountValue] = @DiscountValue,
+                    [Status] = @Status,
+                    [Note] = @Note,
+                    [IsActive] = @IsActive
+                WHERE [Id] = @Id
             ";
 
             using (var connection = _context.CreateConnection())
@@ -155,7 +155,7 @@ namespace TheCoffeeCream.Infrastructure.Repositories
                 var order = await connection.QuerySingleOrDefaultAsync<Order>(sql, param);
                 if (order != null)
                 {
-                     var itemsQuery = "SELECT * FROM \"OrderItem\" WHERE \"OrderId\" = @OrderId::text";
+                     var itemsQuery = "SELECT * FROM [OrderItem] WHERE [OrderId] = @OrderId";
                      var items = await connection.QueryAsync<OrderItem>(itemsQuery, new { OrderId = order.Id });
                      SetOrderItems(order, items);
                 }

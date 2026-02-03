@@ -1,5 +1,5 @@
 using System.Data;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace TheCoffeeCream.Infrastructure.Data
@@ -17,6 +17,6 @@ namespace TheCoffeeCream.Infrastructure.Data
         }
 
         public IDbConnection CreateConnection()
-            => new NpgsqlConnection(_connectionString);
+            => new SqlConnection(_connectionString);
     }
 }
