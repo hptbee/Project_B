@@ -11,6 +11,31 @@ A premium, end-to-end coffee shop management system featuring a high-performance
   - **[ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: Single Source of Truth for UI, API services, and Offline logic.
 - **publish/**: Build artifacts and deployment scripts.
 
+## 🚀 Quickstart (Docker)
+
+The easiest way to run the entire system is using Docker Compose.
+
+### Prerequisites
+- Docker Desktop installed and running.
+
+### Option 1: Development Mode (Hot Reload) - Recommended
+Run this if you want changes to files to automatically reflect in the browser.
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+### Option 2: Production Mode
+Run this to test the final built artifacts (static files served by Nginx).
+```bash
+docker-compose up --build
+```
+
+### Accessing the Apps
+- **API**: http://localhost:8080
+- **Admin App**: http://localhost:4000
+- **Staff App**: http://localhost:4001
+- **Owner App**: http://localhost:4002
+
 ## 🚀 Quickstart (Local Development)
 
 ### Prerequisites

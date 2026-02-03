@@ -122,7 +122,7 @@ export default function Register() {
 
                         <div className="form-group">
                             <label>Subscription Plan</label>
-                            <select name="planType" value={formData.planType} onChange={handleChange}>
+                            <select name="planType" value={formData.planType} onChange={handleChange} disabled>
                                 <option value="TRIAL_15_DAYS">Trial (15 Days)</option>
                                 <option value="BASIC_30_DAYS">Basic (30 Days)</option>
                                 <option value="PREMIUM_6_MONTHS">Premium (6 Months)</option>

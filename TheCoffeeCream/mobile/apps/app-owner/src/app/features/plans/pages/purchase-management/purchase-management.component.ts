@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ShopService } from '../../services/shop.service';
-import { PlanService } from '../../services/plan.service';
-import { AuthService } from '../../services/auth.service';
-import { ThemeService } from '../../services/theme.service';
+import { ShopService } from '../../../../shared/services/shop.service';
+import { PlanService } from '../../../../shared/services/plan.service';
+import { AuthService } from '../../../../shared/services/auth.service';
+import { ThemeService } from '../../../../shared/services/theme.service';
 import { Router } from '@angular/router';
-import { ToastService } from '../../services/toast.service';
-import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../../../shared/services/toast.service';
+import { LoadingService } from '../../../../shared/services/loading.service';
 
 @Component({
     selector: 'app-purchase-management',

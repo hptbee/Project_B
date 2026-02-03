@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TheCoffeeCream.Application.DTOs;
 using TheCoffeeCream.Application.Interfaces;
 using TheCoffeeCream.Domain.Entities;
@@ -9,7 +10,7 @@ namespace TheCoffeeCream.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Super_Admin")]
+    [Authorize(Roles = "Super_Admin, Admin")]
     public class ShopsController : ControllerBase
     {
         private readonly IShopRepository _shopRepository;
@@ -24,13 +25,57 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> GetAllShops()
         {
             var shops = await _shopRepository.GetAllAsync();
             return Ok(shops);
         }
 
+        [HttpGet("my")]
+        public async Task<IActionResult> GetMyShop()
+        {
+            var userId = User.FindFirst("id")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || string.IsNullOrEmpty(user.ShopId)) return NotFound("Shop not found for this user.");
+
+            var shop = await _shopRepository.GetByIdAsync(user.ShopId);
+            if (shop == null) return NotFound();
+
+            return Ok(shop);
+        }
+
+        [HttpPut("my")]
+        public async Task<IActionResult> UpdateMyShop([FromBody] Shop shopData)
+        {
+            var userId = User.FindFirst("id")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || string.IsNullOrEmpty(user.ShopId)) return NotFound("Shop not found for this user.");
+
+            var existingShop = await _shopRepository.GetByIdAsync(user.ShopId);
+            if (existingShop == null) return NotFound();
+
+            // Allow Shop Admin to update specific fields
+            existingShop.Name = shopData.Name;
+            existingShop.Address = shopData.Address;
+            existingShop.PhoneNumber = shopData.PhoneNumber;
+            existingShop.Email = shopData.Email;
+            existingShop.LogoUrl = shopData.LogoUrl;
+            existingShop.TaxCode = shopData.TaxCode;
+            existingShop.VatRate = shopData.VatRate;
+            existingShop.SurchargeRate = shopData.SurchargeRate;
+            existingShop.ServiceChargeRate = shopData.ServiceChargeRate;
+
+            await _shopRepository.UpdateAsync(existingShop);
+            return Ok(existingShop);
+        }
+
         [HttpGet("{id}")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> GetShopById(string id)
         {
             var shop = await _shopRepository.GetByIdAsync(id);
@@ -39,6 +84,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> CreateShop([FromBody] RegisterShopDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -47,6 +93,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> UpdateShop(string id, [FromBody] Shop shop)
         {
             if (id != shop.Id) return BadRequest();
@@ -54,7 +101,7 @@ namespace TheCoffeeCream.Api.Controllers
             var existingShop = await _shopRepository.GetByIdAsync(id);
             if (existingShop == null) return NotFound();
 
-            // Preserve critical fields if not provided or handle mapping
+            // Super Admin can update everything except maybe ID
             existingShop.Name = shop.Name;
             existingShop.Address = shop.Address;
             existingShop.PhoneNumber = shop.PhoneNumber;
@@ -62,12 +109,16 @@ namespace TheCoffeeCream.Api.Controllers
             existingShop.LogoUrl = shop.LogoUrl;
             existingShop.TaxCode = shop.TaxCode;
             existingShop.IsActive = shop.IsActive;
+            existingShop.VatRate = shop.VatRate;
+            existingShop.SurchargeRate = shop.SurchargeRate;
+            existingShop.ServiceChargeRate = shop.ServiceChargeRate;
 
             await _shopRepository.UpdateAsync(existingShop);
             return Ok(existingShop);
         }
 
         [HttpPost("{id}/extend")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> ExtendSubscription(string id, [FromBody] ExtendSubscriptionRequest request)
         {
              var shop = await _shopRepository.GetByIdAsync(id);
@@ -75,8 +126,6 @@ namespace TheCoffeeCream.Api.Controllers
 
              if (request.Days > 0)
              {
-                 // If already expired, start from now? Or add to expiry?
-                 // Usually if expired, we reset to Now + Days. If active, we add to Expiry.
                  if (shop.ExpiryDate < DateTimeOffset.UtcNow)
                  {
                      shop.ExpiryDate = DateTimeOffset.UtcNow.AddDays(request.Days);
@@ -93,20 +142,23 @@ namespace TheCoffeeCream.Api.Controllers
         [HttpPost("{id}/reset-password")]
         public async Task<IActionResult> ResetShopAdminPassword(string id, [FromBody] ResetPasswordRequest request)
         {
-            // Find the admin user for this shop. 
-            // Note: A shop might have multiple admins, but usually one main one created initially.
-            // Or we look for the user with Role='Admin' and ShopId=id.
-            // Since we don't have GetUsersByShopId in simple repo, we might need to rely on username or email if provided,
-            // OR searching all users.
-            // Ideally, the request should specify WHICH user to reset, or we assume the main one.
-            // Let's assume we find ANY user with Role 'Admin' in this shop for valid MVP.
+            // Allowed for Super_Admin OR Shop Admin resetting their own?
+            // Usually reset password logic is separate. 
+            // This endpoint seems designed for Super Admin to force reset a shop's admin.
+            // Let's keep it Super_Admin for now unless specified.
+            // But I put [Authorize(Roles="Super_Admin, Admin")] on class.
+            // So I must restrict this if it's super admin only.
             
-            // Wait, we need a way to find users of a shop.
-            // Assuming we don't have that yet, let's look at UserRepository.
-            // DapperUserRepository doesn't have GetByShopId.
-            // For now, I will add a rough check or just fail.
-            // BETTER: The request should probably include the Admin's Email or Username to identify the user.
-            
+            // Check if user is Super Admin
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (role != "Super_Admin")
+            {
+                // If not super admin, maybe allow if it's their own shop?
+                // But this takes {id} URL param.
+                // Let's restrict to Super_Admin for safety as per original design.
+                return Forbid();
+            }
+
             if (string.IsNullOrEmpty(request.Username))
             {
                  return BadRequest("Username is required to identify the admin user.");
@@ -125,6 +177,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
         
         [HttpPost("{id}/toggle-status")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> ToggleStatus(string id)
         {
             var shop = await _shopRepository.GetByIdAsync(id);
@@ -137,6 +190,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpGet("{id}/history")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> GetSubscriptionHistory(string id)
         {
             var history = await _shopRepository.GetHistoryByShopIdAsync(id);
@@ -144,6 +198,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpGet("all-history")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> GetAllSubscriptionHistory()
         {
             var history = await _shopRepository.GetAllHistoryAsync();
@@ -151,6 +206,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpPost("{id}/purchase-plan")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> PurchasePlan(string id, [FromBody] PurchasePlanRequest request)
         {
             var shop = await _shopRepository.GetByIdAsync(id);
@@ -179,6 +235,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpPut("history/{id}")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> UpdateHistory(string id, [FromBody] SubscriptionHistory history)
         {
             if (id != history.Id) return BadRequest();
@@ -190,6 +247,7 @@ namespace TheCoffeeCream.Api.Controllers
         }
 
         [HttpDelete("history/{id}")]
+        [Authorize(Roles = "Super_Admin")]
         public async Task<IActionResult> DeleteHistory(string id)
         {
             var existing = await _shopRepository.GetHistoryByIdAsync(id);

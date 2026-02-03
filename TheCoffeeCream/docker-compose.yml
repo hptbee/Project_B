@@ -1,0 +1,49 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # Add other environment variables as needed, e.g., DB connection string
+    networks:
+      - coffee-net
+
+  app-admin:
+    build:
+      context: ./mobile
+      dockerfile: apps/app-admin/Dockerfile
+    ports:
+      - "4000:80"
+    networks:
+      - coffee-net
+    depends_on:
+      - api
+
+  app-staff:
+    build:
+      context: ./mobile
+      dockerfile: apps/app-staff/Dockerfile
+    ports:
+      - "4001:80"
+    networks:
+      - coffee-net
+    depends_on:
+      - api
+
+  app-owner:
+    build:
+      context: ./mobile
+      dockerfile: apps/app-owner/Dockerfile
+    ports:
+      - "4002:80"
+    networks:
+      - coffee-net
+    depends_on:
+      - api
+
+networks:
+  coffee-net:
+    driver: bridge

@@ -13,6 +13,9 @@ namespace TheCoffeeCream.Domain.Entities
         public string LogoUrl { get; set; } = string.Empty;
         public string TaxCode { get; set; } = string.Empty;
         public string SubscriptionPlan { get; set; } = "TRIAL"; // TRIAL, BASIC, PREMIUM
+        public decimal VatRate { get; set; } = 0;
+        public decimal SurchargeRate { get; set; } = 0;
+        public decimal ServiceChargeRate { get; set; } = 0;
         public DateTimeOffset StartDate { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset ExpiryDate { get; set; } = DateTimeOffset.UtcNow.AddDays(15);
         public bool IsActive { get; set; } = true;

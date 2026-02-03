@@ -18,6 +18,8 @@ export * from './services/api/products';
 export * from './services/api/reports';
 export * from './services/api/users';
 export * from './services/api/dashboard';
+export * from './services/api/shop';
+export * from './services/api/menu';
 export * from './services/cache/cacheService';
 export * from './services/offline/OfflineQueue';
 // Explicit Utils Exports

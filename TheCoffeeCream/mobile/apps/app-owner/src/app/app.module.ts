@@ -6,13 +6,13 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './pages/login/login.component';
-import { ShopManagementComponent } from './pages/shop-management/shop-management.component';
-import { PurchaseManagementComponent } from './pages/purchase-management/purchase-management.component';
-import { PlanManagementComponent } from './pages/plan-management/plan-management.component';
-import { ToastComponent } from './components/toast/toast.component';
-import { LoadingComponent } from './components/loading/loading.component';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { LoginComponent } from './features/auth/pages/login/login.component';
+import { ShopManagementComponent } from './features/shops/pages/shop-management/shop-management.component';
+import { PurchaseManagementComponent } from './features/plans/pages/purchase-management/purchase-management.component';
+import { PlanManagementComponent } from './features/plans/pages/plan-management/plan-management.component';
+import { ToastComponent } from './shared/components/toast/toast.component';
+import { LoadingComponent } from './shared/components/loading/loading.component';
+import { authInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [

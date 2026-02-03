@@ -59,5 +59,11 @@ namespace TheCoffeeCream.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task CreateCategoryAsync(Category category)
+        {
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+        }
     }
 }

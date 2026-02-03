@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
-import { ShopManagementComponent } from './pages/shop-management/shop-management.component';
-import { PurchaseManagementComponent } from './pages/purchase-management/purchase-management.component';
-import { PlanManagementComponent } from './pages/plan-management/plan-management.component';
-import { authGuard } from './guards/auth.guard';
+import { LoginComponent } from './features/auth/pages/login/login.component';
+import { ShopManagementComponent } from './features/shops/pages/shop-management/shop-management.component';
+import { PurchaseManagementComponent } from './features/plans/pages/purchase-management/purchase-management.component';
+import { PlanManagementComponent } from './features/plans/pages/plan-management/plan-management.component';
+import { authGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },

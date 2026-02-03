@@ -28,6 +28,9 @@ namespace TheCoffeeCream.Infrastructure.Data
             {
                 entity.ToTable("Shop");
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.VatRate).HasPrecision(18, 2);
+                entity.Property(e => e.SurchargeRate).HasPrecision(18, 2);
+                entity.Property(e => e.ServiceChargeRate).HasPrecision(18, 2);
             });
 
             // User Configuration

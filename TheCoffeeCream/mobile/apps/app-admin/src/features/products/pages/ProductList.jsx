@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { LoadingSpinner, Badge, Icon, useToast, ConfirmModal, SearchBar, Pagination, useTranslation, productsApi as productApi, Select } from '@thecoffeecream/ui-shared'
+import { LoadingSpinner, Badge, Icon, useToast, ConfirmModal, SearchBar, Pagination, useTranslation, productsApi as productApi, Select, MenuService } from '@thecoffeecream/ui-shared'
 import ProductModal from '../components/ProductModal'
 import { formatPrice } from '@thecoffeecream/ui-shared'
 import './ProductList.scss'
@@ -65,6 +65,47 @@ export default function ProductList() {
             showToast(t('modal.action_failed'), 'error')
         } finally {
             setConfirmToggle({ show: false, product: null })
+        }
+    }
+
+    const handleExport = async () => {
+        try {
+            setLoading(true)
+            const blob = await MenuService.exportMenu()
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `menu_export_${new Date().toISOString().slice(0, 10)}.csv`
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            showToast('Menu exported successfully', 'success')
+        } catch (error) {
+            showToast('Failed to export menu', 'error')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleImport = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        try {
+            setLoading(true)
+            const result = await MenuService.importMenu(file)
+            if (result.errors && result.errors.length > 0) {
+                console.warn('Import warnings:', result.errors)
+                showToast(`Import completed with ${result.errors.length} warnings`, 'warning')
+            } else {
+                showToast('Menu imported successfully', 'success')
+            }
+            loadProducts()
+        } catch (error) {
+            showToast('Failed to import menu: ' + error.message, 'error')
+        } finally {
+            setLoading(false)
+            e.target.value = null // Reset input
         }
     }
 
@@ -134,6 +175,22 @@ export default function ProductList() {
                         placeholder={false}
                         fullWidth={false}
                     />
+
+                    <div className="flex gap-2">
+                        <input
+                            type="file"
+                            id="import-csv"
+                            className="hidden"
+                            accept=".csv"
+                            onChange={handleImport}
+                        />
+                        <button className="btn btn-ghost btn-circle" onClick={() => document.getElementById('import-csv').click()} title="Import CSV">
+                            <Icon name="upload" size={20} />
+                        </button>
+                        <button className="btn btn-ghost btn-circle" onClick={handleExport} title="Export CSV">
+                            <Icon name="download" size={20} />
+                        </button>
+                    </div>
 
                     <button className="add-btn" onClick={handleCreate}>
                         <Icon name="plus" size={18} /> <span className="desktop-only">{t('action.add_new')}</span>

@@ -20,6 +20,7 @@ function ProtectedRoute({ children }) {
 import OrderList from '@/features/orders/pages/OrderList'
 import UserList from '@/features/users/pages/UserList'
 import ProductList from '@/features/products/pages/ProductList'
+import ShopSettings from '@/features/settings/pages/ShopSettings'
 
 import Register from '@/features/auth/pages/Register'
 import VerifyEmail from '@/features/auth/pages/VerifyEmail'
@@ -48,6 +49,11 @@ export default function AppRoutes() {
             <Route path="/users" element={
                 <ProtectedRoute>
                     <UserList />
+                </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+                <ProtectedRoute>
+                    <ShopSettings />
                 </ProtectedRoute>
             } />
             <Route path="/logout" element={

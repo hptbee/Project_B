@@ -12,5 +12,6 @@ namespace TheCoffeeCream.Application.Interfaces
         Task CreateAsync(Product product);
         Task UpdateAsync(Product product);
         Task ToggleActiveAsync(Guid id, string shopId);
+        Task CreateCategoryAsync(Category category);
     }
 }

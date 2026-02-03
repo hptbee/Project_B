@@ -92,8 +92,9 @@ $success: #4CAF50;
     }
 
     .brand-logo {
-        width: 50px;
+        width: 100px;
         height: auto;
+        filter: brightness(0) invert(1); // Make logo white
     }
 
     .brand-name {
