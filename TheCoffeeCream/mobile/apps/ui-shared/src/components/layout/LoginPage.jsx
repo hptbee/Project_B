@@ -21,7 +21,8 @@ export function LoginPage({
     logo,
     onLogin,
     error: externalError,
-    loading: externalLoading
+    loading: externalLoading,
+    children
 }) {
     const { t } = useTranslation();
     const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -94,6 +95,8 @@ export function LoginPage({
                                 t('auth.login')
                             )}
                         </button>
+
+                        {children}
                     </form>
 
                     <footer className="login-footer">

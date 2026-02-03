@@ -1,6 +1,9 @@
 # 👑 The Coffee Cream - Admin Portal
 
-Business administration and analytics dashboard.
+Business administration and analytics dashboard for shop managers.
+
+> [!NOTE]
+> Super Admin / Shop Management features have been moved to the [app-owner](../app-owner) project.
 
 ## ✨ Features
 - **Sales Insights**: Real-time revenue tracking and trend analysis via `reportsApi`.

@@ -263,8 +263,28 @@ CREATE TABLE "User" (
 
 INSERT INTO "User" ("Id", "email", "username", "PasswordHash", "Role", "IsActive")
 VALUES
-('1', 'staff@thecoffeecream.com', 'staff', '$2a$11$jg3NjAXxbBVCkOMHcUkWVuwOekndzS5MyHTmtPp8Q8gttwuo2/UaO', 'Staff', TRUE),
 ('2', 'admin@thecoffeecream.com', 'admin', '$2a$11$wrTB9bhEyd8jUbxn48anc.vXJ56Z/wu0Gg9zX/UxpuVHVdjsZQwwq', 'Admin', TRUE);
+
+-- Table: Plan
+DROP TABLE IF EXISTS "Plan" CASCADE;
+CREATE TABLE "Plan" (
+    "Id" TEXT,
+    "Code" TEXT,
+    "Name" TEXT,
+    "DurationDays" INTEGER,
+    "Price" DECIMAL(18,2),
+    "Description" TEXT,
+    "IsActive" BOOLEAN,
+    PRIMARY KEY ("Id")
+);
+
+INSERT INTO "Plan" ("Id", "Code", "Name", "DurationDays", "Price", "Description", "IsActive")
+VALUES
+('1', 'TRIAL_15_DAYS', 'Trial (15 Days)', 15, 0, 'Free trial for new users', TRUE),
+('2', 'BASIC_30_DAYS', 'Basic (30 Days)', 30, 500000, 'Basic monthly subscription', TRUE),
+('3', 'PREMIUM_6_MONTHS', 'Premium (6 Months)', 180, 2500000, 'Premium half-year subscription', TRUE),
+('4', 'PREMIUM_1_YEAR', 'Premium (1 Year)', 365, 4500000, 'Premium annual subscription', TRUE);
+
 
 -- Relationships
 

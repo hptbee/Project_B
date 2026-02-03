@@ -1,0 +1,18 @@
+@use 'variables' as *;
+@import '../../../../../../ui-shared/src/components/ui/Toast/Toast.scss';
+
+// Ensure the icon style is compatible since we might not have the exact React Icon component
+.toast-check-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: currentColor;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        stroke-width: 3px;
+    }
+}

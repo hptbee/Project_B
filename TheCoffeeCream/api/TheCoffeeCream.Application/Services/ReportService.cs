@@ -13,16 +13,25 @@ namespace TheCoffeeCream.Application.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
 
-        public ReportService(IOrderRepository orderRepository, IProductRepository productRepository)
+        public ReportService(IOrderRepository orderRepository, IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetShopId()
+        {
+            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
+            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
+            return shopId;
         }
 
         public async Task<IEnumerable<RevenueReport>> GetRevenueReportAsync(DateTimeOffset startDate, DateTimeOffset endDate, string groupBy)
         {
-            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, GetShopId());
 
             var grouped = groupBy.ToLower() switch
             {
@@ -45,8 +54,9 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<IEnumerable<ProductSalesReport>> GetProductSalesReportAsync(DateTimeOffset startDate, DateTimeOffset endDate, string? category = null)
         {
-            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
-            var products = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+            var shopId = GetShopId();
+            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, shopId);
+            var products = (await _productRepository.GetAllAsync(shopId)).ToDictionary(p => p.Id);
 
             var productSales = orders
                 .SelectMany(o => o.Items)
@@ -78,7 +88,7 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<IEnumerable<PaymentMethodReport>> GetPaymentMethodReportAsync(DateTimeOffset startDate, DateTimeOffset endDate)
         {
-            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+            var orders = await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, GetShopId());
 
             var paymentReports = orders
                 .GroupBy(o => o.PaymentMethod)
@@ -100,7 +110,7 @@ namespace TheCoffeeCream.Application.Services
             var startDate = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset);
             var endDate = startDate.AddDays(1).AddTicks(-1);
 
-            var orders = (await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate))
+            var orders = (await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, GetShopId()))
                 .Where(o => o.Status == OrderStatus.SUCCESS)
                 .ToList();
 

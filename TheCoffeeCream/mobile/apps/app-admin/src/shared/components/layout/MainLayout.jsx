@@ -5,7 +5,7 @@ import './MainLayout.scss'
 
 export default function MainLayout({ children }) {
     const { isOpen, toggle } = useMenu()
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, user } = useAuth() // Get user to check role
     const { t } = useTranslation()
 
     const menuItems = [

@@ -6,12 +6,12 @@ namespace TheCoffeeCream.Application.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<bool> ExistsByClientOrderIdAsync(Guid clientOrderId);
-        Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId);
+        Task<bool> ExistsByClientOrderIdAsync(Guid clientOrderId, string shopId);
+        Task<Order?> GetByClientOrderIdAsync(Guid clientOrderId, string shopId);
         Task AddAsync(Order order);
-        Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate);
-        Task<Order?> GetByIdAsync(Guid id);
+        Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate, string shopId);
+        Task<Order?> GetByIdAsync(Guid id, string shopId);
         Task UpdateAsync(Order order);
-        Task ToggleActiveAsync(Guid id);
+        Task ToggleActiveAsync(Guid id, string shopId);
     }
 }

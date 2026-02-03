@@ -30,6 +30,35 @@ namespace TheCoffeeCream.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("register-shop")]
+        public async Task<IActionResult> RegisterShop([FromBody] Application.DTOs.RegisterShopDto request)
+        {
+             if (!ModelState.IsValid)
+             {
+                 return BadRequest(ModelState);
+             }
+
+             var result = await _authService.RegisterShopAsync(request);
+             return Ok(result);
+        }
+
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "Token is required" });
+            }
+
+            var result = await _authService.VerifyEmailAsync(token);
+            if (!result)
+            {
+                return BadRequest(new { message = "Invalid or expired token" });
+            }
+
+            return Ok(new { message = "Email verified successfully" });
+        }
     }
 
     public class LoginRequest

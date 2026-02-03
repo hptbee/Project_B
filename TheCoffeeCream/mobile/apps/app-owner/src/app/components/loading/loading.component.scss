@@ -1,0 +1,8 @@
+@use 'variables' as *;
+@import '../../../../../../ui-shared/src/components/ui/LoadingSpinner/LoadingSpinner.scss';
+
+// Ensure assets are accessible
+.spinner-logo img {
+    // Angular handles assets slightly differently, verify path
+    // Assuming assets are copied to root dist
+}

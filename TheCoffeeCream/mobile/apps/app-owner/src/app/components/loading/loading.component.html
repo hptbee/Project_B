@@ -1,0 +1,11 @@
+<div class="spinner-overlay" *ngIf="isLoading$ | async">
+    <div class="spinner-container">
+        <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <div class="spinner-logo">
+                <img src="assets/icons/logo.png" alt="Logo" />
+            </div>
+        </div>
+        <div class="spinner-message">LOADING...</div>
+    </div>
+</div>

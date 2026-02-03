@@ -1,0 +1,301 @@
+<div class="dashboard-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.open]="!isSidebarCollapsed" (click)="toggleSidebar()">
+        <div class="side-drawer" (click)="$event.stopPropagation()">
+            <div class="side-header">
+                <div class="side-logo-wrapper">
+                    <img src="assets/icons/logo.png" alt="Logo" class="side-logo" />
+                </div>
+                <div class="side-user-info">
+                    <div class="user">{{ user?.username || 'Owner' }}</div>
+                    <div class="branch">THE COFFEE CREAM</div>
+                </div>
+            </div>
+
+            <nav class="side-nav">
+                <a routerLink="/shops" routerLinkActive="active" (click)="toggleSidebar()" class="side-link">
+                    <span class="side-link-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-text">Shop Management</span>
+                </a>
+                <a routerLink="/purchases" routerLinkActive="active" (click)="toggleSidebar()" class="side-link">
+                    <span class="side-link-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-text">Purchase Logs</span>
+                </a>
+                <a routerLink="/plans" routerLinkActive="active" (click)="toggleSidebar()" class="side-link">
+                    <span class="side-link-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                    </span>
+                    <span class="nav-text">Plans</span>
+                </a>
+
+                <div class="nav-divider"></div>
+
+                <div class="side-link danger" (click)="logout()">
+                    <span class="side-link-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </span>
+                    <span class="nav-text">Logout</span>
+                </div>
+            </nav>
+
+            <div class="side-controls">
+                <div class="control-box">
+                    <span class="label">DARK MODE</span>
+                    <div class="toggle-switch" [class.active]="themeService.isDarkMode"
+                        (click)="themeService.toggleTheme()">
+                        <div class="knob">
+                            {{ themeService.isDarkMode ? '🌙' : '☀️' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-footer">
+                Owner Portal v1.0.0
+            </div>
+        </div>
+    </aside>
+
+    <div class="layout-content">
+        <!-- TopBar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="mobile-menu-btn" (click)="toggleSidebar()">
+                    <span class="menu-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </span>
+                </button>
+                <div class="page-title-section">
+                    <nav class="breadcrumbs">
+                        <a routerLink="/shops" class="breadcrumb-item">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </a>
+                        <span class="separator">/</span>
+                        <span class="breadcrumb-item active">Shops</span>
+                    </nav>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <div class="user-profile">
+                    <div class="user-info">
+                        <span class="username">{{ user?.username || 'Owner' }}</span>
+                        <span class="role">QUẢN LÝ</span>
+                    </div>
+                    <div class="avatar">
+                        {{ user?.username?.charAt(0).toUpperCase() || 'O' }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="page-container">
+            <div class="content-header">
+                <h1 class="page-title">SHOP MANAGEMENT</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" (click)="openDialog('create')">+ New Shop</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="glass-card table-container">
+                    <table *ngIf="!loading; else loadingTpl">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Plan</th>
+                                <th>Expiry</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let shop of shops" (click)="openDialog('detail', shop)" class="clickable-row">
+                                <td>{{ shop.code }}</td>
+                                <td>
+                                    <div class="shop-name">{{ shop.name }}</div>
+                                    <div class="shop-addr">{{ shop.address }}</div>
+                                </td>
+                                <td>{{ shop.subscriptionPlan }}</td>
+                                <td [class.expired]="isExpired(shop.expiryDate)">
+                                    {{ shop.expiryDate | date:'mediumDate' }}
+                                </td>
+                                <td>
+                                    <span class="badge" [class.badge-success]="shop.isActive"
+                                        [class.badge-error]="!shop.isActive">
+                                        {{ shop.isActive ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <ng-template #loadingTpl>
+                        <div class="loading-state">Loading shops...</div>
+                    </ng-template>
+                </div> <!-- close table-container -->
+            </div> <!-- close page-content -->
+        </main> <!-- close page-container -->
+    </div> <!-- close layout-content -->
+</div> <!-- close dashboard-layout -->
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-content glass-card">
+        <div class="modal-header">
+            <h2>{{ modalTitle }}</h2>
+            <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Detail View -->
+            <div *ngIf="dialogType === 'detail' && selectedShop" class="detail-view">
+                <div class="info-grid">
+                    <div class="info-item"><strong>Code:</strong> {{ selectedShop.code }}</div>
+                    <div class="info-item"><strong>Name:</strong> {{ selectedShop.name }}</div>
+                    <div class="info-item"><strong>Plan:</strong> {{ selectedShop.subscriptionPlan }}</div>
+                    <div class="info-item"><strong>Expiry:</strong> {{ selectedShop.expiryDate | date:'mediumDate'
+                        }}
+                    </div>
+                    <div class="info-item"><strong>Status:</strong> {{ selectedShop.isActive ? 'Active' : 'Inactive'
+                        }}
+                    </div>
+                    <div class="info-item" *ngIf="selectedShop.phoneNumber"><strong>Phone:</strong> {{
+                        selectedShop.phoneNumber }}</div>
+                    <div class="info-item" *ngIf="selectedShop.address"><strong>Address:</strong> {{
+                        selectedShop.address }}</div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="btn btn-secondary" (click)="openDialog('edit', selectedShop)">Edit
+                            Info</button>
+                        <button class="btn btn-secondary" (click)="openDialog('password', selectedShop)">Reset
+                            Password</button>
+                        <button class="btn" [class.btn-error]="selectedShop.isActive"
+                            [class.btn-success]="!selectedShop.isActive" (click)="toggleStatus(selectedShop)">
+                            {{ selectedShop.isActive ? 'Deactivate' : 'Activate' }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="history-section" *ngIf="history.length > 0">
+                    <h3>Purchase History</h3>
+                    <div class="table-container history-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Plan</th>
+                                    <th>Amount</th>
+                                    <th>Expiry</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let h of history">
+                                    <td>{{ h.purchaseDate | date:'shortDate' }}</td>
+                                    <td>{{ h.planName }}</td>
+                                    <td>{{ h.amount | currency:'VND':'symbol':'1.0-0' }}</td>
+                                    <td>{{ h.newExpiryDate | date:'shortDate' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create/Edit Form -->
+            <div *ngIf="dialogType === 'create' || dialogType === 'edit'" class="form-container">
+                <div class="input-group">
+                    <label>Shop Code</label>
+                    <input type="text" [(ngModel)]="formData.shopCode" [disabled]="dialogType === 'edit'">
+                </div>
+                <div class="input-group">
+                    <label>Shop Name</label>
+                    <input type="text" [(ngModel)]="formData.shopName">
+                </div>
+                <div class="input-group">
+                    <label>Address</label>
+                    <input type="text" [(ngModel)]="formData.address">
+                </div>
+                <div class="input-group">
+                    <label>Phone</label>
+                    <input type="text" [(ngModel)]="formData.phoneNumber">
+                </div>
+
+                <div class="input-group">
+                    <label>Plan Type</label>
+                    <select [(ngModel)]="formData.planType" [disabled]="dialogType === 'edit'">
+                        <option *ngFor="let p of availablePlans" [value]="p.code">{{ p.name }} ({{ p.durationDays }}
+                            Days)</option>
+                    </select>
+                </div>
+
+                <div class="admin-section" *ngIf="dialogType === 'create'">
+                    <h3>Admin Account</h3>
+                    <div class="input-group">
+                        <label>Admin Username</label>
+                        <input type="text" [(ngModel)]="formData.adminUsername">
+                    </div>
+                    <div class="input-group">
+                        <label>Admin Password</label>
+                        <input type="password" [(ngModel)]="formData.adminPassword">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Password Form -->
+            <div *ngIf="dialogType === 'password'" class="form-container">
+                <div class="input-group">
+                    <label>Admin Username</label>
+                    <input type="text" value="admin" disabled>
+                </div>
+                <div class="input-group">
+                    <label>New Password</label>
+                    <input type="password" [(ngModel)]="formData.newPassword">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer" *ngIf="dialogType !== 'detail'">
+            <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+            <button class="btn btn-primary" (click)="save()">{{ dialogType === 'extend' ? 'Confirm Purchase' : 'Save
+                Changes' }}</button>
+        </div>
+    </div>
+</div>

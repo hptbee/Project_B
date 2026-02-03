@@ -6,6 +6,7 @@ namespace TheCoffeeCream.Domain.Entities
     public class Product
     {
         public Guid Id { get; set; }
+        public string ShopId { get; set; } = string.Empty;
         public Guid CategoryId { get; set; }
         public Category? Category { get; set; }
         public string Code { get; set; } = string.Empty;
@@ -23,7 +24,7 @@ namespace TheCoffeeCream.Domain.Entities
 
         private readonly List<Product> _toppings = new();
 
-        private Product() { }
+        public Product() { }
 
         public Product(Guid id, string name, decimal price, bool isTopping = false, Guid categoryId = default, Category? category = null, string? code = null, decimal cost = 0, string? imageUrl = null, bool isActive = true, IEnumerable<Product>? toppings = null, string? toppingMapping = null)
         {

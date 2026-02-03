@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth, LoginPage, useTranslation } from '@thecoffeecream/ui-shared'
 import logo from '@/assets/icons/logo.png'
 
@@ -36,6 +36,10 @@ export default function Login() {
             onLogin={handleLogin}
             loading={loading}
             error={error}
-        />
+        >
+            <div style={{ textAlign: 'center', marginTop: '15px', color: '#A0A0A0', fontSize: '0.9rem' }}>
+                Don't have an account? <Link to="/register" style={{ color: '#D4AF37', fontWeight: 'bold', textDecoration: 'none' }}>Register</Link>
+            </div>
+        </LoginPage>
     )
 }

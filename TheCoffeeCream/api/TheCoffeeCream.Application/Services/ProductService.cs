@@ -10,21 +10,31 @@ namespace TheCoffeeCream.Application.Services
     public class ProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             _productRepository = productRepository;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetShopId()
+        {
+            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
+            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
+            return shopId;
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            return (await _productRepository.GetAllAsync()).ToList();
+            return (await _productRepository.GetAllAsync(GetShopId())).ToList();
         }
 
         public async Task<MenuDto> GetMenuAsync()
         {
-            var products = (await _productRepository.GetAllAsync()).ToList();
-            var categories = await _productRepository.GetCategoriesAsync();
+            var shopId = GetShopId();
+            var products = (await _productRepository.GetAllAsync(shopId)).ToList();
+            var categories = await _productRepository.GetCategoriesAsync(shopId);
 
             return new MenuDto
             {
@@ -57,7 +67,7 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<IEnumerable<CategoryResponse>> GetCategoriesAsync()
         {
-            var categories = await _productRepository.GetCategoriesAsync();
+            var categories = await _productRepository.GetCategoriesAsync(GetShopId());
             return categories.Select(c => new CategoryResponse
             {
                 Id = c.Id,
@@ -68,7 +78,7 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<ProductDto?> GetByIdAsync(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id, GetShopId());
             if (product == null) return null;
             return MapToDto(product);
         }
@@ -95,17 +105,19 @@ namespace TheCoffeeCream.Application.Services
                 null,
                 toppingMapping
             );
+            
+            product.ShopId = GetShopId();
 
             await _productRepository.CreateAsync(product);
             
             // Re-fetch to get resolved toppings and category
-            var createdProduct = await _productRepository.GetByIdAsync(product.Id);
+            var createdProduct = await _productRepository.GetByIdAsync(product.Id, GetShopId());
             return MapToDto(createdProduct ?? product);
         }
 
         public async Task<ProductDto?> UpdateAsync(Guid id, ProductUpsertRequest request)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productRepository.GetByIdAsync(id, GetShopId());
             if (product == null) return null;
 
             var categoryId = await ResolveCategoryId(request.CategoryId, request.Category);
@@ -127,7 +139,7 @@ namespace TheCoffeeCream.Application.Services
             await _productRepository.UpdateAsync(product);
 
             // Re-fetch to get resolved toppings and category
-            var updatedProduct = await _productRepository.GetByIdAsync(id);
+            var updatedProduct = await _productRepository.GetByIdAsync(id, GetShopId());
             return MapToDto(updatedProduct ?? product);
         }
 
@@ -136,17 +148,18 @@ namespace TheCoffeeCream.Application.Services
             if (categoryId != Guid.Empty) return categoryId;
             if (string.IsNullOrWhiteSpace(categoryName)) return Guid.Empty;
 
-            var categories = await _productRepository.GetCategoriesAsync();
+            var categories = await _productRepository.GetCategoriesAsync(GetShopId());
             var matched = categories.FirstOrDefault(c => c.Name.Equals(categoryName, System.StringComparison.OrdinalIgnoreCase));
             return matched?.Id ?? Guid.Empty;
         }
 
         public async Task<bool> ToggleActiveAsync(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var shopId = GetShopId();
+            var product = await _productRepository.GetByIdAsync(id, shopId);
             if (product == null) return false;
 
-            await _productRepository.ToggleActiveAsync(id);
+            await _productRepository.ToggleActiveAsync(id, shopId);
             return true;
         }
 

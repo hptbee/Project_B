@@ -21,10 +21,15 @@ import OrderList from '@/features/orders/pages/OrderList'
 import UserList from '@/features/users/pages/UserList'
 import ProductList from '@/features/products/pages/ProductList'
 
+import Register from '@/features/auth/pages/Register'
+import VerifyEmail from '@/features/auth/pages/VerifyEmail'
+
 export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/" element={
                 <ProtectedRoute>
                     <Insights />
@@ -50,6 +55,7 @@ export default function AppRoutes() {
                     <Logout />
                 </ProtectedRoute>
             } />
+
         </Routes>
     )
 }

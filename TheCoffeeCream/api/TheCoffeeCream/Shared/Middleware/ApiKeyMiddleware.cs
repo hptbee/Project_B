@@ -15,18 +15,28 @@ namespace TheCoffeeCream.Shared.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ApiKeyOptions _options;
+        private readonly IHostEnvironment _env;
 
-        public ApiKeyMiddleware(RequestDelegate next, IOptions<ApiKeyOptions> options)
+        public ApiKeyMiddleware(RequestDelegate next, IOptions<ApiKeyOptions> options, IHostEnvironment env)
         {
             _next = next;
             _options = options.Value;
+            _env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             if (string.IsNullOrWhiteSpace(_options.ApiKey))
             {
-                // No API key configured - allow for local/dev scenarios
+                if (!_env.IsDevelopment())
+                {
+                    // Strict Mode: In Production, if API Key is missing, SERVER ERROR.
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    await context.Response.WriteAsync("Server Configuration Error: API Key is missing in Production environment.");
+                    return;
+                }
+                
+                // Allow for local/dev scenarios if not in Production
                 await _next(context);
                 return;
             }

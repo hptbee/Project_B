@@ -1,0 +1,8 @@
+@use 'login' as *;
+
+// Any owner specific login style overrides can go here
+.login-page {
+    .brand-logo-wrapper {
+        background: var(--bg-primary);
+    }
+}

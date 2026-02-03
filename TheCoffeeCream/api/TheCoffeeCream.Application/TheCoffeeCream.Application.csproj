@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="..\TheCoffeeCream.Domain\TheCoffeeCream.Domain.csproj" />
   </ItemGroup>
 

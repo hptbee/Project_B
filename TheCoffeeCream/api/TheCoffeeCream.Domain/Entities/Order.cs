@@ -7,6 +7,7 @@ namespace TheCoffeeCream.Domain.Entities
     public class Order
     {
         public Guid Id { get; set; }
+        public string ShopId { get; set; } = string.Empty;
         public Guid ClientOrderId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public OrderType OrderType { get; set; }
@@ -40,7 +41,7 @@ namespace TheCoffeeCream.Domain.Entities
 
         public decimal Total => SubTotal - DiscountAmount;
 
-        private Order() { }
+        public Order() { }
 
         public Order(
             Guid clientOrderId,

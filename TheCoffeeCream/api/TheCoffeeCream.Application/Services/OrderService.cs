@@ -11,21 +11,31 @@ namespace TheCoffeeCream.Application.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
+        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository)
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        private string GetShopId()
+        {
+            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
+            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
+            return shopId;
         }
 
         public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
         {
-            var existing = await _orderRepository.GetByClientOrderIdAsync(request.ClientOrderId);
+            var shopId = GetShopId();
+            var existing = await _orderRepository.GetByClientOrderIdAsync(request.ClientOrderId, shopId);
             if (existing != null && existing.Status != OrderStatus.DRAFT)
                 throw new InvalidOperationException("This order has already been finalized and cannot be modified.");
 
             var orderType = ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN);
-            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+            var allProducts = (await _productRepository.GetAllAsync(shopId)).ToDictionary(p => p.Id);
 
             var items = request.Items.Select(i =>
             {
@@ -46,7 +56,10 @@ namespace TheCoffeeCream.Application.Services
                 request.DiscountValue,
                 ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
                 request.Note,
-                existing?.Id);
+                existing?.Id)
+            {
+                ShopId = shopId
+            };
 
             await _orderRepository.AddAsync(order);
             return order;
@@ -54,10 +67,11 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task UpdateOrderAsync(Guid id, CreateOrderRequest request)
         {
-            var existing = await _orderRepository.GetByIdAsync(id);
+            var shopId = GetShopId();
+            var existing = await _orderRepository.GetByIdAsync(id, shopId);
             if (existing == null) throw new ArgumentException("Order not found");
 
-            var allProducts = (await _productRepository.GetAllAsync()).ToDictionary(p => p.Id);
+            var allProducts = (await _productRepository.GetAllAsync(shopId)).ToDictionary(p => p.Id);
 
             var items = request.Items.Select(i =>
             {
@@ -139,22 +153,22 @@ namespace TheCoffeeCream.Application.Services
 
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
         {
-            return await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate);
+            return await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, GetShopId());
         }
 
         public async Task<Order?> GetOrderByIdAsync(Guid id)
         {
-            return await _orderRepository.GetByIdAsync(id);
+            return await _orderRepository.GetByIdAsync(id, GetShopId());
         }
 
         public async Task SoftDeleteOrderAsync(Guid id)
         {
-            await _orderRepository.ToggleActiveAsync(id);
+            await _orderRepository.ToggleActiveAsync(id, GetShopId());
         }
 
         public async Task UpdateOrderPaymentMethodAsync(Guid id, UpdatePaymentMethodRequest request)
         {
-            var existing = await _orderRepository.GetByIdAsync(id);
+            var existing = await _orderRepository.GetByIdAsync(id, GetShopId());
             if (existing == null) throw new ArgumentException("Order not found");
 
             var paymentMethod = ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH);
