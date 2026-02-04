@@ -22,12 +22,30 @@ export function UIProvider({ children, ToastComponent: Toast }) {
     const openMenu = useCallback(() => setMenuOpen(true), [])
 
     // Toast actions
-    const showToast = useCallback((message, duration = 1400) => {
+    const showToast = useCallback((message, optionsOrType = 'success', duration = 3000) => {
         clearTimeout(toastTimer.current)
-        setToast({ message, visible: true })
-        toastTimer.current = setTimeout(() => {
-            setToast(prev => ({ ...prev, visible: false }))
-        }, duration)
+
+        // Handle backward compatibility: if second arg is string, treat as type
+        let type = 'success'
+        let action = null
+        let customDuration = duration
+
+        if (typeof optionsOrType === 'string') {
+            type = optionsOrType
+        } else if (typeof optionsOrType === 'object') {
+            type = optionsOrType.type || 'success'
+            action = optionsOrType.action
+            if (optionsOrType.duration) customDuration = optionsOrType.duration
+        }
+
+        setToast({ message, visible: true, type, action })
+
+        // Only auto-hide if there is NO action required
+        if (!action) {
+            toastTimer.current = setTimeout(() => {
+                setToast(prev => ({ ...prev, visible: false }))
+            }, customDuration)
+        }
     }, [])
 
     const value = {

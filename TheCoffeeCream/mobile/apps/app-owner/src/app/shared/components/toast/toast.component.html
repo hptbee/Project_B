@@ -26,5 +26,9 @@
             </svg>
         </div>
         <div class="toast-msg">{{ message$ | async }}</div>
+
+        <button *ngIf="action$ | async as action" class="toast-action-btn" (click)="handleAction(action)">
+            {{ action.label }}
+        </button>
     </div>
 </div>

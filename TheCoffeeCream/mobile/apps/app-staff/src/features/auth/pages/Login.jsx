@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth, LoginPage, useTranslation } from '@thecoffeecream/ui-shared'
 import logo from '@/assets/icons/logo.png'
+import AuthToggles from '../components/AuthToggles'
 
 /**
  * Login screen for staff members - Powered by ui-shared
@@ -36,6 +37,12 @@ export default function Login() {
             onLogin={handleLogin}
             loading={loading}
             error={error}
-        />
+        >
+            <div className="login-footer-link" style={{ textAlign: "center", marginBottom: "16px" }}>
+                {/* Optional footer content */}
+            </div>
+
+            <AuthToggles />
+        </LoginPage>
     )
 }

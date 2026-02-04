@@ -28,12 +28,11 @@ export class LoginComponent {
 
     this.auth.login({ username: this.username, password: this.password }).subscribe({
       next: (res) => {
-        if (this.auth.isSuperAdmin()) {
-          this.router.navigate(['/shops']);
-        } else {
-          this.error = 'Access denied. Only Super Admins can access this portal.';
-          this.auth.logout();
-        }
+        this.router.navigate(['/shops']).then((success) => {
+          if (!success) {
+            this.loading = false;
+          }
+        });
       },
       error: (err) => {
         this.error = err.error || 'Login failed. Please check your credentials.';

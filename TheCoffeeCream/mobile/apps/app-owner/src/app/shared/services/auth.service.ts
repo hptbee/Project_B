@@ -46,6 +46,11 @@ export class AuthService {
 
   isSuperAdmin(): boolean {
     const user = this.getUser();
-    return user && user.role === 'Super_Admin';
+    if (!user) return false;
+
+    // Debug log to trace login attempts
+    console.log('[AuthService] Checking SuperAdmin role. User role:', user.role);
+
+    return user.role === 'Super_Admin';
   }
 }

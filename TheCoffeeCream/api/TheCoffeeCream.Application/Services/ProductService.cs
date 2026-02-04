@@ -20,9 +20,21 @@ namespace TheCoffeeCream.Application.Services
 
         private string GetShopId()
         {
-            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
-            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
-            return shopId;
+            // 1. Try to get from User Claims (Authenticated users)
+            // Note: JwtTokenService uses "ShopId" (Capital S), ensuring case match.
+            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("ShopId")?.Value 
+                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
+
+            if (!string.IsNullOrEmpty(shopId)) return shopId;
+
+            // 2. Try to get from Headers (Anonymous/Public users)
+            if (_httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("X-Shop-Id", out var headerShopId) == true)
+            {
+                return headerShopId.ToString();
+            }
+
+            // 3. Fallback or Fail
+            throw new System.UnauthorizedAccessException("ShopId not found in user context or headers.");
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync()

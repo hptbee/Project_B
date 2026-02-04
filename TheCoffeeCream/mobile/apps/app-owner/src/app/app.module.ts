@@ -12,6 +12,7 @@ import { PurchaseManagementComponent } from './features/plans/pages/purchase-man
 import { PlanManagementComponent } from './features/plans/pages/plan-management/plan-management.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { LoadingComponent } from './shared/components/loading/loading.component';
+import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
 import { authInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
@@ -22,7 +23,8 @@ import { authInterceptor } from './shared/interceptors/auth.interceptor';
     PurchaseManagementComponent,
     PlanManagementComponent,
     ToastComponent,
-    LoadingComponent
+    LoadingComponent,
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,

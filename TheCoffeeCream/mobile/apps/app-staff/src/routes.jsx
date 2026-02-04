@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
+import { useAuth, useToast, ConfirmModal } from '@thecoffeecream/ui-shared'
 
 // Pages
 import Login from '@/features/auth/pages/Login'
@@ -27,13 +27,35 @@ import Terms from '@/features/menu/pages/Terms'
  * ProtectedRoute component - redirects to /login if not authenticated
  */
 function ProtectedRoute({ children }) {
-    const { isAuthenticated, loading } = useAuth()
+    const { isAuthenticated, loading, user, logout } = useAuth()
     const location = useLocation()
 
     if (loading) return null
 
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />
+    }
+
+    // Role Guard: Only 'Admin' and 'Staff' can access this app
+    // Super_Admin should use app-owner
+    const allowedRoles = ['Admin', 'Staff']
+
+    // Safety check: ensure user object exists
+    if (!user || !user.role || !allowedRoles.includes(user.role)) {
+        return (
+            <ConfirmModal
+                show={true}
+                title="Access Denied"
+                message="You do not have permission to access the Staff App."
+                confirmText="OK"
+                onConfirm={() => {
+                    logout()
+                    window.location.href = '/login'
+                }}
+                // No cancel
+                type="danger"
+            />
+        )
     }
 
     return children

@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
+import { useNavigate, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useAuth, useToast, ConfirmModal } from '@thecoffeecream/ui-shared'
 import { Suspense, lazy } from 'react'
 
 // Lazy load components
@@ -14,13 +14,32 @@ const ProductList = lazy(() => import('@/features/products/pages/ProductList'))
 const ShopSettings = lazy(() => import('@/features/settings/pages/ShopSettings'))
 
 function ProtectedRoute({ children }) {
-    const { isAuthenticated, loading } = useAuth()
+    const { isAuthenticated, loading, user, logout } = useAuth()
+    const { showToast } = useToast()
     const location = useLocation()
 
     if (loading) return null
 
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />
+    }
+
+    // Role Guard: Only 'Admin' can access this app
+    if (user?.role !== 'Admin') {
+        return (
+            <ConfirmModal
+                show={true}
+                title="Access Denied"
+                message="You do not have permission to access the Admin Portal."
+                confirmText="OK"
+                onConfirm={() => {
+                    logout()
+                    window.location.href = '/login'
+                }}
+                // Hide Cancel button by not providing onCancel or cancelText
+                type="danger"
+            />
+        )
     }
 
     return children

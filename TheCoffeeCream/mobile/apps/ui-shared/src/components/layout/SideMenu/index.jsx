@@ -65,9 +65,7 @@ export function SideMenu({
                         </div>
                     </nav>
 
-                    import {ThemeToggle, LanguageToggle} from '../../ui/Toggles'
 
-                    // ... (in component)
                     <div className="side-controls">
                         <div className="control-box">
                             <span className="label">{t('nav.language')}</span>
