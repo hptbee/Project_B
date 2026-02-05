@@ -116,7 +116,11 @@ app.UseAuthorization();
 app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
 // 3. API key middleware
+// 3. API key middleware
 app.UseMiddleware<TheCoffeeCream.Shared.Middleware.ApiKeyMiddleware>();
+
+// 4. Session Middleware (After Auth)
+app.UseMiddleware<TheCoffeeCream.Api.Middleware.SessionMiddleware>();
 
 app.MapControllers();
 

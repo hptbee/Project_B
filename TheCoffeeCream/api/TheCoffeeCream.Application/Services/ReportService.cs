@@ -13,21 +13,16 @@ namespace TheCoffeeCream.Application.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
-        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+        private readonly IShopContext _shopContext;
 
-        public ReportService(IOrderRepository orderRepository, IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+        public ReportService(IOrderRepository orderRepository, IProductRepository productRepository, IShopContext shopContext)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
-            _httpContextAccessor = httpContextAccessor;
+            _shopContext = shopContext;
         }
 
-        private string GetShopId()
-        {
-            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
-            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
-            return shopId;
-        }
+        private string GetShopId() => _shopContext.GetShopId();
 
         public async Task<IEnumerable<RevenueReport>> GetRevenueReportAsync(DateTimeOffset startDate, DateTimeOffset endDate, string groupBy)
         {

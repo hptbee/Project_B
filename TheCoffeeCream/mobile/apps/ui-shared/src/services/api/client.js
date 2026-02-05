@@ -36,11 +36,22 @@ async function apiFetch(url, options = {}, retries = API_CONFIG.MAX_RETRIES) {
 
     try {
         const token = localStorage.getItem('auth_token');
+        const authUser = localStorage.getItem('auth_user');
+        let shopId = null;
+        if (authUser) {
+            try {
+                shopId = JSON.parse(authUser).shopId;
+            } catch (e) {
+                Logger.error('Failed to parse auth_user for shopId');
+            }
+        }
+
         const fetchOptions = {
             ...options,
             headers: {
                 ...(isJsonRequest ? { 'Content-Type': 'application/json' } : {}),
                 ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                ...(shopId ? { 'x-shop-id': shopId } : {}),
                 ...options.headers
             }
         };
@@ -57,14 +68,30 @@ async function apiFetch(url, options = {}, retries = API_CONFIG.MAX_RETRIES) {
                 return apiFetch(url, options, retries - 1);
             }
 
-            if (response.status === 401) {
-                Logger.warn(`[AUTH] 401 Unauthorized - Dispatching logout event`);
-                window.dispatchEvent(new Event('auth:unauthorized'));
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { message: await response.text() };
             }
 
-            const errorText = await response.text();
-            Logger.error(`[API ERROR RESPONSE] ${method} ${fullUrl} - ${errorText}`);
-            throw new Error(errorText || `API Error: ${response.status}`);
+            if (response.status === 401) {
+                if (errorData?.code === 'SessionConflict') {
+                    Logger.warn(`[AUTH] Session Conflict - Dispatching session conflict event`);
+                    window.dispatchEvent(new CustomEvent('auth:session_conflict', { detail: errorData }));
+                } else {
+                    Logger.warn(`[AUTH] 401 Unauthorized - Dispatching logout event`);
+                    window.dispatchEvent(new Event('auth:unauthorized'));
+                }
+            }
+
+            const errorMessage = errorData?.message || errorData || `API Error: ${response.status}`;
+            Logger.error(`[API ERROR RESPONSE] ${method} ${fullUrl} - ${JSON.stringify(errorMessage)}`);
+
+            // Create error object with response data attached
+            const error = new Error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
+            error.response = { data: errorData, status: response.status };
+            throw error;
         }
 
         if (response.status === 204) {

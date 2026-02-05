@@ -10,32 +10,15 @@ namespace TheCoffeeCream.Application.Services
     public class ProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+        private readonly IShopContext _shopContext;
 
-        public ProductService(IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+        public ProductService(IProductRepository productRepository, IShopContext shopContext)
         {
             _productRepository = productRepository;
-            _httpContextAccessor = httpContextAccessor;
+            _shopContext = shopContext;
         }
 
-        private string GetShopId()
-        {
-            // 1. Try to get from User Claims (Authenticated users)
-            // Note: JwtTokenService uses "ShopId" (Capital S), ensuring case match.
-            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("ShopId")?.Value 
-                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
-
-            if (!string.IsNullOrEmpty(shopId)) return shopId;
-
-            // 2. Try to get from Headers (Anonymous/Public users)
-            if (_httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("X-Shop-Id", out var headerShopId) == true)
-            {
-                return headerShopId.ToString();
-            }
-
-            // 3. Fallback or Fail
-            throw new System.UnauthorizedAccessException("ShopId not found in user context or headers.");
-        }
+        private string GetShopId() => _shopContext.GetShopId();
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {

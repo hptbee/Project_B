@@ -24,6 +24,7 @@ The **Admin App** is a centralized dashboard designed for shop managers to overs
 *   **Order Management**: View and manage all store orders (`/orders`).
 *   **Product Management**: Manage product catalog, prices, and availability (`/products`).
 *   **User Management**: View and manage system users (`/users`).
+    *   **Staff Limit**: Maximum of **5 Active Staff** accounts per shop. Creating or activating more requires disabling existing ones.
 ### 3.4 User Interface & UX
 *   **Theme & Language**: universal toggles for Dark/Light mode and Language selection (Login, Register, and Sidebar).
 *   **Visual Feedback**:

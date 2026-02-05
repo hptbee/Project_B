@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using TheCoffeeCream.Application.DTOs;
 using TheCoffeeCream.Domain.Entities;
 using TheCoffeeCream.Application.Interfaces;
+using TheCoffeeCream.Application.Common;
 
 namespace TheCoffeeCream.Application.Services
 {
@@ -11,21 +12,16 @@ namespace TheCoffeeCream.Application.Services
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductRepository _productRepository;
-        private readonly Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor;
+        private readonly IShopContext _shopContext;
 
-        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor)
+        public OrderService(IOrderRepository orderRepository, IProductRepository productRepository, IShopContext shopContext)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
-            _httpContextAccessor = httpContextAccessor;
+            _shopContext = shopContext;
         }
 
-        private string GetShopId()
-        {
-            var shopId = _httpContextAccessor.HttpContext?.User?.FindFirst("shopId")?.Value;
-            if (string.IsNullOrEmpty(shopId)) throw new System.UnauthorizedAccessException("ShopId not found in user context.");
-            return shopId;
-        }
+        private string GetShopId() => _shopContext.GetShopId();
 
         public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
         {
@@ -34,12 +30,12 @@ namespace TheCoffeeCream.Application.Services
             if (existing != null && existing.Status != OrderStatus.DRAFT)
                 throw new InvalidOperationException("This order has already been finalized and cannot be modified.");
 
-            var orderType = ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN);
+            var orderType = EnumUtilities.ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN);
             var allProducts = (await _productRepository.GetAllAsync(shopId)).ToDictionary(p => p.Id);
 
             var items = request.Items.Select(i =>
             {
-                var itemDiscountType = ParseNullableEnum<DiscountType>(i.DiscountType);
+                var itemDiscountType = EnumUtilities.ParseNullableEnum<DiscountType>(i.DiscountType);
                 var selected = ResolveToppings(i, allProducts);
                 return new OrderItem(i.ProductId, i.Name, i.UnitPrice, i.Quantity, selected, itemDiscountType, i.DiscountValue, i.Note);
             });
@@ -49,12 +45,12 @@ namespace TheCoffeeCream.Application.Services
                 orderType,
                 items,
                 request.TableNumber,
-                ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
+                EnumUtilities.ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
                 request.CashAmount,
                 request.TransferAmount,
-                ParseNullableEnum<DiscountType>(request.DiscountType),
+                EnumUtilities.ParseNullableEnum<DiscountType>(request.DiscountType),
                 request.DiscountValue,
-                ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
+                EnumUtilities.ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
                 request.Note,
                 existing?.Id)
             {
@@ -82,22 +78,22 @@ namespace TheCoffeeCream.Application.Services
                     i.UnitPrice,
                     i.Quantity,
                     selected,
-                    ParseNullableEnum<DiscountType>(i.DiscountType),
+                    EnumUtilities.ParseNullableEnum<DiscountType>(i.DiscountType),
                     i.DiscountValue,
                     i.Note);
             });
 
             var order = new Order(
                 request.ClientOrderId,
-                ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN),
+                EnumUtilities.ParseEnum<OrderType>(request.OrderType, OrderType.DINE_IN),
                 items,
                 request.TableNumber,
-                ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
+                EnumUtilities.ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH),
                 request.CashAmount,
                 request.TransferAmount,
-                ParseNullableEnum<DiscountType>(request.DiscountType),
+                EnumUtilities.ParseNullableEnum<DiscountType>(request.DiscountType),
                 request.DiscountValue,
-                ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
+                EnumUtilities.ParseEnum<OrderStatus>(request.Status, OrderStatus.SUCCESS),
                 request.Note,
                 id)
             {
@@ -139,18 +135,6 @@ namespace TheCoffeeCream.Application.Services
             return selected.Any() ? selected : null;
         }
 
-        private static T ParseEnum<T>(string value, T defaultValue) where T : struct
-        {
-            if (string.IsNullOrEmpty(value)) return defaultValue;
-            return Enum.TryParse<T>(value, true, out var result) ? result : defaultValue;
-        }
-
-        private static T? ParseNullableEnum<T>(string value) where T : struct
-        {
-            if (string.IsNullOrEmpty(value)) return null;
-            return Enum.TryParse<T>(value, true, out var result) ? result : (T?)null;
-        }
-
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTimeOffset startDate, DateTimeOffset endDate)
         {
             return await _orderRepository.GetOrdersByDateRangeAsync(startDate, endDate, GetShopId());
@@ -171,7 +155,7 @@ namespace TheCoffeeCream.Application.Services
             var existing = await _orderRepository.GetByIdAsync(id, GetShopId());
             if (existing == null) throw new ArgumentException("Order not found");
 
-            var paymentMethod = ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH);
+            var paymentMethod = EnumUtilities.ParseEnum<PaymentMethod>(request.PaymentMethod, PaymentMethod.CASH);
             
             // Re-construct the order with new payment details
             // Order is immutable-ish but we can use the constructor to create a modified copy (or just modify properties)

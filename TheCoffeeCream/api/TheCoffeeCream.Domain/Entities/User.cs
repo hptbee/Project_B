@@ -9,5 +9,6 @@ namespace TheCoffeeCream.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = "Staff";
         public bool IsActive { get; set; } = true;
+        public string LastLoginToken { get; set; } = string.Empty;
     }
 }

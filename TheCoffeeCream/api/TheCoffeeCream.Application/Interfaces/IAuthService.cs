@@ -6,6 +6,7 @@ namespace TheCoffeeCream.Application.Interfaces
     public interface IAuthService
     {
         Task<LoginResult?> LoginAsync(string username, string password);
+        Task LogoutAsync(string userId);
         Task<ShopDto> RegisterShopAsync(DTOs.RegisterShopDto registerDto);
         Task<bool> VerifyEmailAsync(string token);
     }

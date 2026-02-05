@@ -74,7 +74,13 @@ namespace TheCoffeeCream.Application.Services
             else if (shop == null && user.Role != "Super_Admin")
             {
                  Console.WriteLine($"[AUTH-DEBUG] Shop NOT FOUND for user: {username}, ShopId: {user.ShopId}");
+                 return null;
             }
+
+            // Generate Session Token
+            var sessionToken = Guid.NewGuid().ToString();
+            user.LastLoginToken = sessionToken;
+            await _userRepository.UpdateAsync(user);
 
             var token = _tokenService.GenerateToken(user);
             return new LoginResult
@@ -82,6 +88,16 @@ namespace TheCoffeeCream.Application.Services
                 User = user,
                 Token = token
             };
+        }
+
+        public async Task LogoutAsync(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user != null)
+            {
+                user.LastLoginToken = string.Empty;
+                await _userRepository.UpdateAsync(user);
+            }
         }
 
         public async Task<ShopDto> RegisterShopAsync(RegisterShopDto dto)

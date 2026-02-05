@@ -53,7 +53,8 @@ export default function UserModal({ user, onClose, onSave }) {
             onSave()
         } catch (error) {
             console.error('Failed to save user:', error)
-            showToast('Lỗi khi lưu thông tin nhân viên', 'error')
+            const msg = error.response?.data?.message || t('modal.action_failed')
+            showToast(msg, 'error')
         } finally {
             setLoading(false)
         }

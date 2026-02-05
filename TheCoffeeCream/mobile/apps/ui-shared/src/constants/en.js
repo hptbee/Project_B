@@ -45,6 +45,8 @@ export const en = {
         confirm: 'Confirm',
         refresh: 'Refresh',
         export: 'Export CSV',
+        import_csv: 'Import CSV',
+        export_csv: 'Export CSV',
         add_new: 'Add New',
         update: 'Update'
     },

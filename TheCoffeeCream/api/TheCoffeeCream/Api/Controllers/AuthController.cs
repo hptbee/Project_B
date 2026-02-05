@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using TheCoffeeCream.Application.Interfaces;
 
 namespace TheCoffeeCream.Api.Controllers
@@ -29,6 +31,20 @@ namespace TheCoffeeCream.Api.Controllers
             }
 
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            await _authService.LogoutAsync(userId);
+            return Ok(new { message = "Logged out successfully" });
         }
 
         [HttpPost("register-shop")]

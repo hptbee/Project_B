@@ -103,7 +103,8 @@ export default function UserList() {
             showToast(user.isActive ? t('modal.status_inactive_alert', { name: user.username }) : t('modal.status_active_alert', { name: user.username }))
             loadUsers()
         } catch (error) {
-            showToast(t('modal.action_failed'), 'error')
+            const msg = error.response?.data?.message || t('modal.action_failed')
+            showToast(msg, 'error')
         } finally {
             setConfirmToggle({ show: false, user: null })
         }

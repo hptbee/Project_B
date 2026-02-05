@@ -14,6 +14,7 @@ The **Staff App** is a mobile-first Point of Sale (POS) and order management app
 *   **Login**: secure login interface supporting username/password.
 *   **Role Guard**: Restricts access to authorized roles only.
 *   **Token Management**: Uses `auth_token` for session management.
+*   **Single Session**: Enforces single active session per user. Logging in on a new device invalidates previous sessions (Warning + Logout).
 
 ### 3.2 Table Management
 *   **Table List**: Visual representation of restaurant tables (Root path `/`).
@@ -32,21 +33,16 @@ The **Staff App** is a mobile-first Point of Sale (POS) and order management app
     *   **Offline Queue**: Orders taken while offline are queued locally using `OfflineQueue`.
     *   **Auto-Sync**: Background process syncs queued orders when connectivity is restored.
     *   **Data Sync**: Manual sync option for menus and settings (`/sync`).
-*   **Kitchen Integration**: View kitchen notifications (`/kitchen`).
-*   **Payment Requests**: Handle payment requests from customers (`/requests`).
 
 ### 3.5 Reporting
 *   **End of Day Report**: Generate daily sales reports (`/report`).
 *   **Receipts**: View and print receipts (`/receipts`).
 
 ### 3.6 Settings & Support
-*   **Settings**: General app configuration (`/settings`).
 *   **Theme & Language**:
     *   **Theme Toggle**: Switch between Dark and Light modes (Default: Dark).
     *   **Language Toggle**: Switch between supported languages.
     *   *Note*: Toggles are accessible via Login page, Register page, and Main Menu.
-*   **Help & Support**: Access help documentation and support channels (`/help`, `/support`).
-*   **Terms**: View terms of service (`/terms`).
 
 ### 3.7 System Behaviors (Non-Functional)
 *   **Locality**: All dates and time comparisons MUST respect **Vietnam Standard Time (GMT+7)**.

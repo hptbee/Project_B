@@ -4,6 +4,7 @@
 **/.vscode
 **/bin
 **/obj
-mobile/
+**/node_modules
+**/dist
 publish/
 .github/

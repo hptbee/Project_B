@@ -10,6 +10,8 @@ import AppRoutes from './routes'
 
 import { OfflineQueue, Logger, useTranslation } from '@thecoffeecream/ui-shared'
 
+import SessionConflictHandler from '@/shared/components/SessionConflictHandler'
+
 /**
  * Main application content with route and global effect logic
  */
@@ -85,6 +87,7 @@ function AppContent() {
 
     return (
         <>
+            <SessionConflictHandler />
             <SideMenu />
             <AppRoutes />
         </>

@@ -176,7 +176,7 @@ export default function ProductList() {
                         fullWidth={false}
                     />
 
-                    <div className="flex gap-2">
+                    <div className="data-actions-group">
                         <input
                             type="file"
                             id="import-csv"
@@ -184,11 +184,13 @@ export default function ProductList() {
                             accept=".csv"
                             onChange={handleImport}
                         />
-                        <button className="btn btn-ghost btn-circle" onClick={() => document.getElementById('import-csv').click()} title="Import CSV">
-                            <Icon name="upload" size={20} />
+                        <button className="data-btn import-btn" onClick={() => document.getElementById('import-csv').click()} title={t('action.import_csv')}>
+                            <Icon name="upload" size={18} />
+                            <span className="btn-label">{t('action.import_csv')}</span>
                         </button>
-                        <button className="btn btn-ghost btn-circle" onClick={handleExport} title="Export CSV">
-                            <Icon name="download" size={20} />
+                        <button className="data-btn export-btn" onClick={handleExport} title={t('action.export_csv')}>
+                            <Icon name="download" size={18} />
+                            <span className="btn-label">{t('action.export_csv')}</span>
                         </button>
                     </div>
 

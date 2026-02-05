@@ -11,6 +11,7 @@ namespace TheCoffeeCream.Application
             services.AddScoped<OrderService>();
             services.AddScoped<ProductService>();
             services.AddScoped<UserService>();
+            services.AddScoped<IShopContext, ShopContext>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IReportService, ReportService>();
 

@@ -1,15 +1,11 @@
-# Build Stage
-FROM node:20-alpine AS build
+# Base Stage - Install dependencies
+FROM node:20 AS base
 WORKDIR /app
-
-# Copy root workspace configurations
-COPY package*.json ./
-
-# Copy all source code
 COPY . .
-
-# Install dependencies and build
 RUN npm install
+
+# Build Stage - Production Build
+FROM base AS build
 RUN npm run build -w app-staff
 
 # Serve Stage

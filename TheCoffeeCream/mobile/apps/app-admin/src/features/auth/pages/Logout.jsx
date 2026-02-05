@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
+import { useAuth, useTranslation } from '@thecoffeecream/ui-shared'
 
 /**
  * Logout page for Admin app
@@ -8,6 +8,7 @@ import { useAuth } from '@thecoffeecream/ui-shared'
  */
 export default function Logout() {
     const { logout } = useAuth()
+    const { t } = useTranslation()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export default function Logout() {
 
     return (
         <div className="admin-logout-page full-center">
-            <p>Đang đăng xuất khỏi hệ thống quản trị...</p>
+            <p>{t('nav.logout_processing')}</p>
         </div>
     )
 }

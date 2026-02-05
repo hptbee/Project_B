@@ -45,6 +45,8 @@ export const vi = {
         confirm: 'Xác nhận',
         refresh: 'Làm mới',
         export: 'Xuất báo cáo',
+        import_csv: 'Nhập CSV',
+        export_csv: 'Xuất CSV',
         add_new: 'Thêm mới',
         update: 'Cập nhật'
     },

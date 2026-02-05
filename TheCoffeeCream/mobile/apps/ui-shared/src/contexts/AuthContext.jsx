@@ -30,11 +30,17 @@ export function AuthProvider({ children }) {
         }
     }, [])
 
-    const logout = useCallback(() => {
-        setUser(null)
-        setToken(null)
-        localStorage.removeItem('auth_token')
-        localStorage.removeItem('auth_user')
+    const logout = useCallback(async () => {
+        try {
+            await apiFetch('/Auth/logout', { method: 'POST' })
+        } catch (error) {
+            console.error('API Logout failed:', error)
+        } finally {
+            setUser(null)
+            setToken(null)
+            localStorage.removeItem('auth_token')
+            localStorage.removeItem('auth_user')
+        }
     }, [])
 
     useEffect(() => {

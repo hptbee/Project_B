@@ -33,7 +33,8 @@ namespace TheCoffeeCream.Infrastructure.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role),
-                new Claim("shopId", user.ShopId ?? "")
+                new Claim("shopId", user.ShopId ?? ""),
+                new Claim("session_id", user.LastLoginToken ?? "")
             };
 
             var token = new JwtSecurityToken(

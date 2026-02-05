@@ -15,7 +15,7 @@ services:
     build:
       context: ./mobile
       dockerfile: apps/app-admin/Dockerfile
-      target: build
+      target: base
     volumes:
       - ./mobile:/app
       - /app/node_modules
@@ -31,7 +31,7 @@ services:
     build:
       context: ./mobile
       dockerfile: apps/app-staff/Dockerfile
-      target: build
+      target: base
     volumes:
       - ./mobile:/app
       - /app/node_modules
@@ -47,7 +47,7 @@ services:
     build:
       context: ./mobile
       dockerfile: apps/app-owner/Dockerfile
-      target: build
+      target: base
     volumes:
       - ./mobile:/app
       - /app/node_modules

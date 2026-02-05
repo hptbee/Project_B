@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@thecoffeecream/ui-shared'
+import { useAuth, useTranslation } from '@thecoffeecream/ui-shared'
 
 export default function Logout() {
     const { logout } = useAuth()
+    const { t } = useTranslation()
     const nav = useNavigate()
 
     useEffect(() => {
