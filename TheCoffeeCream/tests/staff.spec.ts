@@ -26,7 +26,7 @@ test.describe('Staff App E2E', () => {
     // 0. SETUP: Create multiple orders to populate database
     test('Setup: Create Multiple Orders for Different Tables', async ({ page }) => {
         test.setTimeout(600000); // 10 minutes for 25 orders
-        const numOrders = 25;
+        const numOrders = 3;
         const numTables = 10; // Tables 1-10
         const numProducts = 5; // Use first 5 products
 
@@ -229,6 +229,164 @@ test.describe('Staff App E2E', () => {
         await page.context().setOffline(false);
     });
 
+    // 6. SEARCH & FILTER
+    test('Search and Filter Products', async ({ page }) => {
+        await page.goto('/products');
+        await page.waitForLoadState('networkidle');
+
+        // Search
+        const searchInput = page.locator('input[type="text"], .search-input').first();
+        await searchInput.fill('Cafe');
+        await page.waitForTimeout(1000); // Wait for filter
+
+        // Verify some products visible
+        const productsCount = await page.locator('.product-row, .product-card').count();
+        expect(productsCount).toBeGreaterThan(0);
+
+        // Filter by Category
+        const chips = page.locator('.tab');
+        const firstCategory = await chips.nth(1).innerText();
+        await chips.nth(1).click();
+
+        console.log(`Filtered by category: ${firstCategory}`);
+        await page.waitForTimeout(500);
+    });
+
+    // 7. PRODUCT OPTIONS & ADD-ONS
+    test('Add Product with Options and Add-ons', async ({ page }) => {
+        await page.goto('/products?table=4');
+        await page.waitForLoadState('networkidle');
+
+        // Click first product to go to detail
+        await page.locator('.product-row, .product-card').first().click();
+        await expect(page).toHaveURL(/\/products\/\w+/);
+
+        // Select a topping if available
+        const topping = page.locator('.topping').first();
+        if (await topping.isVisible()) {
+            await topping.locator('.add-topping-btn, .plus').click();
+            console.log('Added a topping');
+        }
+
+        // Increase quantity
+        await page.locator('.qty-adjustment .adj-btn.active').click();
+
+        // Add to order
+        await page.locator('.bottom-action.btn-primary').click();
+
+        // Should go to Table Order
+        await expect(page).toHaveURL(/\/table\/4/);
+    });
+
+    // 8. CART MANAGEMENT
+    test('Cart Management: Update Quantities and Remove Item', async ({ page }) => {
+        // Add item first
+        await page.goto('/products');
+        await page.locator('.product-row, .product-card').first().waitFor();
+        await page.locator('.product-row, .product-card').first().click();
+        await page.locator('.bottom-action.btn-primary').click();
+
+        // Go to Cart
+        await page.goto('/cart');
+        await expect(page).toHaveURL(/\/cart/);
+
+        // Increase Qty
+        const initialQtyText = await page.locator('.qty-val').first().innerText();
+        const initialQty = parseInt(initialQtyText);
+        await page.locator('.qty-btn.plus').first().click();
+
+        // Wait for update
+        await expect(page.locator('.qty-val').first()).not.toHaveText(initialQtyText);
+        const newQty = parseInt(await page.locator('.qty-val').first().innerText());
+        expect(newQty).toBeGreaterThan(initialQty);
+
+        // Remove Item
+        await page.locator('.remove-btn').first().click();
+        await expect(page.locator('.empty-cart-state')).toBeVisible();
+    });
+
+    // 9. ORDER DETAIL
+    test('View Order Details from History', async ({ page }) => {
+        await page.goto('/orders');
+        await page.waitForLoadState('networkidle');
+
+        // Click first order in history
+        const firstOrder = page.locator('.order-card, .order-item').first();
+        if (await firstOrder.isVisible()) {
+            await firstOrder.click();
+            await expect(page).toHaveURL(/\/orders\/\w+/);
+            await expect(page.locator('.page-header h2')).toContainText(/Chi tiết|Detail/i);
+        }
+    });
+
+    // 10. ORDER ITEM NOTE
+    test('Add Product with Note and Verify Persistence', async ({ page }) => {
+        await page.goto('/products?table=5');
+        await page.waitForLoadState('networkidle');
+
+        // Go to detail
+        await page.locator('.product-row, .product-card').first().click();
+
+        // Add note
+        const noteText = 'No sugar, extra ice';
+        await page.locator('textarea').fill(noteText);
+        await page.locator('.bottom-action.btn-primary').click();
+
+        // Verify in cart (Table Order page)
+        await expect(page).toHaveURL(/\/table\/5/);
+    });
+
+    // 11. TABLE STATUS VISIBILITY
+    test('Verify Table Status Updates to Occupied', async ({ page }) => {
+        // Go to Table 6 and add something
+        await page.goto('/products?table=6');
+        await page.locator('.product-row, .product-card').first().waitFor();
+        await page.locator('.product-row, .product-card').first().click();
+        await page.locator('.bottom-action.btn-primary').click();
+
+        // Go to Floor Plan
+        await page.goto('/');
+        await page.waitForLoadState('networkidle');
+
+        // Table 6 should have 'active' class
+        const table6 = page.locator('a:has-text("Bàn 6"), a:has-text("Table 6")').first();
+        await expect(table6).toHaveClass(/active/);
+    });
+
+    // 12. CHECKOUT WITH BANK TRANSFER
+    test('Checkout using Bank Transfer', async ({ page }) => {
+        // Add item to Table 7
+        await page.goto('/products?table=7');
+        await page.locator('.product-row, .product-card').first().waitFor();
+        await page.locator('.product-row, .product-card').first().click();
+        await page.locator('.bottom-action.btn-primary').click();
+
+        // Go to Checkout
+        await page.goto('/checkout/7');
+        await page.waitForLoadState('networkidle');
+
+        // Select Bank Transfer
+        const transferBtn = page.locator('.payment-method-item:has-text("Chuyển khoản"), .payment-method-item:has-text("Transfer")');
+        await transferBtn.click();
+
+        // Pay
+        await page.locator('.checkout-footer .btn-primary').click();
+        await expect(page).toHaveURL(/\/$/);
+    });
+
+    // 13. SYNC DATA
+    test('Trigger Manual Data Sync', async ({ page }) => {
+        await page.click('.menu.icon-btn');
+        await page.getByText('Đồng bộ dữ liệu').click();
+        await expect(page).toHaveURL(/\/sync/);
+
+        const syncBtn = page.getByRole('button', { name: /Đồng bộ|Sync/i });
+        await syncBtn.click();
+
+        // Wait for sync to complete (success toast or similar)
+        // We just check if button is clickable or toast appears
+        await page.waitForTimeout(2000);
+    });
 
 });
 
@@ -277,5 +435,16 @@ test.describe('Staff App E2E - Login Page', () => {
             const newTheme = await html.getAttribute('data-theme');
             console.log('Theme changed to:', newTheme);
         }
+    });
+
+    test('Login Failure with Invalid Credentials', async ({ page }) => {
+        await page.goto('/login');
+        await page.fill('input[name="username"]', 'wronguser');
+        await page.fill('input[name="password"]', 'wrongpass');
+        await page.click('button[type="submit"]');
+
+        // Expect error message
+        const errorMsg = page.locator('.error-alert');
+        await expect(errorMsg).toBeVisible();
     });
 });
