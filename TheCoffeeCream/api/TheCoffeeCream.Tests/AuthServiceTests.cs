@@ -22,6 +22,7 @@ namespace TheCoffeeCream.Tests
         private readonly Mock<ITokenService> _tokenServiceMock;
         private readonly Mock<IPlanRepository> _planRepositoryMock;
         private readonly Mock<ISubscriptionHistoryRepository> _subscriptionHistoryRepositoryMock;
+        private readonly Mock<Microsoft.Extensions.Caching.Memory.IMemoryCache> _cacheMock;
         private readonly AuthService _authService;
 
         public AuthServiceTests()
@@ -32,6 +33,7 @@ namespace TheCoffeeCream.Tests
             _tokenServiceMock = new Mock<ITokenService>();
             _planRepositoryMock = new Mock<IPlanRepository>();
             _subscriptionHistoryRepositoryMock = new Mock<ISubscriptionHistoryRepository>();
+            _cacheMock = new Mock<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
 
             _authService = new AuthService(
                 _userRepositoryMock.Object,
@@ -39,7 +41,8 @@ namespace TheCoffeeCream.Tests
                 _emailServiceMock.Object,
                 _tokenServiceMock.Object,
                 _planRepositoryMock.Object,
-                _subscriptionHistoryRepositoryMock.Object
+                _subscriptionHistoryRepositoryMock.Object,
+                _cacheMock.Object
             );
         }
 

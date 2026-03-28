@@ -1,6 +1,6 @@
 @use '@ui-shared/styles/variables' as *;
 @use './styles/components';
-@import '../../ui-shared/src/styles/_tokens.scss';
+@import '@ui-shared/styles/_tokens.scss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 * {
@@ -26,11 +26,11 @@ body {
 }
 
 /* Global Button Synchronization - Imported from Shared */
-@import '../../ui-shared/src/styles/buttons.scss';
-@import '../../ui-shared/src/styles/inputs.scss';
-@import '../../ui-shared/src/styles/cards.scss';
-@import '../../ui-shared/src/styles/layout.scss';
-@import '../../ui-shared/src/styles/animations.scss';
+@import '@ui-shared/styles/buttons.scss';
+@import '@ui-shared/styles/inputs.scss';
+@import '@ui-shared/styles/cards.scss';
+@import '@ui-shared/styles/layout.scss';
+@import '@ui-shared/styles/animations.scss';
 
 .page {
     padding-bottom: calc(92px + env(safe-area-inset-bottom));

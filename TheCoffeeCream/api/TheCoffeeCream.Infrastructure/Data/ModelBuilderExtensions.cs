@@ -35,20 +35,20 @@ namespace TheCoffeeCream.Infrastructure.Data
 
             // Category
             modelBuilder.Entity<Category>().HasData(
-                new Category { Id = Guid.Parse("6648dbe7-e96c-4e74-87c9-854747e94ae5"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Khác", Rank = 14, IsActive = false },
-                new Category { Id = Guid.Parse("ad8147f8-cccf-420f-bc55-d3d2491dfa81"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Bánh", Rank = 7, IsActive = false },
-                new Category { Id = Guid.Parse("2bfba6b7-c0eb-47dd-a06b-14fda34023ae"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "TOPPING", Rank = 13, IsActive = false },
-                new Category { Id = Guid.Parse("1d4b6612-5cd7-4c9f-9fda-8209e95da2ae"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Cafe", Rank = 1, IsActive = false },
-                new Category { Id = Guid.Parse("6138ec79-4292-4747-81aa-d0e4d308efda"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Specialty", Rank = 2, IsActive = false },
-                new Category { Id = Guid.Parse("485e5bd2-e0f6-4a56-9f20-cd1707db60f1"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Món khác", Rank = 9, IsActive = false },
-                new Category { Id = Guid.Parse("23a13583-3794-4fa1-8704-ba54916dff7d"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trending", Rank = 8, IsActive = false },
-                new Category { Id = Guid.Parse("5d49224a-7fd8-436f-a9a7-b04cf681f706"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Cacao", Rank = 4, IsActive = false },
-                new Category { Id = Guid.Parse("97f21f46-4f5e-4979-8d66-c5e666e50aa4"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trà Sữa", Rank = 3, IsActive = false },
-                new Category { Id = Guid.Parse("cf121efe-0380-48eb-82ba-5f26c6f67fab"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Món Nóng", Rank = 10, IsActive = false },
-                new Category { Id = Guid.Parse("05ab0a7a-8a5c-43d1-93dc-bef44fa28908"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Latte", Rank = 5, IsActive = false },
-                new Category { Id = Guid.Parse("00f6c7bb-e1b1-4d79-b3b1-112e7dcb6700"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trà trái cây", Rank = 6, IsActive = false },
-                new Category { Id = Guid.Parse("added61a-03d3-465e-8ebf-9f90b729c2b5"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Chai hủ", Rank = 11, IsActive = false },
-                new Category { Id = Guid.Parse("a687085b-5ddc-49b5-8724-e94bd31ba54f"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Nước ngọt", Rank = 12, IsActive = false }
+                new Category { Id = Guid.Parse("6648dbe7-e96c-4e74-87c9-854747e94ae5"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Khác", Rank = 14, IsActive = true },
+                new Category { Id = Guid.Parse("ad8147f8-cccf-420f-bc55-d3d2491dfa81"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Bánh", Rank = 7, IsActive = true },
+                new Category { Id = Guid.Parse("2bfba6b7-c0eb-47dd-a06b-14fda34023ae"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "TOPPING", Rank = 13, IsActive = true },
+                new Category { Id = Guid.Parse("1d4b6612-5cd7-4c9f-9fda-8209e95da2ae"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Cafe", Rank = 1, IsActive = true },
+                new Category { Id = Guid.Parse("6138ec79-4292-4747-81aa-d0e4d308efda"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Specialty", Rank = 2, IsActive = true },
+                new Category { Id = Guid.Parse("485e5bd2-e0f6-4a56-9f20-cd1707db60f1"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Món khác", Rank = 9, IsActive = true },
+                new Category { Id = Guid.Parse("23a13583-3794-4fa1-8704-ba54916dff7d"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trending", Rank = 8, IsActive = true },
+                new Category { Id = Guid.Parse("5d49224a-7fd8-436f-a9a7-b04cf681f706"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Cacao", Rank = 4, IsActive = true },
+                new Category { Id = Guid.Parse("97f21f46-4f5e-4979-8d66-c5e666e50aa4"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trà Sữa", Rank = 3, IsActive = true },
+                new Category { Id = Guid.Parse("cf121efe-0380-48eb-82ba-5f26c6f67fab"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Món Nóng", Rank = 10, IsActive = true },
+                new Category { Id = Guid.Parse("05ab0a7a-8a5c-43d1-93dc-bef44fa28908"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Latte", Rank = 5, IsActive = true },
+                new Category { Id = Guid.Parse("00f6c7bb-e1b1-4d79-b3b1-112e7dcb6700"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Trà trái cây", Rank = 6, IsActive = true },
+                new Category { Id = Guid.Parse("added61a-03d3-465e-8ebf-9f90b729c2b5"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Chai hủ", Rank = 11, IsActive = true },
+                new Category { Id = Guid.Parse("a687085b-5ddc-49b5-8724-e94bd31ba54f"), ShopId = "00000000-0000-0000-0000-000000000001", Name = "Nước ngọt", Rank = 12, IsActive = true }
             );
 
             // Product

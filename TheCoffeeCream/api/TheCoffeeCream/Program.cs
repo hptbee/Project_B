@@ -71,25 +71,69 @@ builder.Services.AddApplication();
 
 var app = builder.Build();
 
-// Automatically apply migrations on startup
+// Automatically apply migrations on startup with retries
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var context = services.GetRequiredService<TheCoffeeCream.Infrastructure.Data.ApplicationDbContext>();
+    
+    int maxRetries = 10;
+    int delaySeconds = 5;
+    bool migrationSucceeded = false;
+
+    for (int i = 1; i <= maxRetries; i++)
     {
-        Console.WriteLine("[DB-INIT] Applying migrations...");
-        var context = services.GetRequiredService<TheCoffeeCream.Infrastructure.Data.ApplicationDbContext>();
-        if (context.Database.IsSqlServer())
+        try
         {
-            context.Database.Migrate();
-            Console.WriteLine("[DB-INIT] Migrations applied successfully.");
+            Console.WriteLine($"[DB-INIT] Attempt {i}/{maxRetries} to connect and migrate...");
+            
+            if (context.Database.IsSqlServer())
+            {
+                // Verify connection before migrating
+                if (context.Database.CanConnect())
+                {
+                    Console.WriteLine("[DB-INIT] Connected to SQL Server. Applying migrations...");
+                    context.Database.Migrate();
+                    Console.WriteLine("[DB-INIT] Migrations applied successfully.");
+                    migrationSucceeded = true;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("[DB-INIT] SQL Server is not ready yet.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"[DB-INIT] WARNING: Database provider is not SQL Server ({context.Database.ProviderName}). Skipping migrations.");
+                migrationSucceeded = true; // Not an error we can fix with retry
+                break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DB-INIT] Attempt {i} failed: {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"[DB-INIT] INNER ERROR: {ex.InnerException.Message}");
+            }
+            
+            if (i == maxRetries)
+            {
+                logger.LogError(ex, "An error occurred while migrating the database after multiple attempts.");
+            }
+            else
+            {
+                Console.WriteLine($"[DB-INIT] Retrying in {delaySeconds} seconds...");
+                Thread.Sleep(delaySeconds * 1000);
+            }
         }
     }
-    catch (Exception ex)
+
+    if (!migrationSucceeded && context.Database.IsSqlServer())
     {
-        Console.WriteLine($"[DB-INIT] ERROR: {ex.Message}");
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
+        Console.WriteLine("[DB-INIT] FATAL: Could not migrate database. Application might be in an inconsistent state.");
     }
 }
 

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useTableCart, useTableCartDispatch } from '@/shared/contexts/CartContext'
+import { useTableCart, useTableCartDispatch, useCart } from '@/shared/contexts/CartContext'
 import { calculateCartTotal, formatPrice, useAutoSave, useTranslation } from '@thecoffeecream/ui-shared'
 import { ordersApi as api } from '@thecoffeecream/ui-shared'
 import { Fab, Icon, ConfirmModal, IconChevron, Badge, EmptyState } from '@thecoffeecream/ui-shared'
 import BillTemplate from '../../orders/components/BillTemplate'
 import PrintBillModal from '../../orders/components/PrintBillModal'
+import MergeTableModal from '@/shared/components/MergeTableModal'
+import SplitTableModal from '@/shared/components/SplitTableModal'
 import './TableOrder.scss'
 
 export default function TableOrder() {
@@ -20,6 +22,10 @@ export default function TableOrder() {
     const [confirmDelete, setConfirmDelete] = useState({ show: false, key: null })
     const [showPrintModal, setShowPrintModal] = useState(false)
     const [printLang, setPrintLang] = useState('vi')
+    const [showMergeModal, setShowMergeModal] = useState(false)
+    const [showSplitModal, setShowSplitModal] = useState(false)
+    const [showActionsMenu, setShowActionsMenu] = useState(false)
+    const cart = useCart()
 
     // On first mount, if table is empty -> go to ProductList.
     // But when items later become empty (e.g. after deleting last item), do NOT redirect.
@@ -130,6 +136,34 @@ export default function TableOrder() {
         }, 300)
     }
 
+    const handleMergeConfirm = (targetTableId) => {
+        dispatch({ type: 'MERGE_TABLES', payload: { sourceTableId: tableId, targetTableId } })
+        setShowMergeModal(false)
+        navigate('/')
+    }
+
+    const handleSplitConfirm = (targetTableId, itemKeys) => {
+        dispatch({ type: 'MOVE_ITEMS_BETWEEN_TABLES', payload: { sourceTableId: tableId, targetTableId, itemKeys } })
+        setShowSplitModal(false)
+        // If table becomes empty, it will be handled by the context (deleted)
+        // We can stay or navigate back depending on if source still has items.
+        const sourceTable = cart.tables[tableId]
+        if (!sourceTable || sourceTable.items.length <= itemKeys.length) {
+            navigate('/')
+        }
+    }
+
+    const takeawayTable = { id: 'takeaway', name: t('pos.takeaway'), type: 'takeaway' }
+    const floorTables = Array.from({ length: 12 }).map((_, i) => ({
+        id: (i + 1).toString(),
+        name: `Bàn ${i + 1}`,
+        type: 'table'
+    }))
+    const allTables = [takeawayTable, ...floorTables].map(t => ({
+        ...t,
+        active: (cart?.tables?.[t.id]?.items || []).length > 0
+    }))
+
     return (
         <div className="page">
             <header className="page-header">
@@ -137,9 +171,25 @@ export default function TableOrder() {
                     <IconChevron variant="bold" />
                 </button>
                 <h2>{t('common.table_name', { name: tableId })}</h2>
-                <button className="icon-btn print-action-btn" onClick={() => setShowPrintModal(true)} title={t('common.print_bill')}>
-                    <Icon name="printer" size={24} />
-                </button>
+                <div className="header-actions">
+                    <button className="icon-btn" onClick={() => setShowActionsMenu(!showActionsMenu)}>
+                        <Icon name="more-vertical" size={24} />
+                    </button>
+                    <button className="icon-btn print-action-btn" onClick={() => setShowPrintModal(true)} title={t('common.print_bill')}>
+                        <Icon name="printer" size={24} />
+                    </button>
+                </div>
+
+                {showActionsMenu && (
+                    <div className="actions-dropdown">
+                        <button onClick={() => { setShowMergeModal(true); setShowActionsMenu(false); }}>
+                            <Icon name="git-merge" size={18} /> Gộp bàn
+                        </button>
+                        <button onClick={() => { setShowSplitModal(true); setShowActionsMenu(false); }}>
+                            <Icon name="git-pull-request" size={18} /> Tách bàn / Chuyển món
+                        </button>
+                    </div>
+                )}
             </header>
 
             <div className="order-metadata">
@@ -271,6 +321,23 @@ export default function TableOrder() {
                 discount={0}
                 total={total}
                 lang={printLang}
+            />
+
+            <MergeTableModal
+                show={showMergeModal}
+                currentTableId={tableId}
+                allTables={allTables}
+                onClose={() => setShowMergeModal(false)}
+                onConfirm={handleMergeConfirm}
+            />
+
+            <SplitTableModal
+                show={showSplitModal}
+                currentTableId={tableId}
+                items={tableCart.items}
+                allTables={allTables}
+                onClose={() => setShowSplitModal(false)}
+                onConfirm={handleSplitConfirm}
             />
         </div>
     )

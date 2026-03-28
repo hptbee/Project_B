@@ -6,7 +6,7 @@ import './OrderHistory.scss'
 export default function OrderHistory() {
     const { t } = useTranslation()
     const navigate = useNavigate()
-    const [searchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [paymentMethodFilter, setPaymentMethodFilter] = useState('') // ''=All, CASH, TRANSFER, COMBINED
@@ -15,6 +15,15 @@ export default function OrderHistory() {
     const paramStatus = searchParams.get('status')
 
     useEffect(() => {
+        if (!paramStatus) {
+            setSearchParams(prev => {
+                const newParams = new URLSearchParams(prev)
+                newParams.set('status', 'SUCCESS')
+                return newParams
+            }, { replace: true })
+            return
+        }
+
         const fetchOrders = async () => {
             const localDate = new Date().toLocaleDateString('en-CA')
             const targetDate = paramDate || localDate
@@ -51,7 +60,7 @@ export default function OrderHistory() {
             }
         }
         fetchOrders()
-    }, [paramDate, paramStatus]) // Removed paymentMethodFilter dependency
+    }, [paramDate, paramStatus, setSearchParams]) // Removed paymentMethodFilter dependency
 
     // Client-side filtering
     const filteredOrders = orders.filter(order => {

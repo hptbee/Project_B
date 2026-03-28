@@ -171,6 +171,79 @@ function cartReducer(state, action) {
             delete newTables[tableId]
             return { ...state, tables: newTables }
         }
+        case 'MERGE_TABLES': {
+            const { sourceTableId, targetTableId } = action.payload
+            const sourceTable = state.tables[sourceTableId]
+            const targetTable = state.tables[targetTableId] || {
+                items: [],
+                orderId: generateOrderId(),
+                clientOrderId: crypto.randomUUID(),
+                status: 'DRAFT',
+                customer: null,
+                createdAt: Date.now()
+            }
+
+            if (!sourceTable) return state
+
+            // Merge items
+            const mergedItems = [...targetTable.items]
+            sourceTable.items.forEach(sourceItem => {
+                const existing = mergedItems.find(i => i.key === sourceItem.key)
+                if (existing) {
+                    existing.qty += sourceItem.qty
+                } else {
+                    mergedItems.push({ ...sourceItem })
+                }
+            })
+
+            const newTables = { ...state.tables }
+            newTables[targetTableId] = {
+                ...targetTable,
+                items: mergedItems,
+                note: [targetTable.note, sourceTable.note].filter(Boolean).join('; ')
+            }
+            delete newTables[sourceTableId]
+
+            return { ...state, tables: newTables }
+        }
+        case 'MOVE_ITEMS_BETWEEN_TABLES': {
+            const { sourceTableId, targetTableId, itemKeys } = action.payload
+            const sourceTable = state.tables[sourceTableId]
+            const targetTable = state.tables[targetTableId] || {
+                items: [],
+                orderId: generateOrderId(),
+                clientOrderId: crypto.randomUUID(),
+                status: 'DRAFT',
+                customer: null,
+                createdAt: Date.now()
+            }
+
+            if (!sourceTable) return state
+
+            const itemsToMove = sourceTable.items.filter(i => itemKeys.includes(i.key))
+            const remainingItems = sourceTable.items.filter(i => !itemKeys.includes(i.key))
+
+            const updatedTargetItems = [...targetTable.items]
+            itemsToMove.forEach(moveItem => {
+                const existing = updatedTargetItems.find(i => i.key === moveItem.key)
+                if (existing) {
+                    existing.qty += moveItem.qty
+                } else {
+                    updatedTargetItems.push({ ...moveItem })
+                }
+            })
+
+            const newTables = { ...state.tables }
+            newTables[targetTableId] = { ...targetTable, items: updatedTargetItems }
+
+            if (remainingItems.length === 0) {
+                delete newTables[sourceTableId]
+            } else {
+                newTables[sourceTableId] = { ...sourceTable, items: remainingItems }
+            }
+
+            return { ...state, tables: newTables }
+        }
         default: return state
     }
 }

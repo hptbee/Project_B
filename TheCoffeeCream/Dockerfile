@@ -9,6 +9,8 @@ RUN ls -R
 COPY ["api/TheCoffeeCream/TheCoffeeCream.csproj", "api/TheCoffeeCream/"]
 COPY ["api/TheCoffeeCream.Application/TheCoffeeCream.Application.csproj", "api/TheCoffeeCream.Application/"]
 COPY ["api/TheCoffeeCream.Domain/TheCoffeeCream.Domain.csproj", "api/TheCoffeeCream.Domain/"]
+COPY ["api/TheCoffeeCream.Infrastructure/TheCoffeeCream.Infrastructure.csproj", "api/TheCoffeeCream.Infrastructure/"]
+COPY ["api/TheCoffeeCream.Migrations/TheCoffeeCream.Migrations.csproj", "api/TheCoffeeCream.Migrations/"]
 
 # Restore dependencies
 RUN dotnet restore "api/TheCoffeeCream/TheCoffeeCream.csproj"

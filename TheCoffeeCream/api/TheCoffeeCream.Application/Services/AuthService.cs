@@ -18,8 +18,9 @@ namespace TheCoffeeCream.Application.Services
         private readonly ITokenService _tokenService;
         private readonly IPlanRepository _planRepository;
         private readonly ISubscriptionHistoryRepository _subscriptionHistoryRepository;
+        private readonly Microsoft.Extensions.Caching.Memory.IMemoryCache _cache;
 
-        public AuthService(IUserRepository userRepository, IShopRepository shopRepository, IEmailService emailService, ITokenService tokenService, IPlanRepository planRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository)
+        public AuthService(IUserRepository userRepository, IShopRepository shopRepository, IEmailService emailService, ITokenService tokenService, IPlanRepository planRepository, ISubscriptionHistoryRepository subscriptionHistoryRepository, Microsoft.Extensions.Caching.Memory.IMemoryCache cache)
         {
             _userRepository = userRepository;
             _shopRepository = shopRepository;
@@ -27,6 +28,7 @@ namespace TheCoffeeCream.Application.Services
             _tokenService = tokenService;
             _planRepository = planRepository;
             _subscriptionHistoryRepository = subscriptionHistoryRepository;
+            _cache = cache;
         }
 
         public async Task<LoginResult?> LoginAsync(string username, string password)
@@ -81,6 +83,9 @@ namespace TheCoffeeCream.Application.Services
             var sessionToken = Guid.NewGuid().ToString();
             user.LastLoginToken = sessionToken;
             await _userRepository.UpdateAsync(user);
+
+            // Invalidate cache to force middleware to fetch new token
+            _cache.Remove($"session_{user.Id}");
 
             var token = _tokenService.GenerateToken(user);
             return new LoginResult

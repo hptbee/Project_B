@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TheCoffeeCream.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TheCoffeeCream.Infrastructure.Data;
 namespace TheCoffeeCream.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260205154327_AddLastLoginTokenToUser")]
+    partial class AddLastLoginTokenToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("6648dbe7-e96c-4e74-87c9-854747e94ae5"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Khác",
                             Rank = 14,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -60,7 +63,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("ad8147f8-cccf-420f-bc55-d3d2491dfa81"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Bánh",
                             Rank = 7,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -68,7 +71,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("2bfba6b7-c0eb-47dd-a06b-14fda34023ae"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "TOPPING",
                             Rank = 13,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -76,7 +79,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("1d4b6612-5cd7-4c9f-9fda-8209e95da2ae"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Cafe",
                             Rank = 1,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -84,7 +87,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("6138ec79-4292-4747-81aa-d0e4d308efda"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Specialty",
                             Rank = 2,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -92,7 +95,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("485e5bd2-e0f6-4a56-9f20-cd1707db60f1"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Món khác",
                             Rank = 9,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -100,7 +103,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("23a13583-3794-4fa1-8704-ba54916dff7d"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Trending",
                             Rank = 8,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -108,7 +111,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("5d49224a-7fd8-436f-a9a7-b04cf681f706"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Cacao",
                             Rank = 4,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -116,7 +119,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("97f21f46-4f5e-4979-8d66-c5e666e50aa4"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Trà Sữa",
                             Rank = 3,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -124,7 +127,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("cf121efe-0380-48eb-82ba-5f26c6f67fab"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Món Nóng",
                             Rank = 10,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -132,7 +135,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("05ab0a7a-8a5c-43d1-93dc-bef44fa28908"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Latte",
                             Rank = 5,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -140,7 +143,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("00f6c7bb-e1b1-4d79-b3b1-112e7dcb6700"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Trà trái cây",
                             Rank = 6,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -148,7 +151,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("added61a-03d3-465e-8ebf-9f90b729c2b5"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Chai hủ",
                             Rank = 11,
                             ShopId = "00000000-0000-0000-0000-000000000001"
@@ -156,7 +159,7 @@ namespace TheCoffeeCream.Migrations
                         new
                         {
                             Id = new Guid("a687085b-5ddc-49b5-8724-e94bd31ba54f"),
-                            IsActive = true,
+                            IsActive = false,
                             Name = "Nước ngọt",
                             Rank = 12,
                             ShopId = "00000000-0000-0000-0000-000000000001"
