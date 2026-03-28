@@ -2,72 +2,6 @@
 
 /* Common Components for Premium Dark Mode */
 
-.product-row {
-    display: flex;
-    align-items: center;
-    padding: 20px 24px;
-    background: var(--bg-card);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--border-glass);
-    border-radius: var(--radius-xl);
-    margin-bottom: 16px;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    text-decoration: none;
-    color: var(--text-primary);
-    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    box-shadow: var(--glass-shadow);
-
-    @for $i from 1 through 20 {
-        &:nth-child(#{$i}) {
-            animation-delay: #{$i * 0.04}s;
-        }
-    }
-
-    &:active {
-        transform: scale(0.97);
-        border-color: var(--accent-amber);
-        background: var(--bg-glass-active);
-    }
-
-    &.clickable {
-        cursor: pointer;
-    }
-}
-
-.thumb-small {
-    width: 68px;
-    height: 68px;
-    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-darker));
-    border-radius: 16px;
-    margin-right: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    font-size: 24px;
-    border: 1px solid var(--border-glass);
-    box-shadow: var(--glass-shadow);
-}
-
-.meta {
-    flex: 1;
-
-    .title {
-        font-size: 17px;
-        font-weight: 800;
-        margin-bottom: 4px;
-        color: var(--text-primary);
-        line-height: 1.2;
-    }
-
-    .price {
-        font-size: 15px;
-        font-weight: 900;
-        color: var(--accent-amber);
-        font-family: var(--font-number);
-    }
-}
-
 .fab {
     position: fixed;
     right: 24px;
@@ -90,27 +24,6 @@
     &:active {
         transform: scale(0.9) rotate(5deg);
         box-shadow: 0 5px 15px var(--accent-amber-glow);
-    }
-}
-
-.add-btn {
-    width: 44px;
-    height: 44px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-glass);
-    border-radius: 14px;
-    color: var(--accent-amber);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: pointer;
-
-    &:active {
-        transform: scale(0.9);
-        background: var(--accent-amber);
-        color: var(--text-on-accent);
-        border-color: var(--accent-amber);
     }
 }
 

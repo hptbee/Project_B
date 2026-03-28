@@ -5,7 +5,7 @@ High-performance backend powered by ASP.NET Core 8, implementing Clean Architect
 ## 🏗️ Architecture
 - **Web API**: RESTful endpoints with standard DTOs.
 - **Domain**: Pure business logic and entities (Product, Order, Category, User, Plan).
-- **Infrastructure**: Lightweight Dapper integration with SQL Server for high-performance data access.
+- **Infrastructure**: Entity Framework Core integration with SQL Server for high-performance data access.
 
 ## 🗄️ Database Initialization
 The API relies on a SQL Server instance (provisioned via `docker-compose.yml` at the root). 

@@ -14,12 +14,12 @@ When requested to add a new endpoint or feature to the primary `.NET 8` backend,
 **Location**: `api/TheCoffeeCream/TheCoffeeCream.Application/DTOs/`
 Create robust Request and Response Object implementations. Never map a pure entity back to the controller. Utilize standard nullable patterns if variables are optional.
 
-## Step 2: Domain Abstraction & Infrastructure (Dapper)
+## Step 2: Domain Abstraction & Infrastructure (Entity Framework Core)
 **Location**: `api/TheCoffeeCream/TheCoffeeCream.Infrastructure/Repositories/`
 1. If the entity is completely new, define it in `api/TheCoffeeCream/TheCoffeeCream.Domain/Entities/`.
 2. Determine your interface in `TheCoffeeCream.Application/Interfaces/`.
-3. For data mutation, strictly use **Dapper** (Not Entity Framework natively unless extending an ancient module). 
-4. Write clean raw SQL queries to be utilized by the specific `DapperRepository`. Execute parameter binding (avoid concat).
+3. For data mutation, strictly use **Entity Framework Core**. 
+4. Write clean LINQ queries to be utilized by the specific `EfRepository`.
 
 ## Step 3: Application Service Definition
 **Location**: `api/TheCoffeeCream/TheCoffeeCream.Application/Services/`

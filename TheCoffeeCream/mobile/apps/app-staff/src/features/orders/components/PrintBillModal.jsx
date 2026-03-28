@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from '@thecoffeecream/ui-shared';
+import { useTranslation, Button } from '@thecoffeecream/ui-shared';
 import './PrintBillModal.scss';
 
 export default function PrintBillModal({ show, onConfirm, onCancel, tableName }) {
@@ -41,12 +41,12 @@ export default function PrintBillModal({ show, onConfirm, onCancel, tableName })
                     </div>
                 </div>
                 <div className="modal-footer">
-                    <button className="btn-cancel btn-secondary" onClick={onCancel}>
+                    <Button variant="secondary" onClick={onCancel}>
                         {t('action.cancel')}
-                    </button>
-                    <button className="btn-confirm btn-primary" onClick={() => onConfirm(selectedLang)}>
+                    </Button>
+                    <Button variant="primary" onClick={() => onConfirm(selectedLang)}>
                         {t('common.print')}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,0 +1,124 @@
+@import '../../../../styles/variables.scss';
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    border: none;
+    border-radius: $radius-md;
+    font-family: $font-main;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $trans-fast;
+    outline: none;
+    text-decoration: none;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    // Sizes
+    &-sm {
+        padding: $spacing-xs $spacing-sm;
+        font-size: $text-sm;
+        border-radius: $radius-sm;
+        min-height: 32px;
+    }
+
+    &-md {
+        padding: $spacing-sm $spacing-md;
+        font-size: $text-md;
+        min-height: 44px; // Touch friendly
+    }
+
+    &-lg {
+        padding: $spacing-md $spacing-lg;
+        font-size: $text-lg;
+        border-radius: $radius-lg;
+        min-height: 56px;
+    }
+
+    // Variants (Glassmorphism inspired)
+    &-primary {
+        background: $accent-amber;
+        color: var(--text-on-accent);
+        box-shadow: $glass-shadow;
+
+        &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            background: color-mix(in srgb, $accent-amber 90%, white);
+        }
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
+
+    &-secondary {
+        background: $bg-glass;
+        backdrop-filter: $glass-blur;
+        color: $text-primary;
+        border: 1px solid $border-glass;
+        box-shadow: $glass-shadow;
+
+        &:hover:not(:disabled) {
+            background: var(--bg-glass-active);
+        }
+    }
+
+    &-outline {
+        background: transparent;
+        color: $text-primary;
+        border: 2px solid $bg-glass;
+        
+        &:hover:not(:disabled) {
+            background: var(--bg-glass-active);
+            border-color: $border-active;
+        }
+    }
+
+    &-ghost {
+        background: transparent;
+        color: $text-primary;
+
+        &:hover:not(:disabled) {
+            background: var(--bg-glass-active);
+        }
+    }
+
+    &-danger {
+        background: $accent-red;
+        color: white;
+
+        &:hover:not(:disabled) {
+            background: mix($accent-red, black, 90%);
+        }
+    }
+
+    // Loading State
+    &.loading {
+        position: relative;
+        color: transparent !important;
+        pointer-events: none;
+
+        .btn-spinner {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 0.8s linear infinite;
+        }
+    }
+}
+
+// Keyframes required for the spinner
+@keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}

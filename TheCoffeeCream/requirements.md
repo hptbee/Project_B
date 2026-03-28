@@ -7,7 +7,7 @@ A premium, end-to-end multi-tenant coffee shop management system giving shop own
 - **Backend Infrastructure**:
   - **Framework**: .NET Core 8 Web API
   - **Architecture**: Domain-Driven Design (DDD) & Clean Architecture
-  - **Database**: SQL Server (MSSQL) using lightweight Dapper ORM
+  - **Database**: SQL Server (MSSQL) using Entity Framework Core ORM
 - **Frontend Suites**:
   - **Shop Operations (Admin/Staff)**: React 18, Vite, and Capacitor (Cross-platform WebView / Android APK)
   - **Shared Kit**: `@thecoffeecream/ui-shared` (UI Tokens, API clients, Offline capabilities)
@@ -42,4 +42,4 @@ A premium, end-to-end multi-tenant coffee shop management system giving shop own
 ## 5. Non-Functional Requirements
 - **Design System Excellence**: Dark-mode primary interfaces utilizing premium Glassmorphism traits.
 - **Build Targets**: Fully deployable via Docker (`docker-compose.yml`), natively exported to Android APKs via Capacitor/Gradle (`build-apk.ps1`).
-- **Performance**: High throughput operations via Dapper on the backend and local in-memory caching mechanisms.
+- **Performance**: High throughput operations via Entity Framework Core on the backend and local in-memory caching mechanisms.

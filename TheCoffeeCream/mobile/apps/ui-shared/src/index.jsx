@@ -1,3 +1,4 @@
+export * from './components/ui/Button';
 export * from './components/ui/LoadingSpinner';
 export * from './components/ui/Icon';
 export * from './components/ui/IconChevron';

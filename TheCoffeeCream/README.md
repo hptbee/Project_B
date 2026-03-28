@@ -64,7 +64,7 @@ npm run dev --workspaces
 ## 🌐 Architecture Highlights
 - **Centralized API Layer**: All React mobile apps share a unified service layer in `ui-shared`, ensuring zero logic duplication.
 - **Global Offline Sync**: Reliable order processing powered by a shared `OfflineQueue` for Staff devices.
-- **Backend DDD**: Clean Architecture with a robust SQL Server and Dapper implementation for high-performance data management.
+- **Backend DDD**: Clean Architecture with a robust SQL Server and Entity Framework Core implementation for high-performance data management.
 
 ## 🛠️ Build & Deploy
 - **Docker**: Root-level `Dockerfile` for backend deployment.
