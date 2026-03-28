@@ -1,6 +1,6 @@
 # 👑 The Coffee Cream - Admin Portal
 
-Business administration and analytics dashboard for shop managers.
+Business administration and analytics dashboard for shop managers built with React 18, Vite, and Capacitor.
 
 > [!NOTE]
 > Super Admin / Shop Management features have been moved to the [app-owner](../app-owner) project.

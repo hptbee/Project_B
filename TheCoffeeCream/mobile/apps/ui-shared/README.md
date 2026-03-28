@@ -1,6 +1,6 @@
 # 📦 @thecoffeecream/ui-shared
 
-The core bridge of The Coffee Cream ecosystem. Provides a unified Design System, API layer, and Business Utils.
+The core bridge of The Coffee Cream ecosystem. Provides a unified Design System, API layer, and Business Utils for the React mobile suite (`app-admin` and `app-staff`).
 
 ## 🚀 Shared Architecture
 This package is the "Single Source of Truth" for:

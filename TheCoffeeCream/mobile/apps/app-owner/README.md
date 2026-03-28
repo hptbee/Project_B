@@ -1,4 +1,4 @@
-# The Coffee Cream - Owner Portal (`app-owner`)
+# 👑 The Coffee Cream - Owner Portal (`app-owner`)
 
 This is a dedicated web application for Super Admins (Owners) of **The Coffee Cream** ecosystem. It is built with **Angular 18** and features a modern, glassmorphism-inspired design system.
 

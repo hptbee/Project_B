@@ -1,6 +1,6 @@
 # ☕ The Coffee Cream - Staff App
 
-Modern point-of-sale and order management for staff.
+Modern point-of-sale and order management for staff built with React 18, Vite, and Capacitor.
 
 ## ✨ Features
 - **Offline-First Ready**: Powered by `@thecoffeecream/ui-shared/OfflineQueue` for zero-latency order submission.
