@@ -21,17 +21,20 @@ A premium, end-to-end multi-tenant coffee shop management system giving shop own
 ## 4. Sub-Application Core Features
 
 ### 4.1. Staff App (`app-staff`)
+*👉 [View Detailed Product Requirements](./mobile/apps/app-staff/REQUIREMENTS.md)*
 - **Offline-First Resilience**: Order taking and caching (`OfflineQueue`) continue to function without internet latency. 
 - **Point of Sale (POS)**: Core checkout flow supporting Cash and Transfer methods.
 - **Table Management**: Real-time table states (Empty, Occupied, Ordered).
 - **Cart & Split Payments**: Dynamic management of the active cart items.
 
 ### 4.2. Admin Dashboard (`app-admin`)
+*👉 [View Detailed Product Requirements](./mobile/apps/app-admin/REQUIREMENTS.md)*
 - **Business Intelligence**: Rich analytics covering Sales Trends and best selling products via `reportsApi`.
 - **Order Overrides**: Ability to review, track, and update the status of active and historical orders.
 - **Data Visualization**: Date range filtering for granular insights.
 
 ### 4.3. Owner Portal (`app-owner`)
+*👉 [View Detailed Product Requirements](./mobile/apps/app-owner/REQUIREMENTS.md)*
 - **Tenant Onboarding**: Register new shop instances and their respective admin accounts.
 - **Subscription Engine**: Manage active plans (Trial, Basic, Premium) and exact expiry lengths.
 - **Security Control**: Remotely enable/disable shops or reset credentials.

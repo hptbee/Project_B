@@ -3,9 +3,10 @@
 The mobile workspace for The Coffee Cream system, featuring shared logic and specialized applications.
 
 ## 📦 Structure
-- **[apps/app-staff](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-staff)**: Staff-facing application for order management.
-- **[apps/app-admin](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-admin)**: Administrative dashboard and analytics.
-- **[apps/ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: The core library containing all shared UI modules, API clients, and business utilities.
+- **[apps/app-staff](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-staff)**: Staff-facing application for order management (React 18).
+- **[apps/app-admin](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-admin)**: Administrative dashboard and analytics (React 18).
+- **[apps/app-owner](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/app-owner)**: Super Admin portal for handling subscriptions across shops (Angular 18).
+- **[apps/ui-shared](file:///d:/Project/Project_B/TheCoffeeCream/mobile/apps/ui-shared)**: The core library containing all shared UI modules, API clients, and business utilities for the React apps.
 
 ## 🛠️ Shared Logic (Best Practice)
 All core calculations, price formatting, and API services are centralized in `ui-shared`. This ensures:

@@ -70,5 +70,9 @@ npm run dev --workspaces
 - **Docker**: Root-level `Dockerfile` for backend deployment.
 - **Mobile APKs**: Timestamped builds located in `android/app/build/outputs/apk/debug/` for each app.
 
+## 🧪 Testing & QA
+This project utilizes Playwright for full End-to-End Automation.
+Please refer to the detailed [Testing Guide](file:///d:/Project/Project_B/TheCoffeeCream/tests/README.md) for executing the E2E suite against `app-staff`, `app-admin`, and `app-owner` environments.
+
 ---
 Proprietary © 2026 The Coffee Cream
