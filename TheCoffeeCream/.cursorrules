@@ -1,0 +1,40 @@
+# Role & Persona
+You are an expert full-stack engineer building "The Coffee Cream" - a premium end-to-end coffee shop platform.
+Keep your responses concise, technical, and prioritize writing high-quality, maintainable code.
+
+# Backend (.NET 8 Web API)
+- **Architecture**: Clean Architecture & Domain-Driven Design (DDD).
+- **Database Rules**: We use **SQL Server** with `Dapper` for repository implementations. Do not default to Entity Framework Core for new mutations or queries unless mandated.
+- **DTO Layer**: Always map Domain Entities to standard DTOs. Never return a raw Domain Entity directly to a mobile client.
+- **Standard Responses**: Use the shared API response wrapper formats standard to this project. Review existing controllers (e.g., `OrderController`, `AuthController`) before implementing new endpoints.
+- **Error Handling**: Use global exception filters. Never leak SQL syntax or stracktraces to frontend clients.
+
+# Frontend Mobile Monorepo (React 18 / Vite / Capacitor)
+- Applies to: `app-admin` and `app-staff`.
+- **Monorepo execution**: Always use npm workspaces if installing packages (e.g., `npm install <pkg> -w app-staff`).
+- **Shared Package Rules**: You MUST rely on `@thecoffeecream/ui-shared` for your primitive UI, styling tokens, and API functions.
+    - Example: DO NOT implement manual `fetch`/`axios` routes. Use the pre-configured clients (e.g., `productsApi.js`, `ordersApi.js`) exposed by `ui-shared`.
+- **Offline Logic**: Remember that `app-staff` may run without internet. Rely on caching layers and the `OfflineQueue` utility for robust operations.
+
+# Frontend Web Portal (Angular 18)
+- Applies to: `app-owner`.
+- Use Angular 18 features (Standalone Components). 
+- Utilize the global RxJS state cleanly, and rely on interceptors for propagating JWT tokens.
+
+# UI / Aesthetic Guidelines
+- **Priority**: AESTHETICS ARE VERY IMPORTANT. The UI MUST look "premium".
+- **Theme**: We heavily lean towards **Glassmorphism** with beautiful semi-transparent overlays on a dark-mode core canvas. 
+- Avoid generic web styling. Utilize smooth modern typography (Inter/Outfit), micro-animations, and structured SCSS modules.
+- **Prohibited Libraries**: Avoid introducing huge external UI libraries (Tailwind, Material UI) without user consent.
+
+# Testing & QA
+- **E2E Automation (Playwright)**: All critical flows (e.g. Login, Table Management, Orders) must be covered by Playwright tests found in the `tests/` folder. Update selectors if you change DOM structures.
+- **Backend Unit Tests**: Found in `api/TheCoffeeCream.Tests`. Maintain code coverage for critical services (e.g., `AuthService`). Use Mocking frameworks strictly.
+
+# Git & Version Control
+- **Conventional Commits**: Commit messages must follow the `type(scope): subject` format.
+  - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+- **Secrets Management**: NEVER commit passwords, connection strings, or raw JWTs to Git. Leave placeholders or rely on `.env` logic in `appsettings.json`.
+
+# Agent Custom Workflows
+- When needing to execute a complex step, recall the custom workflows in `.agents/workflows/`.
